@@ -1,0 +1,225 @@
+---
+const RAIL_CENTER_X = 126;
+const ARROW_W = 25;
+const ARROW_H = 24;
+const RAIL_TOP_Y = 64;
+---
+
+<svg class="spine-svg" id="spine" aria-hidden="true">
+  <rect
+    class="spine-rail-track"
+    id="spine-rail-track"
+    x={RAIL_CENTER_X - 3}
+    y={RAIL_TOP_Y}
+    width="6"
+    height="586"
+  />
+  <g class="spine-rings" id="spine-rings"></g>
+  <g class="spine-arrow" id="spine-arrow" transform="translate(113.5, 642)">
+    <rect class="spine-arrow-tile" width={ARROW_W} height={ARROW_H} rx="4" />
+    <path
+      class="spine-arrow-glyph"
+      d="M11.16 5 L13.81 5 L13.84 5 L13.84 13.75 L19 8.34 L19 12.18 L12.5 19 L6 12.18 L6 8.31 L11.16 13.72 L11.16 5 Z"
+    />
+  </g>
+  <path class="spine-branch-line spine-branch-line--ai" id="spine-branch-ai" d=""></path>
+  <path class="spine-branch-line spine-branch-line--ent" id="spine-branch-ent" d=""></path>
+  <path class="spine-branch-line spine-branch-line--pers" id="spine-branch-pers" d=""></path>
+  <rect class="spine-line-terminator spine-line-terminator--ai" id="spine-term-ai" rx="4" width="14" height="8" />
+  <rect class="spine-line-terminator spine-line-terminator--ent" id="spine-term-ent" rx="4" width="14" height="8" />
+  <rect class="spine-line-terminator spine-line-terminator--pers" id="spine-term-pers" rx="4" width="14" height="8" />
+  <rect class="spine-line-indicator spine-line-indicator--ai" id="spine-ind-ai" rx="4" width="28" height="8" />
+  <rect class="spine-line-indicator spine-line-indicator--ent" id="spine-ind-ent" rx="4" width="22" height="8" />
+  <rect class="spine-line-indicator spine-line-indicator--pers" id="spine-ind-pers" rx="4" width="8" height="8" />
+</svg>
+
+<script>
+  const RAIL_CENTER_X = 126;
+  const RING_SIZE = 14;
+  const ARROW_W = 25;
+  const ARROW_H = 24;
+  const RAIL_TOP_Y = 64;
+
+  type SectionKey = 'ai' | 'ent' | 'pers';
+
+  function buildBranchPath(startX: number, startY: number, endX: number, endY: number): string {
+    const dx = endX - startX;
+    const dy = endY - startY;
+    if (dx < 24) {
+      const verticalEnd = endY - 6;
+      return `M ${startX} ${startY} V ${verticalEnd} Q ${startX} ${endY} ${startX + 6} ${endY} H ${endX}`;
+    }
+    const horizontalApproach = Math.max(20, Math.min(dx * 0.30, 80));
+    const remainingDx = dx - horizontalApproach;
+    const diagonal = Math.max(20, Math.min(remainingDx, dy * 0.55, 220));
+    const verticalEnd = endY - diagonal;
+    const diagonalEndX = startX + diagonal;
+    return `M ${startX} ${startY} V ${verticalEnd} L ${diagonalEndX} ${endY} H ${endX}`;
+  }
+
+  function computeVerticalEnd(startX: number, startY: number, endX: number, endY: number): number {
+    const dx = endX - startX;
+    const dy = endY - startY;
+    if (dx < 24) return endY - 6;
+    const horizontalApproach = Math.max(20, Math.min(dx * 0.30, 80));
+    const remainingDx = dx - horizontalApproach;
+    const diagonal = Math.max(20, Math.min(remainingDx, dy * 0.55, 220));
+    return endY - diagonal;
+  }
+
+  function init() {
+    const svg = document.getElementById('spine') as SVGSVGElement | null;
+    if (!svg) return;
+    const spineContainer = svg.parentElement as HTMLElement | null;
+    if (!spineContainer) return;
+
+    const ringsGroup = document.getElementById('spine-rings') as SVGGElement | null;
+    const arrowGroup = document.getElementById('spine-arrow') as SVGGElement | null;
+    const track = document.getElementById('spine-rail-track') as SVGRectElement | null;
+    if (!ringsGroup || !arrowGroup || !track) return;
+
+    const linePaths: Record<SectionKey, SVGPathElement | null> = {
+      ai: document.getElementById('spine-branch-ai') as SVGPathElement | null,
+      ent: document.getElementById('spine-branch-ent') as SVGPathElement | null,
+      pers: document.getElementById('spine-branch-pers') as SVGPathElement | null,
+    };
+    const lineTerminators: Record<SectionKey, SVGRectElement | null> = {
+      ai: document.getElementById('spine-term-ai') as SVGRectElement | null,
+      ent: document.getElementById('spine-term-ent') as SVGRectElement | null,
+      pers: document.getElementById('spine-term-pers') as SVGRectElement | null,
+    };
+    const lineIndicators: Record<SectionKey, SVGRectElement | null> = {
+      ai: document.getElementById('spine-ind-ai') as SVGRectElement | null,
+      ent: document.getElementById('spine-ind-ent') as SVGRectElement | null,
+      pers: document.getElementById('spine-ind-pers') as SVGRectElement | null,
+    };
+
+    const sizeSpineSvg = () => {
+      const cw = spineContainer.offsetWidth;
+      const ch = spineContainer.offsetHeight;
+      svg.setAttribute('viewBox', `0 0 ${cw} ${ch}`);
+      svg.setAttribute('width', String(cw));
+      svg.setAttribute('height', String(ch));
+    };
+
+    const placeSpineGeometry = () => {
+      const heroCards = Array.from(
+        document.querySelectorAll<HTMLLIElement>('.hero-cards .hero-card'),
+      );
+      ringsGroup.innerHTML = '';
+      heroCards.forEach((card) => {
+        const r = card.getBoundingClientRect();
+        const center = r.top + r.height / 2 + window.scrollY;
+        const ring = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        ring.setAttribute('class', 'spine-rail-ring');
+        ring.setAttribute('x', String(RAIL_CENTER_X - RING_SIZE / 2));
+        ring.setAttribute('y', String(center - RING_SIZE / 2));
+        ring.setAttribute('width', String(RING_SIZE));
+        ring.setAttribute('height', String(RING_SIZE));
+        ring.setAttribute('rx', '7');
+        ringsGroup.appendChild(ring);
+      });
+
+      const lastCard = heroCards[heroCards.length - 1];
+      let arrowTop = 642;
+      if (lastCard) {
+        const r = lastCard.getBoundingClientRect();
+        arrowTop = r.bottom + window.scrollY + 80;
+      }
+      arrowGroup.setAttribute('transform', `translate(${RAIL_CENTER_X - ARROW_W / 2}, ${arrowTop})`);
+
+      const trackBottom = arrowTop + ARROW_H / 2;
+      track.setAttribute('y', String(RAIL_TOP_Y));
+      track.setAttribute('height', String(trackBottom - RAIL_TOP_Y));
+    };
+
+    const regenerateBranchLines = () => {
+      const sectionHeaders: Record<SectionKey, HTMLElement | null> = {
+        ai: document.getElementById('section-ai'),
+        ent: document.getElementById('section-ent'),
+        pers: document.getElementById('section-pers'),
+      };
+
+      const containerRect = spineContainer.getBoundingClientRect();
+      const arrowTransform = arrowGroup.getAttribute('transform') ?? '';
+      const match = arrowTransform.match(/translate\(\s*[0-9.]+\s*,\s*([0-9.]+)\s*\)/);
+      const arrowY = match ? parseFloat(match[1]) : 642;
+      const lineStartY = arrowY + ARROW_H;
+
+      const startXs: Record<SectionKey, number> = {
+        ai: RAIL_CENTER_X - 8,
+        ent: RAIL_CENTER_X,
+        pers: RAIL_CENTER_X + 8,
+      };
+
+      const verticalEnds: Partial<Record<SectionKey, number>> = {};
+
+      (['ai', 'ent', 'pers'] as const).forEach((key) => {
+        const headerEl = sectionHeaders[key];
+        const path = linePaths[key];
+        const term = lineTerminators[key];
+        if (!headerEl || !path || !term) return;
+        const r = headerEl.getBoundingClientRect();
+        const endX = r.left - containerRect.left;
+        const endY = r.top - containerRect.top + r.height / 2;
+        path.setAttribute('d', buildBranchPath(startXs[key], lineStartY, endX, endY));
+        term.setAttribute('x', String(endX - 7));
+        term.setAttribute('y', String(endY - 4));
+        verticalEnds[key] = computeVerticalEnd(startXs[key], lineStartY, endX, endY);
+      });
+
+      const MARKER_H = 8;
+      const MARKER_OFFSET = 8;
+
+      if (lineIndicators.ai && verticalEnds.ai !== undefined) {
+        const w = 28;
+        const center = (startXs.ai + startXs.pers) / 2;
+        lineIndicators.ai.setAttribute('x', String(center - w / 2));
+        lineIndicators.ai.setAttribute('y', String(verticalEnds.ai - MARKER_H - MARKER_OFFSET));
+      }
+      if (lineIndicators.ent && verticalEnds.ent !== undefined) {
+        const w = 22;
+        const center = (startXs.ent + startXs.pers) / 2;
+        lineIndicators.ent.setAttribute('x', String(center - w / 2));
+        lineIndicators.ent.setAttribute('y', String(verticalEnds.ent - MARKER_H - MARKER_OFFSET));
+      }
+      if (lineIndicators.pers && verticalEnds.pers !== undefined) {
+        const w = 8;
+        lineIndicators.pers.setAttribute('x', String(RAIL_CENTER_X + 8 - w / 2));
+        lineIndicators.pers.setAttribute('y', String(verticalEnds.pers - MARKER_H - MARKER_OFFSET));
+      }
+    };
+
+    const draw = () => {
+      sizeSpineSvg();
+      placeSpineGeometry();
+      regenerateBranchLines();
+    };
+
+    draw();
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => requestAnimationFrame(draw));
+    }
+
+    let resizeTimeout: ReturnType<typeof setTimeout> | undefined;
+    const onResize = () => {
+      if (resizeTimeout) clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(draw, 100);
+    };
+    window.addEventListener('resize', onResize);
+    const ro = new ResizeObserver(onResize);
+    ro.observe(spineContainer);
+
+    // Accordion toggle requests an undebounced redraw on every animation
+    // frame during its 420ms max-height transition so branch lines stay
+    // glued to the moving section headers.
+    window.addEventListener('spine:redraw', draw);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+</script>
