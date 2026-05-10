@@ -293,3 +293,90 @@ html, body {
     transition-duration: 0.001ms !important;
   }
 }
+
+/* ── MOBILE (< 768px) ────────────────────────────────────
+   Spine: SVG hidden, replaced by per-section colored bars on
+   the left edge. Sections sit flush against each other so the
+   color change between sections is the visual "transition".
+   Above the AI section, MobileSpine renders the blue intro rail
+   and arrow terminator that bridges hero → first colored bar. */
+@media (max-width: 767px) {
+  .page {
+    width: 100%;
+  }
+
+  .hero {
+    left: 0;
+    width: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 80px;
+  }
+
+  .hero-cards {
+    width: 100%;
+  }
+
+  .hero-card--proposition {
+    width: 100%;
+  }
+
+  .spine-svg {
+    display: none;
+  }
+
+  .spine-container {
+    padding-top: calc(70vh + 80px);
+    padding-bottom: 60px;
+  }
+
+  /* Reset desktop section offsets — sections stack flush, with
+     the colored bar on each providing continuity. */
+  .section,
+  .section-ai,
+  .section-ent,
+  .section-pers {
+    padding: 0;
+    margin: 0;
+  }
+
+  .section {
+    position: relative;
+  }
+
+  .section-ai::before,
+  .section-ent::before,
+  .section-pers::before {
+    content: '';
+    position: absolute;
+    left: 16px;
+    top: 0;
+    bottom: 0;
+    width: 9px;
+    z-index: 0;
+  }
+  .section-ai::before  { background: var(--color-line-ai); }
+  .section-ent::before { background: var(--color-line-ent); }
+  .section-pers::before { background: var(--color-line-pers); }
+
+  /* Section header sits over the bar at left:16, its 44px-wide
+     L-left badge merges with the 9px bar (same color, wider). */
+  .section-header {
+    margin-left: 16px;
+    width: auto;
+    max-width: calc(100% - 32px);
+    position: relative;
+    z-index: 2;
+    margin-bottom: 14px;
+  }
+
+  /* Cases: full width inside section padding, aligned with bar.
+     Card chips at left:0 sit on top of the bar (same color). */
+  .cases {
+    width: auto;
+    margin: 0 16px;
+    gap: 12px;
+    position: relative;
+    z-index: 2;
+  }
+}

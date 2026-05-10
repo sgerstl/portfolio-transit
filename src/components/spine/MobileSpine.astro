@@ -1,0 +1,62 @@
+---
+---
+
+<div class="mobile-spine" aria-hidden="true">
+  <div class="mobile-rail-blue"></div>
+  <div class="mobile-arrow">
+    <svg viewBox="0 0 25 24" width="25" height="24">
+      <rect class="mobile-arrow-tile" width="25" height="24" rx="4" />
+      <path
+        class="mobile-arrow-glyph"
+        d="M11.16 5 L13.81 5 L13.84 5 L13.84 13.75 L19 8.34 L19 12.18 L12.5 19 L6 12.18 L6 8.31 L11.16 13.72 L11.16 5 Z"
+      />
+    </svg>
+  </div>
+</div>
+
+<style>
+  .mobile-spine {
+    display: none;
+  }
+
+  @media (max-width: 767px) {
+    .mobile-spine {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      /* Fills the spine-container padding-top zone, ending just above the
+         AI section. The blue rail descends from below the fixed hero;
+         the arrow terminator caps it where the green AI line begins. */
+      height: calc(70vh + 60px);
+      pointer-events: none;
+    }
+
+    .mobile-rail-blue {
+      position: absolute;
+      left: 16px;
+      top: 0;
+      bottom: 28px;
+      width: 9px;
+      background: var(--color-rail-blue);
+    }
+
+    .mobile-arrow {
+      position: absolute;
+      left: calc(16px + 4.5px - 12.5px);
+      bottom: 4px;
+      filter: drop-shadow(2px 3px 3px rgba(0, 0, 0, 0.22));
+    }
+
+    .mobile-arrow-tile {
+      fill: white;
+      stroke: var(--color-text);
+      stroke-width: 0.5;
+    }
+
+    .mobile-arrow-glyph {
+      fill: var(--color-text);
+    }
+  }
+</style>

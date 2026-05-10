@@ -47,7 +47,8 @@ export default function Hero() {
     const cardsEls = cardsRef.current.filter(Boolean);
     if (!heroEl) return;
 
-    const getExitDistance = () => window.innerHeight * 1.2;
+    const getExitDistance = () =>
+      window.innerHeight * (window.innerWidth < 768 ? 0.7 : 1.2);
 
     const applyHeroProgress = (progress: number) => {
       if (reducedMotion) {

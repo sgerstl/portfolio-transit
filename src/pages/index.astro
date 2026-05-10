@@ -5,6 +5,7 @@ import MapWallpaper from '../components/MapWallpaper.astro';
 import DepartureBoard from '../components/DepartureBoard.astro';
 import Hero from '../components/hero/Hero.tsx';
 import Spine from '../components/spine/Spine.astro';
+import MobileSpine from '../components/spine/MobileSpine.astro';
 import Section from '../components/cases/Section.astro';
 import SectionHeader from '../components/cases/SectionHeader.astro';
 import Cases from '../components/cases/Cases.astro';
@@ -23,6 +24,7 @@ import { SECTIONS, casesForLine } from '../data/cases';
 
     <div class="spine-container" id="cases">
       <Spine />
+      <MobileSpine />
 
       {SECTIONS.map((section) => (
         <Section line={section.line}>
