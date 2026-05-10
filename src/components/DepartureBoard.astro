@@ -1,0 +1,134 @@
+---
+const stops = [
+  { line: 'CS1', target: 'epilog',   ziel: 'Epilog',   time: '4 min' },
+  { line: 'CS1', target: 'cal',      ziel: 'Cal',      time: '3 min' },
+  { line: 'CS1', target: 'racemake', ziel: 'RaceMake', time: '4 min' },
+  { line: 'CS2', target: 'brightly', ziel: 'Brightly', time: '6 min' },
+  { line: 'CS2', target: 'fleet',    ziel: 'Fleet',    time: '5 min' },
+  { line: 'CS2', target: 'pqdr',     ziel: 'PQ + DR',  time: '4 min' },
+  { line: 'P',   target: 'about',    ziel: 'About',    time: '2 min' },
+  { line: 'P',   target: 'contact',  ziel: 'Contact',  time: '1 min' },
+];
+---
+
+<aside class="naechste-station" aria-label="Upcoming case studies">
+  <div class="ns-frame">
+    <div class="ns-row ns-band ns-band--header">
+      <span class="cell cell--line">Linie</span>
+      <span class="cell cell--ziel">Ziel</span>
+      <span class="cell cell--time">Lesezeit</span>
+    </div>
+
+    <div class="ns-led-area">
+      <div class="ns-led">
+        <div class="ns-led-inner">
+          {stops.map((stop) => (
+            <div class="ns-row ns-row--led" data-target={stop.target}>
+              <span class="cell cell--line">{stop.line}</span>
+              <span class="cell cell--ziel">{stop.ziel}</span>
+              <span class="cell cell--time">{stop.time}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div class="ns-band ns-band--footer">
+      <span class="footer-prefix">Current stop:</span>
+      <span class="footer-station">Home</span>
+    </div>
+  </div>
+</aside>
+
+<style>
+  .naechste-station {
+    position: fixed;
+    top: 73px;
+    right: 13px;
+    width: 380px;
+    z-index: 50;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.20));
+    user-select: none;
+    transform: scale(0.9);
+    transform-origin: top right;
+  }
+
+  .ns-frame {
+    background: #616870;
+    border: 1px solid #8E8E8E;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .ns-row {
+    display: grid;
+    grid-template-columns: 48px 1fr 76px;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Barlow Condensed', sans-serif;
+  }
+
+  .ns-band { background: white; }
+
+  .ns-band--header {
+    height: 38px;
+    padding: 0 50px;
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .ns-band--header .cell--time { text-align: right; }
+
+  .ns-band--footer {
+    height: 38px;
+    padding: 0 50px;
+    display: flex;
+    align-items: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .ns-band--footer .footer-prefix {
+    color: var(--color-text-soft);
+    font-weight: 600;
+    margin-right: 6px;
+  }
+
+  .ns-led-area {
+    background: #616870;
+    padding: 0 38px;
+  }
+
+  .ns-led {
+    background: #171511;
+    padding: 4px 12px;
+    overflow: hidden;
+    height: 128px;
+  }
+
+  .ns-led-inner {
+    transition: transform 0.55s cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+
+  .ns-row--led {
+    font-family: 'VT323', monospace;
+    font-size: 22px;
+    line-height: 1;
+    color: #FFB000;
+    text-shadow: 0 0 4px rgba(255, 176, 0, 0.45);
+    cursor: pointer;
+    transition: color 0.15s ease, text-shadow 0.15s ease;
+    height: 24px;
+    align-content: center;
+  }
+
+  .ns-row--led:hover {
+    color: #FFD060;
+    text-shadow: 0 0 6px rgba(255, 208, 96, 0.65);
+  }
+
+  .ns-row--led .cell--time { text-align: right; }
+</style>

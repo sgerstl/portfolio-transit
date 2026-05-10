@@ -1,1 +1,224 @@
 @import "tailwindcss";
+
+@theme {
+  --color-bg: #f6f6f6;
+  --color-text: #4B4B4B;
+  --color-text-soft: #6a6258;
+  --color-rail-blue: #009DE0;
+  --color-ring-stroke: #555555;
+
+  --color-line-ai: #43AF00;
+  --color-line-ent: #DA5A00;
+  --color-line-pers: #896CAE;
+
+  --font-sans: 'Inter', sans-serif;
+  --font-condensed: 'Barlow Condensed', sans-serif;
+  --font-mono: 'VT323', monospace;
+}
+
+:root {
+  --rail-track-w: 6px;
+  --ring-w: 14px;
+  --ring-h: 14px;
+  --ring-radius: 7px;
+  --arrow-w: 25px;
+  --arrow-h: 24px;
+}
+
+html, body {
+  background: var(--color-bg);
+  font-family: 'Inter', sans-serif;
+  color: var(--color-text);
+  overflow-x: hidden;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* ── PAGE WRAPPER ──────────────────────────────────────── */
+.page {
+  position: relative;
+  width: 1440px;
+  margin: 0 auto;
+  background: #f6f6f6;
+}
+
+/* ── HERO ──────────────────────────────────────────────── */
+.hero {
+  position: fixed;
+  top: 0;
+  /* Match the page's centering exactly: page uses margin:0 auto
+     (centers when viewport >= 1440, clamps to x=0 when narrower).
+     Hero must use the same math or hero cards drift from spine. */
+  left: max(0px, calc((100vw - 1440px) / 2));
+  width: 1440px;
+  height: 100vh;
+  min-height: 700px;
+  z-index: 30;
+  overflow: visible;
+  padding-top: 96px;
+  padding-left: 153px;
+  pointer-events: none;
+  will-change: opacity;
+}
+
+.hero-cards {
+  position: relative;
+  padding-top: 14px;
+  width: 1024px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.hero-prelude {
+  --slide-x: 0px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 38px;
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  color: var(--color-text-soft);
+  display: block;
+  margin-bottom: 30px;
+  will-change: transform, opacity;
+  position: relative;
+  transform: translate3d(var(--slide-x), 0, 0);
+}
+
+/* Card transform uses CSS variables so the scroll-driven slide-X
+   composes with the hover-driven lift-Y without one clobbering
+   the other (writing style.transform from JS would overwrite
+   the :hover transform rule). */
+.hero-card {
+  --slide-x: 0px;
+  --hover-y: 0px;
+  border-radius: 4px;
+  will-change: transform, opacity;
+  position: relative;
+  overflow: hidden;
+  transform: translate3d(var(--slide-x), var(--hover-y), 0);
+}
+
+.hero-card--stat {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  display: grid;
+  grid-template-columns: 124px 1fr;
+  align-items: center;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+.hero-card--stat:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+  --hover-y: -2px;
+  border-color: rgba(0, 0, 0, 0.18);
+}
+
+.hero-card--stat:hover::before {
+  height: 9px;
+}
+
+.hero-card--stat::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: var(--color-rail-blue);
+  transition: height 0.2s ease;
+}
+
+.hero-card--stat .stat-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 72px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: var(--color-rail-blue);
+  text-align: center;
+  padding: 22px 0 18px;
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  user-select: none;
+}
+
+.hero-card--stat .stat-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--color-text);
+  padding: 22px 30px 20px 28px;
+}
+
+.hero-card--stat strong {
+  font-weight: 700;
+  color: #1a1714;
+}
+
+.hero-card--proposition {
+  margin-top: 20px;
+  width: 1020px;
+  max-width: 100%;
+  padding: 26px 38px 32px;
+  background: #4B4B4B;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+  position: relative;
+}
+
+.hero-card--proposition::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: var(--color-rail-blue);
+}
+
+.hero-card--proposition .prop-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--color-rail-blue);
+  display: block;
+  margin-bottom: 18px;
+}
+
+.hero-card--proposition .prop-primary {
+  font-family: 'Inter', sans-serif;
+  font-size: 25px;
+  font-weight: 600;
+  line-height: 1.40;
+  color: #f6f6f6;
+  letter-spacing: 0.003em;
+  margin-bottom: 16px;
+}
+
+.hero-card--proposition .prop-secondary {
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: #d6d6d6;
+  letter-spacing: 0.005em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-card,
+  .hero-prelude,
+  .ns-led-inner {
+    will-change: auto;
+    transition-duration: 0.001ms !important;
+  }
+}

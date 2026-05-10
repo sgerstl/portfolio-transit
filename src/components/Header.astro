@@ -1,0 +1,71 @@
+---
+---
+
+<header class="site-header">
+  <img class="brand-img" src="/wordmark.svg" alt="Scott Gerstl" />
+  <span class="tagline">Enterprise Design · AI Products · Berlin</span>
+  <nav class="nav">
+    <a href="#cases">Cases</a>
+    <a href="#lab">Lab</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: rgba(246, 246, 246, 0.55);
+    backdrop-filter: blur(18px) saturate(170%);
+    -webkit-backdrop-filter: blur(18px) saturate(170%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    padding: 0 32px;
+    gap: 32px;
+  }
+
+  .brand-img {
+    height: 44px;
+    width: auto;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .tagline {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    color: var(--color-text-soft);
+    letter-spacing: 0.01em;
+    margin-left: 8px;
+  }
+
+  .nav {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+  }
+
+  .nav a {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--color-text);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: opacity 0.15s ease;
+  }
+
+  .nav a:hover {
+    opacity: 0.6;
+  }
+</style>
