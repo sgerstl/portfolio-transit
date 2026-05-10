@@ -29,7 +29,10 @@ html, body {
   background: var(--color-bg);
   font-family: 'Inter', sans-serif;
   color: var(--color-text);
-  overflow-x: hidden;
+  /* clip (not hidden) — visually identical, but doesn't establish a
+     scroll context, which would otherwise break position: sticky on
+     descendants like the case-page back button. */
+  overflow-x: clip;
 }
 
 *, *::before, *::after {
@@ -308,17 +311,66 @@ html, body {
   .hero {
     left: 0;
     width: 100%;
+    min-height: 0;
     padding-left: 16px;
     padding-right: 16px;
-    padding-top: 80px;
+    padding-top: 72px;
+  }
+
+  .hero-prelude {
+    font-size: 18px;
+    line-height: 1.25;
+    margin-bottom: 18px;
+    /* Clear the 9px blue rail at viewport x=16-25 with breathing room. */
+    padding-left: 18px;
   }
 
   .hero-cards {
     width: 100%;
+    padding-top: 0;
+    gap: 12px;
+  }
+
+  /* Stat cards: number INLINE above sentence, full width.
+     5px rail-blue top stripe stays. */
+  .hero-card--stat {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-card--stat .stat-num {
+    font-size: 36px;
+    line-height: 1;
+    text-align: left;
+    padding: 18px 20px 2px;
+    border-right: none;
+  }
+
+  .hero-card--stat .stat-text {
+    font-size: 17px;
+    line-height: 1.4;
+    padding: 6px 20px 16px;
   }
 
   .hero-card--proposition {
     width: 100%;
+    margin-top: 8px;
+    padding: 22px 22px 26px;
+  }
+
+  .hero-card--proposition .prop-label {
+    font-size: 11px;
+    margin-bottom: 14px;
+  }
+
+  .hero-card--proposition .prop-primary {
+    font-size: 18px;
+    line-height: 1.4;
+    margin-bottom: 12px;
+  }
+
+  .hero-card--proposition .prop-secondary {
+    font-size: 14px;
+    line-height: 1.5;
   }
 
   .spine-svg {
@@ -326,57 +378,9 @@ html, body {
   }
 
   .spine-container {
-    padding-top: calc(70vh + 80px);
+    /* Push first case section below the fold; rail and arrow
+       terminator descend through the viewport before AI begins. */
+    padding-top: calc(100vh + 60px);
     padding-bottom: 60px;
-  }
-
-  /* Reset desktop section offsets — sections stack flush, with
-     the colored bar on each providing continuity. */
-  .section,
-  .section-ai,
-  .section-ent,
-  .section-pers {
-    padding: 0;
-    margin: 0;
-  }
-
-  .section {
-    position: relative;
-  }
-
-  .section-ai::before,
-  .section-ent::before,
-  .section-pers::before {
-    content: '';
-    position: absolute;
-    left: 16px;
-    top: 0;
-    bottom: 0;
-    width: 9px;
-    z-index: 0;
-  }
-  .section-ai::before  { background: var(--color-line-ai); }
-  .section-ent::before { background: var(--color-line-ent); }
-  .section-pers::before { background: var(--color-line-pers); }
-
-  /* Section header sits over the bar at left:16, its 44px-wide
-     L-left badge merges with the 9px bar (same color, wider). */
-  .section-header {
-    margin-left: 16px;
-    width: auto;
-    max-width: calc(100% - 32px);
-    position: relative;
-    z-index: 2;
-    margin-bottom: 14px;
-  }
-
-  /* Cases: full width inside section padding, aligned with bar.
-     Card chips at left:0 sit on top of the bar (same color). */
-  .cases {
-    width: auto;
-    margin: 0 16px;
-    gap: 12px;
-    position: relative;
-    z-index: 2;
   }
 }

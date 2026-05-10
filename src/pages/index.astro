@@ -36,7 +36,14 @@ import { SECTIONS, casesForLine } from '../data/cases';
           />
           <Cases>
             {casesForLine(section.line).map((c) => (
-              <CaseCard slug={c.slug} name={c.name} tagline={c.tagline} line={c.line} body={c.body} />
+              <CaseCard
+                slug={c.slug}
+                name={c.name}
+                tagline={c.tagline}
+                line={c.line}
+                body={c.body}
+                personal={c.personal}
+              />
             ))}
           </Cases>
         </Section>

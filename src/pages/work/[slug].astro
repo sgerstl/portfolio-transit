@@ -46,6 +46,10 @@ const colorVar = `var(--color-line-${entry.line})`;
   }
 
   .back {
+    /* Sticks just below the 60px sticky header (with breathing). */
+    position: sticky;
+    top: 80px;
+    z-index: 50;
     display: inline-block;
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 14px;
@@ -55,6 +59,12 @@ const colorVar = `var(--color-line-${entry.line})`;
     color: var(--color-text-soft);
     text-decoration: none;
     margin-bottom: 28px;
+    padding: 6px 12px;
+    background: rgba(246, 246, 246, 0.78);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 4px;
   }
 
   .back:hover {

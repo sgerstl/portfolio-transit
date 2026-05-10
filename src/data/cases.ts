@@ -24,6 +24,18 @@ export type CaseBody = {
   ctaHref: string;
 };
 
+export type ContactLink = {
+  href: string;
+  icon: 'email' | 'linkedin';
+  label: string;
+  value: string;
+};
+
+export type PersonalBody = {
+  paragraphs?: string[];
+  links?: ContactLink[];
+};
+
 export type CaseEntry = {
   slug: CaseSlug;
   name: string;
@@ -31,6 +43,7 @@ export type CaseEntry = {
   line: LineKey;
   readingMinutes: number;
   body?: CaseBody;
+  personal?: PersonalBody;
 };
 
 export const CASES: CaseEntry[] = [
@@ -166,6 +179,12 @@ export const CASES: CaseEntry[] = [
     tagline: 'Two crafts I keep close to.',
     line: 'pers',
     readingMinutes: 2,
+    personal: {
+      paragraphs: [
+        "I've built and prepared cars for track days, driven them at their limits, and taught others to find theirs. Getting someone fast requires understanding exactly what's wrong before suggesting anything different.",
+        "I've been riding since the 90s. Mountain bikes first, then road racing, cyclocross, and now back to the road and gravel in Berlin. The best days are the hard ones that remind you of how much further you can actually go.",
+      ],
+    },
   },
   {
     slug: 'contact',
@@ -173,6 +192,22 @@ export const CASES: CaseEntry[] = [
     tagline: 'Email or LinkedIn. I read both.',
     line: 'pers',
     readingMinutes: 1,
+    personal: {
+      links: [
+        {
+          href: 'mailto:scottgerstl@gmail.com',
+          icon: 'email',
+          label: 'Email',
+          value: 'scottgerstl@gmail.com',
+        },
+        {
+          href: 'https://www.linkedin.com/in/scottgerstl',
+          icon: 'linkedin',
+          label: 'LinkedIn',
+          value: 'linkedin.com/in/scottgerstl',
+        },
+      ],
+    },
   },
 ];
 

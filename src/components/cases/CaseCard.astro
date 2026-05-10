@@ -1,5 +1,5 @@
 ---
-import type { LineKey, CaseSlug, CaseBody } from '../../data/cases';
+import type { LineKey, CaseSlug, CaseBody, PersonalBody } from '../../data/cases';
 
 interface Props {
   slug: CaseSlug;
@@ -7,15 +7,17 @@ interface Props {
   tagline: string;
   line: LineKey;
   body?: CaseBody;
+  personal?: PersonalBody;
 }
 
-const { slug, name, tagline, line, body } = Astro.props;
+const { slug, name, tagline, line, body, personal } = Astro.props;
 const colorVar = `var(--color-line-${line})`;
 const hasBody = !!body;
+const isPersonal = !!personal;
 ---
 
 <article
-  class="case-card"
+  class:list={['case-card', isPersonal && 'case-card--personal']}
   data-case={slug}
   id={`case-${slug}`}
   style={`--card-color: ${colorVar};`}
@@ -60,6 +62,44 @@ const hasBody = !!body;
         <p class="case-claim">{body.claim}</p>
         <a class="case-cta" href={body.ctaHref}>Read the full case study →</a>
       </div>
+    </div>
+  )}
+
+  {personal && (
+    <div class="personal-body">
+      {personal.paragraphs?.map((p) => <p>{p}</p>)}
+      {personal.links && (
+        <div class="contact-links">
+          {personal.links.map((link) => (
+            <a
+              class="contact-link"
+              href={link.href}
+              target={link.href.startsWith('http') ? '_blank' : undefined}
+              rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+            >
+              <span class="contact-icon">
+                {link.icon === 'email' && (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                  </svg>
+                )}
+                {link.icon === 'linkedin' && (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                    <rect x="2" y="9" width="4" height="12"></rect>
+                    <circle cx="4" cy="4" r="2"></circle>
+                  </svg>
+                )}
+              </span>
+              <span class="contact-text">
+                <span class="contact-text-label">{link.label}</span>
+                <span class="contact-text-value">{link.value}</span>
+              </span>
+            </a>
+          ))}
+        </div>
+      )}
     </div>
   )}
 </article>
@@ -271,6 +311,100 @@ const hasBody = !!body;
     opacity: 0.7;
   }
 
+  /* Always-expanded About + Contact bodies (no toggle, no animation). */
+  .case-card--personal {
+    cursor: default;
+  }
+
+  .case-card--personal:hover {
+    box-shadow: 1px 2px 8px rgba(0, 0, 0, 0.08);
+    transform: none;
+  }
+
+  .case-card--personal:hover .chip {
+    width: 9px;
+  }
+
+  .personal-body {
+    padding: 4px 28px 26px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    margin-top: 4px;
+  }
+
+  .personal-body p {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--color-text);
+    margin-top: 16px;
+  }
+
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    background: #f0f0f0;
+    border-radius: 4px;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: background 0.15s ease;
+  }
+
+  .contact-link:hover {
+    background: #e6e6e6;
+  }
+
+  .contact-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--card-color);
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .contact-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .contact-text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .contact-text-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-soft);
+  }
+
+  .contact-text-value {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .case-body {
       transition-duration: 0.001ms !important;
@@ -278,6 +412,115 @@ const hasBody = !!body;
     .case-toggle,
     .case-toggle svg {
       transition-duration: 0.001ms !important;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .case-header {
+      padding: 12px 16px 12px 25px;
+      gap: 10px;
+      min-height: 56px;
+    }
+
+    .case-name {
+      font-size: 22px;
+    }
+
+    .case-tagline {
+      font-size: 12px;
+    }
+
+    .case-toggle {
+      width: 28px;
+      height: 28px;
+    }
+
+    /* Asymmetric left padding so content centers between the right
+       edge of the 9px chip (at card_left + 9) and the right card edge,
+       not against the card's literal left edge. */
+    .case-body-inner {
+      padding: 6px 16px 18px 25px;
+    }
+
+    .case-domains {
+      margin: 0 -16px 16px -25px;
+      padding: 5px 14px 5px 25px;
+      font-size: 10.5px;
+      gap: 8px;
+    }
+
+    .case-outcome {
+      font-size: 14px;
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    .case-visual {
+      height: 160px;
+      margin-bottom: 18px;
+    }
+
+    .case-metrics {
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .case-metric {
+      padding: 12px 14px;
+    }
+
+    .case-metric-num {
+      font-size: 24px;
+    }
+
+    .case-claim {
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    /* Mobile CTA: full-width button instead of inline link */
+    .case-cta {
+      display: block;
+      text-align: center;
+      padding: 12px 16px;
+      background: var(--card-color);
+      color: white;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .case-cta:hover {
+      opacity: 0.9;
+    }
+
+    .personal-body {
+      padding: 4px 16px 20px 25px;
+    }
+
+    .personal-body p {
+      font-size: 14px;
+      margin-top: 14px;
+    }
+
+    .contact-link {
+      padding: 10px 12px;
+      gap: 12px;
+    }
+
+    .contact-icon {
+      width: 32px;
+      height: 32px;
+    }
+
+    .contact-icon svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .contact-text-value {
+      font-size: 13px;
     }
   }
 </style>

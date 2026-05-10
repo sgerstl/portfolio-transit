@@ -33,4 +33,40 @@ const { line } = Astro.props;
     padding-left: 360px;
     padding-bottom: 80px;
   }
+
+  @media (max-width: 767px) {
+    .section,
+    .section-ai,
+    .section-ent,
+    .section-pers {
+      padding: 0;
+      margin: 0;
+    }
+
+    /* Breathing room above each non-first section so the section
+       header is clearly separated from the previous section's last
+       case card. The colored bar (::before) runs through this padding
+       so the line stays continuous; only the color changes. */
+    .section-ent,
+    .section-pers {
+      padding-top: 28px;
+    }
+
+    /* Per-section colored bar on the left edge. Card chips at left:0
+       overlap the bar (same color); gaps between cards expose the bar. */
+    .section-ai::before,
+    .section-ent::before,
+    .section-pers::before {
+      content: '';
+      position: absolute;
+      left: 16px;
+      top: 0;
+      bottom: 0;
+      width: 9px;
+      z-index: 0;
+    }
+    .section-ai::before  { background: var(--color-line-ai); }
+    .section-ent::before { background: var(--color-line-ent); }
+    .section-pers::before { background: var(--color-line-pers); }
+  }
 </style>
