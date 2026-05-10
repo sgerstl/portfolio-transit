@@ -1,0 +1,157 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import LabCard from '../components/lab/LabCard.astro';
+import { LAB_CATEGORIES } from '../data/lab';
+---
+
+<Layout title="AI Lab — Scott Gerstl">
+  <Header />
+
+  <main class="lab-page">
+    <a class="back" href="/">← Back to home</a>
+
+    <header class="lab-page-head">
+      <h1>AI Lab</h1>
+      <p class="lede">
+        A running log of experiments, systems, and tools built at the intersection of UX and AI.
+        Not polished case studies, just honest notes from the process, including what's still unresolved.
+      </p>
+    </header>
+
+    {LAB_CATEGORIES.map((category) => (
+      <section class="lab-category">
+        <div class="cat-head">
+          <h2>{category.name}</h2>
+          <div class="rule"></div>
+        </div>
+        <div class="entries">
+          {category.entries.map((entry) => <LabCard entry={entry} />)}
+        </div>
+      </section>
+    ))}
+  </main>
+</Layout>
+
+<style>
+  .lab-page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 120px 32px 120px;
+  }
+
+  .back {
+    position: sticky;
+    top: 80px;
+    z-index: 50;
+    display: inline-block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text-soft);
+    text-decoration: none;
+    margin-bottom: 28px;
+    padding: 6px 12px;
+    background: rgba(246, 246, 246, 0.78);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 4px;
+  }
+
+  .back:hover {
+    color: var(--color-rail-blue);
+  }
+
+  .lab-page-head {
+    margin-bottom: 56px;
+  }
+
+  .lab-page-head h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--color-text);
+    margin-bottom: 12px;
+    border-left: 6px solid var(--color-rail-blue);
+    padding-left: 18px;
+  }
+
+  .lede {
+    font-family: 'Inter', sans-serif;
+    font-size: 19px;
+    line-height: 1.5;
+    color: var(--color-text);
+    padding-left: 24px;
+    max-width: 620px;
+  }
+
+  .lab-category {
+    margin-bottom: 56px;
+  }
+
+  .cat-head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+
+  .cat-head h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text);
+    flex-shrink: 0;
+  }
+
+  .rule {
+    flex: 1;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.12);
+  }
+
+  .entries {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  @media (max-width: 767px) {
+    .lab-page {
+      padding: 80px 16px 80px;
+    }
+
+    .lab-page-head {
+      margin-bottom: 36px;
+    }
+
+    .lab-page-head h1 {
+      font-size: 42px;
+      padding-left: 14px;
+      border-left-width: 5px;
+    }
+
+    .lede {
+      font-size: 16px;
+      padding-left: 19px;
+    }
+
+    .lab-category {
+      margin-bottom: 40px;
+    }
+
+    .cat-head h2 {
+      font-size: 18px;
+    }
+
+    .entries {
+      gap: 14px;
+    }
+  }
+</style>
