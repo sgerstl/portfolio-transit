@@ -214,6 +214,77 @@ html, body {
   letter-spacing: 0.005em;
 }
 
+/* ── SPINE CONTAINER + SVG ────────────────────────────── */
+.spine-container {
+  position: relative;
+  width: 100%;
+  z-index: 2;
+  /* Push sections fully below the fold on page load AND give the
+     colored branch lines a longer initial vertical run. */
+  padding-top: calc(100vh + 320px);
+  padding-bottom: 200px;
+}
+
+.spine-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: visible;
+}
+
+.spine-rail-track {
+  fill: var(--color-rail-blue);
+}
+
+.spine-rail-ring {
+  fill: white;
+  stroke: var(--color-ring-stroke);
+  stroke-width: 1;
+}
+
+.spine-arrow-tile {
+  fill: white;
+  stroke: var(--color-text);
+  stroke-width: 0.5;
+  filter: drop-shadow(3px 4px 4px rgba(0, 0, 0, 0.25));
+}
+
+.spine-arrow-glyph {
+  fill: var(--color-text);
+}
+
+.spine-branch-line {
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+}
+
+.spine-branch-line--ai   { stroke: var(--color-line-ai); }
+.spine-branch-line--ent  { stroke: var(--color-line-ent); }
+.spine-branch-line--pers { stroke: var(--color-line-pers); }
+
+.spine-line-terminator {
+  fill: white;
+  stroke-width: 1;
+}
+
+.spine-line-terminator--ai,
+.spine-line-terminator--ent,
+.spine-line-terminator--pers {
+  stroke: var(--color-ring-stroke);
+}
+
+.spine-line-indicator {
+  fill: white;
+  stroke: var(--color-ring-stroke);
+  stroke-width: 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-card,
   .hero-prelude,

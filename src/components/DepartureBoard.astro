@@ -40,6 +40,101 @@ const stops = [
   </div>
 </aside>
 
+<script>
+  const VISIBLE_ROWS = 5;
+  const ROW_HEIGHT = 24;
+  const CYCLE_MS = 5000;
+
+  function init() {
+    const ledInner = document.querySelector<HTMLElement>('.ns-led-inner');
+    const ledRows = Array.from(document.querySelectorAll<HTMLElement>('.ns-row--led'));
+    const board = document.querySelector<HTMLElement>('.naechste-station');
+    const footerStation = document.querySelector<HTMLElement>('.ns-band--footer .footer-station');
+    if (!ledInner || ledRows.length === 0 || !board) return;
+
+    // Page-flip cycle: with 8 rows and 5 visible, two pages with 2-row
+    // overlap. Page 0 = rows 1-5, page 1 = rows 4-8.
+    const totalRows = ledRows.length;
+    const pageOffsets =
+      totalRows <= VISIBLE_ROWS
+        ? [0]
+        : [0, (totalRows - VISIBLE_ROWS) * ROW_HEIGHT];
+
+    let pageIdx = 0;
+    let paused = false;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const showPage = (i: number) => {
+      ledInner.style.transform = `translateY(${-pageOffsets[i]}px)`;
+    };
+    showPage(0);
+
+    if (pageOffsets.length > 1 && !reducedMotion) {
+      setInterval(() => {
+        if (paused) return;
+        pageIdx = (pageIdx + 1) % pageOffsets.length;
+        showPage(pageIdx);
+      }, CYCLE_MS);
+    }
+
+    board.addEventListener('mouseenter', () => { paused = true; });
+    board.addEventListener('mouseleave', () => { paused = false; });
+
+    // Click → request the matching case (Accordion handles open-or-scroll)
+    ledRows.forEach((row) => {
+      row.addEventListener('click', () => {
+        const slug = row.dataset.target;
+        if (!slug) return;
+        window.dispatchEvent(new CustomEvent('case:open', { detail: { slug } }));
+      });
+    });
+
+    // Current-stop tracking — observe [data-case] elements; the most-
+    // visible one wins. Reset to "Home" when scrolled near the top.
+    if (footerStation) {
+      const labels: Record<string, string> = {};
+      ledRows.forEach((row) => {
+        const slug = row.dataset.target;
+        if (slug) labels[slug] = row.querySelector('.cell--ziel')?.textContent?.trim() ?? slug;
+      });
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            const slug = (entry.target as HTMLElement).dataset.case;
+            if (slug && labels[slug]) {
+              footerStation.textContent = labels[slug];
+            }
+          });
+        },
+        { threshold: 0.4 },
+      );
+      document.querySelectorAll<HTMLElement>('[data-case]').forEach((el) => observer.observe(el));
+
+      let ticking = false;
+      window.addEventListener(
+        'scroll',
+        () => {
+          if (ticking) return;
+          ticking = true;
+          requestAnimationFrame(() => {
+            if (window.scrollY < 100) footerStation.textContent = 'Home';
+            ticking = false;
+          });
+        },
+        { passive: true },
+      );
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+</script>
+
 <style>
   .naechste-station {
     position: fixed;
