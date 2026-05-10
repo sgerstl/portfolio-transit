@@ -1,0 +1,283 @@
+---
+import type { LineKey, CaseSlug, CaseBody } from '../../data/cases';
+
+interface Props {
+  slug: CaseSlug;
+  name: string;
+  tagline: string;
+  line: LineKey;
+  body?: CaseBody;
+}
+
+const { slug, name, tagline, line, body } = Astro.props;
+const colorVar = `var(--color-line-${line})`;
+const hasBody = !!body;
+---
+
+<article
+  class="case-card"
+  data-case={slug}
+  id={`case-${slug}`}
+  style={`--card-color: ${colorVar};`}
+>
+  <div class="chip"></div>
+  <div class="case-header">
+    <div class="case-header-text">
+      <h3 class="case-name">{name}</h3>
+      <p class="case-tagline">{tagline}</p>
+    </div>
+    {hasBody && (
+      <button class="case-toggle" aria-label="Toggle case study" type="button">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+    )}
+  </div>
+  {body && (
+    <div class="case-body">
+      <div class="case-body-inner">
+        <div class="case-domains">
+          {body.domains.map((d) => <span>{d}</span>)}
+        </div>
+        <p class="case-outcome">{body.outcome}</p>
+        <div class="case-visual">{body.visualLabel}</div>
+        <div class="case-metrics">
+          {body.metrics.map((m) => (
+            <div class="case-metric">
+              <div class="case-metric-num">{m.num}</div>
+              <div class="case-metric-label">{m.label}</div>
+            </div>
+          ))}
+        </div>
+        <p class="case-claim">{body.claim}</p>
+        <a class="case-cta" href={body.ctaHref}>Read the full case study →</a>
+      </div>
+    </div>
+  )}
+</article>
+
+<style>
+  .case-card {
+    position: relative;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 1px 2px 8px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    cursor: pointer;
+  }
+
+  .chip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 9px;
+    height: 100%;
+    background: var(--card-color);
+    transition: width 0.2s ease;
+  }
+
+  .case-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 20px 12px 28px;
+    min-height: 64px;
+  }
+
+  .case-header-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .case-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.0;
+    color: var(--color-text);
+    letter-spacing: 0.01em;
+    margin-bottom: 4px;
+  }
+
+  .case-tagline {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.35;
+    color: var(--color-text);
+    opacity: 0.85;
+  }
+
+  .case-toggle {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    color: var(--color-text);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.25s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    padding: 0;
+  }
+
+  .case-toggle svg {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.25s ease;
+  }
+
+  .case-card:hover {
+    box-shadow: 2px 4px 14px rgba(0, 0, 0, 0.14);
+    transform: translateY(-2px);
+  }
+
+  .case-card:hover .chip {
+    width: 14px;
+  }
+
+  .case-card:hover .case-toggle {
+    background: var(--card-color);
+    border-color: var(--card-color);
+    color: white;
+  }
+
+  .case-card.case-card--open .case-toggle svg {
+    transform: rotate(180deg);
+  }
+  .case-card.case-card--open .chip {
+    width: 14px;
+  }
+
+  .case-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+
+  .case-body-inner {
+    padding: 8px 28px 28px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    margin-top: 4px;
+  }
+
+  .case-domains {
+    background: #FFCC00;
+    margin: 0 -28px 20px;
+    padding: 5px 20px 5px 28px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-text);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .case-domains span:not(:last-child)::after {
+    content: '·';
+    margin-left: 12px;
+    opacity: 0.6;
+  }
+
+  .case-outcome {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--color-text);
+    margin-bottom: 18px;
+  }
+
+  .case-visual {
+    height: 220px;
+    background: linear-gradient(135deg, #ececec, #f6f6f6);
+    border: 1px dashed rgba(0, 0, 0, 0.18);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-text-soft);
+    margin-bottom: 22px;
+  }
+
+  .case-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+
+  .case-metric {
+    background: #f0f0f0;
+    border-radius: 4px;
+    padding: 14px 16px;
+  }
+
+  .case-metric-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--card-color);
+    margin-bottom: 4px;
+  }
+
+  .case-metric-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--color-text);
+  }
+
+  .case-claim {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--color-text);
+    margin-bottom: 18px;
+  }
+
+  .case-cta {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--card-color);
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    transition: opacity 0.15s ease;
+  }
+
+  .case-cta:hover {
+    opacity: 0.7;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .case-body {
+      transition-duration: 0.001ms !important;
+    }
+    .case-toggle,
+    .case-toggle svg {
+      transition-duration: 0.001ms !important;
+    }
+  }
+</style>

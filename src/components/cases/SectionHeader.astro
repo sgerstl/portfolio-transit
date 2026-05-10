@@ -1,0 +1,78 @@
+---
+import type { LineKey } from '../../data/cases';
+
+interface Props {
+  line: LineKey;
+  code: string;
+  title: string;
+  subtitle: string;
+}
+
+const { line, code, title, subtitle } = Astro.props;
+const colorVar = `var(--color-line-${line})`;
+---
+
+<div class="section-header" style={`--section-color: ${colorVar};`} id={`section-${line}`}>
+  <div class="l-top"></div>
+  <div class="l-left">{code}</div>
+  <h2>{title}</h2>
+  <div class="section-sub">{subtitle}</div>
+</div>
+
+<style>
+  .section-header {
+    position: relative;
+    background: white;
+    border-radius: 2px;
+    box-shadow: 2px 3px 10px rgba(0, 0, 0, 0.10);
+    width: max-content;
+    padding: 14px 20px 12px 60px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+
+  .l-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: var(--section-color);
+  }
+
+  .l-left {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 44px;
+    height: 100%;
+    background: var(--section-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.05;
+    color: var(--color-text);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .section-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-soft);
+    margin-top: 3px;
+    letter-spacing: 0.01em;
+  }
+</style>

@@ -1,0 +1,36 @@
+---
+import type { LineKey } from '../../data/cases';
+
+interface Props {
+  line: LineKey;
+}
+
+const { line } = Astro.props;
+---
+
+<div class={`section section-${line}`} data-section={line}>
+  <slot />
+</div>
+
+<style>
+  .section {
+    position: relative;
+    z-index: 2;
+    padding: 0 96px;
+  }
+
+  .section-ai {
+    padding-left: 200px;
+  }
+
+  .section-ent {
+    margin-top: 80px;
+    padding-left: 280px;
+  }
+
+  .section-pers {
+    margin-top: 80px;
+    padding-left: 360px;
+    padding-bottom: 80px;
+  }
+</style>

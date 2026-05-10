@@ -4,6 +4,13 @@ import Header from '../components/Header.astro';
 import MapWallpaper from '../components/MapWallpaper.astro';
 import DepartureBoard from '../components/DepartureBoard.astro';
 import Hero from '../components/hero/Hero.tsx';
+import Spine from '../components/spine/Spine.astro';
+import Section from '../components/cases/Section.astro';
+import SectionHeader from '../components/cases/SectionHeader.astro';
+import Cases from '../components/cases/Cases.astro';
+import CaseCard from '../components/cases/CaseCard.astro';
+import Accordion from '../components/cases/Accordion.astro';
+import { SECTIONS, casesForLine } from '../data/cases';
 ---
 
 <Layout title="Scott Gerstl — Portfolio">
@@ -14,23 +21,26 @@ import Hero from '../components/hero/Hero.tsx';
     <MapWallpaper />
     <Hero client:load />
 
-    <div id="cases" class="page-spacer">
-      <p class="page-spacer__note">Cases land here next session.</p>
+    <div class="spine-container" id="cases">
+      <Spine />
+
+      {SECTIONS.map((section) => (
+        <Section line={section.line}>
+          <SectionHeader
+            line={section.line}
+            code={section.code}
+            title={section.title}
+            subtitle={section.subtitle}
+          />
+          <Cases>
+            {casesForLine(section.line).map((c) => (
+              <CaseCard slug={c.slug} name={c.name} tagline={c.tagline} line={c.line} body={c.body} />
+            ))}
+          </Cases>
+        </Section>
+      ))}
     </div>
   </div>
-</Layout>
 
-<style>
-  .page-spacer {
-    min-height: 220vh;
-    padding-top: calc(100vh + 320px);
-    padding-left: 200px;
-    color: var(--color-text-soft);
-  }
-  .page-spacer__note {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 16px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-</style>
+  <Accordion />
+</Layout>

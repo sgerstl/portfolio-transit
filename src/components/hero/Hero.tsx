@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { smoothScrollTo } from '../../lib/scroll';
 
 type StatCard = {
   num: string;
@@ -33,26 +34,6 @@ const STAT_CARDS: StatCard[] = [
 ];
 
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
-
-function smoothScrollTo(targetY: number, reducedMotion: boolean) {
-  if (reducedMotion) {
-    window.scrollTo(0, targetY);
-    return;
-  }
-  const startY = window.scrollY;
-  const distance = targetY - startY;
-  if (Math.abs(distance) < 2) return;
-  const startTime = performance.now();
-  const dur = Math.max(600, Math.min(1400, Math.abs(distance) * 0.7));
-  function tick(now: number) {
-    const elapsed = now - startTime;
-    const t = clamp01(elapsed / dur);
-    const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-    window.scrollTo(0, startY + distance * eased);
-    if (t < 1) requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-}
 
 export default function Hero() {
   const heroRef = useRef<HTMLElement | null>(null);
@@ -134,19 +115,15 @@ export default function Hero() {
     window.addEventListener('resize', onResize);
 
     const jumpToCase = (target: string) => {
-      const targetEl = document.getElementById(`case-${target}`);
-      // Case study sections are deferred to a future session. When they
-      // land, this handler scrolls + opens. Until then, fall back to
-      // scrolling to the cases anchor so the click still feels alive.
-      if (targetEl) {
-        const rect = targetEl.getBoundingClientRect();
-        smoothScrollTo(window.scrollY + rect.top - 80, reducedMotion);
-        return;
-      }
-      const cases = document.getElementById('cases');
-      if (cases) {
-        const rect = cases.getBoundingClientRect();
-        smoothScrollTo(window.scrollY + rect.top - 80, reducedMotion);
+      // Accordion listens for this and handles open-or-scroll. If no card
+      // matches, fall back to anchoring at the cases section.
+      window.dispatchEvent(new CustomEvent('case:open', { detail: { slug: target } }));
+      if (!document.getElementById(`case-${target}`)) {
+        const cases = document.getElementById('cases');
+        if (cases) {
+          const rect = cases.getBoundingClientRect();
+          smoothScrollTo(window.scrollY + rect.top - 80);
+        }
       }
     };
 

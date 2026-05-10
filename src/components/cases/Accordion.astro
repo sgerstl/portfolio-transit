@@ -1,0 +1,97 @@
+---
+---
+
+<script>
+  import { smoothScrollTo } from '../../lib/scroll';
+
+  const TRANSITION_MS = 420;
+
+  function init() {
+    const cards = Array.from(
+      document.querySelectorAll<HTMLElement>('.case-card'),
+    ).filter((card) => card.querySelector('.case-body'));
+
+    function tickSpineDuring(durationMs: number) {
+      const start = performance.now();
+      function tick(now: number) {
+        window.dispatchEvent(new Event('spine:redraw'));
+        if (now - start < durationMs) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    function openCard(card: HTMLElement) {
+      cards.forEach((other) => {
+        if (other !== card && other.classList.contains('case-card--open')) {
+          closeCard(other);
+        }
+      });
+      card.classList.add('case-card--open');
+      const body = card.querySelector<HTMLElement>('.case-body');
+      if (!body) return;
+      body.style.maxHeight = body.scrollHeight + 'px';
+
+      const onEnd = (e: TransitionEvent) => {
+        if (e.propertyName !== 'max-height') return;
+        body.style.maxHeight = 'none';
+        body.removeEventListener('transitionend', onEnd);
+        window.dispatchEvent(new Event('spine:redraw'));
+        const cardRect = card.getBoundingClientRect();
+        smoothScrollTo(window.scrollY + cardRect.top - 80);
+      };
+      body.addEventListener('transitionend', onEnd);
+
+      tickSpineDuring(TRANSITION_MS);
+    }
+
+    function closeCard(card: HTMLElement) {
+      const body = card.querySelector<HTMLElement>('.case-body');
+      if (!body) return;
+      body.style.maxHeight = body.scrollHeight + 'px';
+      // force reflow so the next assignment animates from the measured value
+      void body.offsetHeight;
+      body.style.maxHeight = '0px';
+      card.classList.remove('case-card--open');
+      tickSpineDuring(TRANSITION_MS);
+    }
+
+    cards.forEach((card) => {
+      const header = card.querySelector<HTMLElement>('.case-header');
+      if (!header) return;
+      header.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (card.classList.contains('case-card--open')) {
+          closeCard(card);
+        } else {
+          openCard(card);
+        }
+      });
+    });
+
+    // External callers (hero stat cards, departure board) request a case
+    // by slug. Open if closed; otherwise just scroll to it.
+    window.addEventListener('case:open', (e) => {
+      const slug = (e as CustomEvent<{ slug: string }>).detail?.slug;
+      if (!slug) return;
+      const card = document.getElementById(`case-${slug}`);
+      if (!card) return;
+      if (card.classList.contains('case-card--open')) {
+        const r = card.getBoundingClientRect();
+        smoothScrollTo(window.scrollY + r.top - 80);
+        return;
+      }
+      if (cards.includes(card)) {
+        openCard(card);
+      } else {
+        const r = card.getBoundingClientRect();
+        smoothScrollTo(window.scrollY + r.top - 80);
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+</script>
