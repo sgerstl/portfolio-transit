@@ -56,7 +56,7 @@ const statusClass = `status-${statusKey}`;
 
   {entry.demoUrl && !entry.links && (
     <div class="links">
-      <a href={entry.demoUrl} target="_blank" rel="noopener noreferrer">Open demo ↗</a>
+      <a href={entry.demoUrl} data-demo data-demo-title={entry.title} target="_blank" rel="noopener noreferrer">Open demo ↗</a>
     </div>
   )}
 </article>

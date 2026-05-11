@@ -58,7 +58,7 @@ const isPersonal = !!personal;
               <div class="case-metric-label">
                 {m.label}
                 {m.linkHref && m.linkText && (
-                  <> <a class="case-metric-link" href={m.linkHref} target="_blank" rel="noopener noreferrer">{m.linkText}</a></>
+                  <> <a class="case-metric-link" href={m.linkHref} data-demo data-demo-title={name} target="_blank" rel="noopener noreferrer">{m.linkText}</a></>
                 )}
               </div>
             </div>

@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import LabCard from '../components/lab/LabCard.astro';
 import LabCardCompact from '../components/lab/LabCardCompact.astro';
+import DemoModal from '../components/DemoModal.astro';
 import { LAB_CATEGORIES } from '../data/lab';
 ---
 
@@ -47,6 +48,7 @@ import { LAB_CATEGORIES } from '../data/lab';
       );
     })}
   </main>
+  <DemoModal />
 </Layout>
 
 <style>

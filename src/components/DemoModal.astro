@@ -1,0 +1,224 @@
+---
+---
+
+<div class="demo-modal" id="demo-modal" aria-hidden="true" role="dialog" aria-modal="true">
+  <button class="demo-modal-close" type="button" aria-label="Close">
+    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  </button>
+  <div class="demo-modal-stage">
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <iframe class="demo-modal-iframe" title="Interactive demo" loading="lazy"></iframe>
+      </div>
+      <div class="phone-mask"></div>
+      <img class="phone-png" src="/images/iphone-frame.png" alt="" draggable="false" />
+    </div>
+    <div class="demo-modal-meta">
+      <h3 class="demo-modal-title"></h3>
+      <a class="demo-modal-link" target="_blank" rel="noopener noreferrer">Open in new tab ↗</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .demo-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.92);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+  }
+
+  .demo-modal.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .demo-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: 0;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s ease;
+    z-index: 1;
+  }
+
+  .demo-modal-close:hover {
+    color: white;
+  }
+
+  .demo-modal-stage {
+    --phone-scale: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .phone-frame {
+    position: relative;
+    width: 316px;
+    height: 636px;
+    transform: scale(var(--phone-scale));
+    transform-origin: top center;
+    margin-bottom: calc((var(--phone-scale) - 1) * 636px);
+  }
+
+  .phone-screen {
+    position: absolute;
+    overflow: hidden;
+    top: 22px;
+    left: 17px;
+    width: 281px;
+    height: 591px;
+    background: #000;
+  }
+
+  .demo-modal-iframe {
+    width: 430px;
+    height: 904px;
+    transform: scale(0.6535);
+    transform-origin: top left;
+    border: 0;
+    display: block;
+  }
+
+  .phone-mask {
+    position: absolute;
+    pointer-events: none;
+    top: 2px;
+    left: -3px;
+    width: 321px;
+    height: 631px;
+    border-radius: 44px;
+    border: 16px solid #000;
+    box-sizing: border-box;
+  }
+
+  .phone-png {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .demo-modal-meta {
+    text-align: center;
+  }
+
+  .demo-modal-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: white;
+    text-transform: uppercase;
+  }
+
+  .demo-modal-link {
+    display: inline-block;
+    margin-top: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.15s ease;
+  }
+
+  .demo-modal-link:hover {
+    color: white;
+  }
+
+  @media (max-height: 800px) {
+    .demo-modal-stage { --phone-scale: 0.85; }
+  }
+  @media (max-height: 720px) {
+    .demo-modal-stage { --phone-scale: 0.75; }
+  }
+  @media (max-height: 640px) {
+    .demo-modal-stage { --phone-scale: 0.65; }
+  }
+
+  @media (max-width: 767px) {
+    .demo-modal {
+      padding: 16px;
+    }
+    .demo-modal-close {
+      top: 12px;
+      right: 12px;
+    }
+  }
+</style>
+
+<script>
+  const modal = document.getElementById('demo-modal');
+  if (modal) {
+    const iframe = modal.querySelector('.demo-modal-iframe') as HTMLIFrameElement;
+    const title = modal.querySelector('.demo-modal-title') as HTMLElement;
+    const link = modal.querySelector('.demo-modal-link') as HTMLAnchorElement;
+    const closeBtn = modal.querySelector('.demo-modal-close') as HTMLElement;
+
+    const open = (href: string, t: string) => {
+      iframe.src = href;
+      title.textContent = t;
+      link.href = href;
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    };
+
+    const close = () => {
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      // Clear src so the demo stops running in the background.
+      iframe.src = 'about:blank';
+    };
+
+    document.addEventListener('click', (e) => {
+      const trigger = (e.target as HTMLElement)?.closest('[data-demo]') as HTMLAnchorElement | null;
+      if (!trigger) return;
+      // Cmd/Ctrl/middle-click → let the browser open in a new tab.
+      const me = e as MouseEvent;
+      if (me.metaKey || me.ctrlKey || me.shiftKey || me.button === 1) return;
+      const href = trigger.getAttribute('href') || trigger.getAttribute('data-demo-href') || '';
+      const t = trigger.getAttribute('data-demo-title') || trigger.textContent?.trim() || '';
+      if (!href) return;
+      e.preventDefault();
+      open(href, t);
+    });
+
+    closeBtn.addEventListener('click', close);
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) close();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('is-open')) close();
+    });
+  }
+</script>
