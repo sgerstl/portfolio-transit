@@ -22,11 +22,13 @@ export type LabEntry = {
 export type LabCategory = {
   name: string;
   entries: LabEntry[];
+  heroTitles?: string[];
 };
 
 export const LAB_CATEGORIES: LabCategory[] = [
   {
     name: 'Products & Tools',
+    heroTitles: ['Epilog: Epilepsy Tracker'],
     entries: [
       {
         title: 'Cal: AI Personal Trainer',
@@ -74,6 +76,7 @@ export const LAB_CATEGORIES: LabCategory[] = [
   },
   {
     name: 'Systems & Workflows',
+    heroTitles: ['Employment Panopticon: AI-Powered Job Hunt Command Center'],
     entries: [
       {
         title: 'Employment Panopticon: AI-Powered Job Hunt Command Center',

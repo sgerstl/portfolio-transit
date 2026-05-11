@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import LabCard from '../components/lab/LabCard.astro';
+import LabCardCompact from '../components/lab/LabCardCompact.astro';
 import { LAB_CATEGORIES } from '../data/lab';
 ---
 
@@ -19,17 +20,32 @@ import { LAB_CATEGORIES } from '../data/lab';
       </p>
     </header>
 
-    {LAB_CATEGORIES.map((category) => (
-      <section class="lab-category">
-        <div class="cat-head">
-          <h2>{category.name}</h2>
-          <div class="rule"></div>
-        </div>
-        <div class="entries">
-          {category.entries.map((entry) => <LabCard entry={entry} />)}
-        </div>
-      </section>
-    ))}
+    {LAB_CATEGORIES.map((category) => {
+      const heroSet = new Set(category.heroTitles ?? []);
+      const heroEntries = category.entries.filter((e) => heroSet.has(e.title));
+      const compactEntries = category.entries.filter((e) => !heroSet.has(e.title));
+
+      return (
+        <section class="lab-category">
+          <div class="cat-head">
+            <h2>{category.name}</h2>
+            <div class="rule"></div>
+          </div>
+
+          {heroEntries.length > 0 && (
+            <div class="hero-entries">
+              {heroEntries.map((entry) => <LabCard entry={entry} />)}
+            </div>
+          )}
+
+          {compactEntries.length > 0 && (
+            <div class="compact-grid">
+              {compactEntries.map((entry) => <LabCardCompact entry={entry} />)}
+            </div>
+          )}
+        </section>
+      );
+    })}
   </main>
 </Layout>
 
@@ -41,8 +57,9 @@ import { LAB_CATEGORIES } from '../data/lab';
   }
 
   .back {
-    position: sticky;
+    position: fixed;
     top: 80px;
+    left: 32px;
     z-index: 50;
     display: inline-block;
     font-family: 'Barlow Condensed', sans-serif;
@@ -52,7 +69,6 @@ import { LAB_CATEGORIES } from '../data/lab';
     text-transform: uppercase;
     color: var(--color-text-soft);
     text-decoration: none;
-    margin-bottom: 28px;
     padding: 6px 12px;
     background: rgba(246, 246, 246, 0.78);
     backdrop-filter: blur(10px);
@@ -116,15 +132,32 @@ import { LAB_CATEGORIES } from '../data/lab';
     background: rgba(0, 0, 0, 0.12);
   }
 
-  .entries {
+  .hero-entries {
     display: flex;
     flex-direction: column;
     gap: 18px;
+    margin-bottom: 18px;
+  }
+
+  .compact-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  @media (max-width: 640px) {
+    .compact-grid {
+      grid-template-columns: 1fr;
+    }
   }
 
   @media (max-width: 767px) {
     .lab-page {
-      padding: 80px 16px 80px;
+      padding: 116px 16px 80px;
+    }
+
+    .back {
+      left: 16px;
     }
 
     .lab-page-head {
@@ -150,8 +183,9 @@ import { LAB_CATEGORIES } from '../data/lab';
       font-size: 18px;
     }
 
-    .entries {
+    .hero-entries {
       gap: 14px;
+      margin-bottom: 14px;
     }
   }
 </style>
