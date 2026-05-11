@@ -24,6 +24,32 @@ export type CaseBody = {
   ctaHref: string;
 };
 
+export type CaseDecision = { title: string; body: string };
+export type CaseScreenshot = { src: string; alt: string; caption?: string };
+export type CaseScreenshotGrid = { columns: 2 | 3; images: CaseScreenshot[] };
+
+export type CaseSection = {
+  title: string;
+  subtitle: string;
+  paragraphs: string[];
+  decisions?: CaseDecision[];
+  italicOutro?: string;
+  tryIts?: string[];
+  screenshots?: CaseScreenshotGrid;
+};
+
+export type CaseDetail = {
+  demoUrl?: string;
+  chips?: string[];
+  hook: string[];
+  sections: CaseSection[];
+  outcomeBeat?: {
+    title: string;
+    paragraphs: string[];
+    highlight?: string;
+  };
+};
+
 export type ContactLink = {
   href: string;
   icon: 'email' | 'linkedin';
@@ -50,6 +76,7 @@ export type CaseEntry = {
   line: LineKey;
   readingMinutes: number;
   body?: CaseBody;
+  detail?: CaseDetail;
   personal?: PersonalBody;
 };
 
@@ -74,6 +101,88 @@ export const CASES: CaseEntry[] = [
         'I design AI features that produce clinical-grade outcomes. Surfacing patterns a clinician verifies and acts on.',
       ctaHref: '/work/epilog',
     },
+    detail: {
+      demoUrl: 'https://epilog-demo.scottgerstl.com',
+      chips: ['Personal', 'Health', 'AI', 'PWA'],
+      hook: [
+        'A seizure and aura tracker built for a family member. Log an event in seconds, find patterns across months, and surface insights that change a clinical conversation.',
+        "Its AI analysis caught a drug interaction their GP had missed: a fiber supplement was interfering with their anti-epileptic medication. They brought the finding to their neurologist, stopped the supplement, and seizure activity went down.",
+      ],
+      sections: [
+        {
+          title: 'Understanding the constraint',
+          subtitle: 'What it took to define the right problem',
+          paragraphs: [
+            "Someone you love has epilepsy. You watch them try to log an event after a seizure or aura, still foggy, motor control off, cognitive function not fully back online. The event is over, but the aftermath is real. That's not a user story you write on a whiteboard. It's something you understand by being in the room.",
+            'Three constraints came out of that proximity:',
+          ],
+          decisions: [
+            {
+              title: 'Log in seconds while still recovering.',
+              body: "Events get logged in the aftermath, when brain function is still impaired. If the logging flow requires concentration, the data doesn't get captured. This wasn't a performance goal. It was a clinical one.",
+            },
+            {
+              title: 'Find correlations without being a data analyst.',
+              body: 'The calendar and insights views needed to surface patterns visually, without an interpretation step. A list of events tells you what happened. A calendar tells you what the pattern is.',
+            },
+            {
+              title: 'Serve the caregiver relationship too.',
+              body: 'Data collected for personal use is only half the value. The other half is the conversation between a patient and their neurologist. Designing for that conversation was a first-class requirement.',
+            },
+          ],
+          italicOutro:
+            'AI can build a health tracker in an afternoon. Knowing which three constraints actually matter requires sitting in the room where the problem lives.',
+          tryIts: [
+            'Open the add flow and walk through logging a seizure. Every input is a single gesture: no typing, no scrolling, no decisions that require concentration.',
+          ],
+          screenshots: {
+            columns: 3,
+            images: [
+              { src: '/images/cases/epilog/epilog-log-event.jpeg', alt: 'Event type selection', caption: 'Type selection' },
+              { src: '/images/cases/epilog/epilog-aura-details.jpeg', alt: 'Severity and duration', caption: 'Severity + duration' },
+              { src: '/images/cases/epilog/epilog-aura-characteristics.jpeg', alt: 'Characteristics', caption: 'Characteristics' },
+            ],
+          },
+        },
+        {
+          title: 'Knowing what to kill',
+          subtitle: 'Why the best design decision was deleting a feature',
+          paragraphs: [
+            "Early on, I built a medication reminder system. Push notifications at dosing times, confirmation flows, the whole pattern you'd expect. It didn't survive first contact with real use.",
+            "The problem wasn't the reminders. It was the assumption. Most of the time, medication is taken on schedule. Building a system that demanded confirmation twice a day created friction on the 95% of days when everything was fine. The user stopped engaging with the app entirely.",
+            'So I stripped it out and inverted the model: assume adherence, only capture deviations. A "Missed Dose" event type replaced the entire notification system. One tap when something goes wrong, silence when it doesn\'t.',
+          ],
+          italicOutro:
+            'AI can generate a notification system in minutes. Recognizing that the right move is to delete it requires judgment that only comes from watching someone actually use it.',
+          tryIts: [
+            'Tap the + button and look at the event types. "Missed Medication" is a first-class event, not a setting buried in a menu. That\'s the entire medication tracking system.',
+          ],
+        },
+        {
+          title: 'The outcome',
+          subtitle: 'How the AI caught something a doctor missed',
+          paragraphs: [
+            "The user's seizure activity had been increasing over several weeks. They'd been logging consistently: seizures, auras, missed doses, sleep data from their wearable. They ran the AI analysis.",
+            "The analysis flagged something unexpected: a potential interaction between psyllium husk, a fiber supplement their GP had prescribed for digestive issues, and their anti-epileptic medication. Psyllium husk can interfere with drug absorption when taken at the same time. The GP hadn't considered this. It's not their domain.",
+            'The user brought the finding to their neurologist. The neurologist confirmed the concern. They stopped the supplement. Seizure activity decreased.',
+            "An AI tool, built by one designer, caught something a doctor missed. Not because the AI was smarter than the doctor. Because it had the right data, in the right context, and surfaced the right question.",
+          ],
+          italicOutro:
+            "The AI didn't replace clinical judgment. The designer's job was knowing what data to collect, how to frame the output, and when to get out of the way. That's the part AI can't do for you.",
+          tryIts: [
+            'Open the Insights tab and switch to "AI Analysis." Tap "Analyze my data" to see the kind of output the tool produces. The demo uses a curated dataset, but the structure mirrors real results.',
+            'Head to the Export tab and tap "Export PDF." The generated report is structured for a neurologist visit: findings, medication history, and event timeline in a format that respects their time.',
+          ],
+          screenshots: {
+            columns: 2,
+            images: [
+              { src: '/images/cases/epilog/epilog-summary.jpeg', alt: 'Insights summary', caption: 'Pattern analysis' },
+              { src: '/images/cases/epilog/epilog-export.jpeg', alt: 'PDF export', caption: 'Clinical PDF export' },
+            ],
+          },
+        },
+      ],
+    },
   },
   {
     slug: 'cal',
@@ -94,6 +203,101 @@ export const CASES: CaseEntry[] = [
       claim:
         'I am AI-fluent at every layer where a designer can be. Thinking, building, shipping features.',
       ctaHref: '/work/cal',
+    },
+    detail: {
+      demoUrl: 'https://cal-demo.scottgerstl.com',
+      chips: ['Personal', 'AI', 'Fitness', 'PWA'],
+      hook: [
+        "The code didn't take long. What took time was everything the AI couldn't do: deciding what to build, evaluating whether the output was trustworthy, and catching the interaction patterns that were technically correct but experientially wrong.",
+        "When production velocity is cheap, judgment becomes expensive. That's the shift this project is about.",
+      ],
+      sections: [
+        {
+          title: 'When execution is free, judgment is expensive',
+          subtitle: 'What building at speed actually revealed',
+          paragraphs: [
+            "Cal shipped in 5 days. Claude Code produced functioning UI, wired-up components, and working API integrations faster than any developer handoff I've experienced. But the timeline isn't a boast. It's a data point about where design effort actually went.",
+            'What took time was the evaluation loop. Running each generated plan through the same criteria a human trainer would: Does this progression make sense for someone at this fitness level? Are the rest periods appropriate for the intensity? Would a real athlete trust this enough to follow it for six weeks?',
+            'Zero visible AI scaffolding. The experience reads as a polished, intentional product, not a prototype. That\'s not because the AI was good enough on its own. It\'s because the evaluation criteria were specific enough to catch what "good enough" actually means.',
+          ],
+          italicOutro:
+            "The role stops being about making things and starts being about deciding what's worth making and whether what was made is good enough.",
+          tryIts: [
+            'Browse the plan overview and tap into a day. The warmup sets, progressive overload, and rest periods are all AI-generated from one profile. Notice how injury accommodations (lower back) shape exercise selection across every session.',
+          ],
+          screenshots: {
+            columns: 2,
+            images: [
+              { src: '/images/cases/cal/cal-active-workout.jpeg', alt: 'Active workout', caption: 'Live workout' },
+              { src: '/images/cases/cal/cal-workout-detail.jpeg', alt: 'Workout detail', caption: 'Workout detail' },
+            ],
+          },
+        },
+        {
+          title: 'The prompt is the deliverable',
+          subtitle: "Why the most important design artifact isn't visual",
+          paragraphs: [
+            "The AI prompt for plan generation is a 400-word structured brief that reads more like a creative brief than a software function. It defines Cal's persona, communication style, hard constraints (training days, injuries, equipment), soft constraints (weekly progression themes, RPE modulation), and the exact JSON schema the UI depends on.",
+            "I treated this prompt the way I'd treat any design artifact: iterating on it, running heuristic evaluations against its output, and refining based on what the AI actually produced rather than what I expected it to produce. The prompt went through more revisions than any single screen in the app.",
+          ],
+          decisions: [
+            {
+              title: 'Persona in two sentences, not two paragraphs.',
+              body: '"Be direct, technical, and motivational. Avoid mechanical metaphors." That second sentence came from v1 output that read like an instruction manual. One exclusion changed the entire tone.',
+            },
+            {
+              title: '"No exceptions" is load-bearing.',
+              body: '"Max 3 working sets per exercise. No exceptions." Removed that phrase once in testing. The model added a 4th set "for advanced athletes." Constraint specificity replaces judgment calls you don\'t want delegated.',
+            },
+            {
+              title: 'Phase names over phase numbers.',
+              body: 'Weeks 1-6 became Foundation, Accumulate, Intensify, Peak. Named phases give the model a conceptual anchor for each block. This produced more coherent progressions than numeric targets alone.',
+            },
+          ],
+          italicOutro:
+            'Any team shipping AI features needs this distinction: the prompt is a design artifact, not an engineering concern. The quality of AI output is a design outcome.',
+          tryIts: [
+            'Watch the plan generate in the demo. The briefing, week themes, and exercise selections all come from a single structured prompt. Tap into any week to see how constraints like "max 3 working sets" and injury accommodations carry through.',
+          ],
+          screenshots: {
+            columns: 2,
+            images: [
+              { src: '/images/cases/cal/cal-plan-overview.jpeg', alt: 'Plan overview', caption: 'Plan generation' },
+              { src: '/images/cases/cal/cal-week-sessions.jpeg', alt: 'Week sessions', caption: 'Week structure' },
+            ],
+          },
+        },
+        {
+          title: 'What the voice taught me',
+          subtitle: 'Why the hardest UX problems are physical, not digital',
+          paragraphs: [
+            "The voice control system is the feature I'm most honest about. It works. It's also the roughest part of the app, and the reasons why are instructive.",
+            'The architecture is sound: two-tier parsing with local regex handling ~90% of commands instantly (no network round-trip) and Claude Haiku as a fallback for edge cases. ElevenLabs TTS for synthesized coaching cues, with IndexedDB caching to avoid re-fetching repeated phrases.',
+            'The failure modes are physical, not digital. A missed "done" command mid-set means the user has to touch their phone between reps, exactly the friction the feature was supposed to eliminate. Commands fired twice when the transcript updated incrementally. Haiku triggered on background noise that regex correctly ignored. Each fix revealed a new edge case.',
+            "This isn't a solvable problem in the traditional sense. It's a calibration problem that requires real-world testing with real users in actual gyms. Heuristic evaluation in a quiet office catches maybe 30% of failure modes. The other 70% only appear under physical use conditions.",
+          ],
+          italicOutro:
+            'Voice UX requires a different evaluation methodology than visual UX. If your product has voice features, the test environment is part of the design spec, not an afterthought.',
+          tryIts: [
+            'Start a workout in the demo, then tap the microphone icon at the bottom of the screen to activate voice control. Try saying "done" to complete a set, or "skip rest" to jump ahead. The two-tier parsing handles most commands locally with no network delay.',
+          ],
+          screenshots: {
+            columns: 2,
+            images: [
+              { src: '/images/cases/cal/cal-session-complete.jpeg', alt: 'Session complete', caption: 'Session summary' },
+              { src: '/images/cases/cal/cal-performance.jpeg', alt: 'Performance tracking', caption: 'Progress tracking' },
+            ],
+          },
+        },
+      ],
+      outcomeBeat: {
+        title: 'What Cal is now',
+        paragraphs: [
+          'Cal runs as the coach I use for my own training. The plans hold up across six-week cycles. Voice control has its rough edges, but it does the one thing it was supposed to do: keeps my hands off the phone between sets. Both plan types, strength and mobility, generate from a single profile, and the two halves of the week support each other instead of competing for attention.',
+        ],
+        highlight:
+          "That's the honest test for an AI-built product. Not whether it shipped fast, but whether it's still the tool you reach for when you have other options.",
+      },
     },
   },
   {
