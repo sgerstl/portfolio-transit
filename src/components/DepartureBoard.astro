@@ -126,6 +126,48 @@ const stops = [
         { passive: true },
       );
     }
+
+    // Hide board when content would overlap it. Compare each visible
+    // [data-case] / .section-header right edge against the board's left
+    // edge with an 8px buffer. rAF-throttle on scroll/resize/spine:redraw.
+    const OVERLAP_BUFFER = 8;
+    let overlapTicking = false;
+
+    const checkOverlap = () => {
+      const boardRect = board.getBoundingClientRect();
+      if (boardRect.width === 0) return;
+      const boardLeft = boardRect.left - OVERLAP_BUFFER;
+      const boardTop = boardRect.top;
+      const boardBottom = boardRect.bottom;
+
+      const targets = document.querySelectorAll<HTMLElement>(
+        '[data-case], .section-header',
+      );
+      let overlaps = false;
+      for (const el of targets) {
+        const r = el.getBoundingClientRect();
+        if (r.bottom < boardTop || r.top > boardBottom) continue;
+        if (r.right > boardLeft) {
+          overlaps = true;
+          break;
+        }
+      }
+      board.classList.toggle('naechste-station--hidden', overlaps);
+    };
+
+    const scheduleOverlapCheck = () => {
+      if (overlapTicking) return;
+      overlapTicking = true;
+      requestAnimationFrame(() => {
+        checkOverlap();
+        overlapTicking = false;
+      });
+    };
+
+    checkOverlap();
+    window.addEventListener('scroll', scheduleOverlapCheck, { passive: true });
+    window.addEventListener('resize', scheduleOverlapCheck);
+    window.addEventListener('spine:redraw', scheduleOverlapCheck);
   }
 
   if (document.readyState === 'loading') {
@@ -146,9 +188,15 @@ const stops = [
     user-select: none;
     transform: scale(0.9);
     transform-origin: top right;
+    transition: opacity 0.25s ease;
   }
 
-  @media (max-width: 767px) {
+  .naechste-station--hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  @media (max-width: 1199px) {
     .naechste-station {
       display: none;
     }
@@ -200,7 +248,7 @@ const stops = [
 
   .ns-led-area {
     background: #616870;
-    padding: 0 38px;
+    padding: 0 24px;
   }
 
   .ns-led {

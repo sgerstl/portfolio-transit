@@ -34,6 +34,28 @@ const { line } = Astro.props;
     padding-bottom: 80px;
   }
 
+  /* Mid-width: drop the staircase. All sections align to the same
+     padding-left so cards have maximum room without falling off the
+     right edge. Rail (spine SVG) shifts left here too — see
+     global.css for the --rail-center-x override. Keep padding-left
+     just right of that rail center so branches travel down-and-right. */
+  @media (max-width: 1199px) and (min-width: 768px) {
+    .section {
+      padding: 0 32px;
+    }
+
+    .section-ai,
+    .section-ent,
+    .section-pers {
+      padding-left: 96px;
+    }
+
+    .section-ent,
+    .section-pers {
+      margin-top: 56px;
+    }
+  }
+
   @media (max-width: 767px) {
     .section,
     .section-ai,

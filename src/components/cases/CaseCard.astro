@@ -525,8 +525,13 @@ const isPersonal = !!personal;
     }
 
     .case-toggle {
-      width: 28px;
-      height: 28px;
+      width: 36px;
+      height: 36px;
+    }
+
+    .case-toggle svg {
+      width: 16px;
+      height: 16px;
     }
 
     /* Asymmetric left padding so content centers between the right
@@ -598,11 +603,6 @@ const isPersonal = !!personal;
       margin-top: 14px;
     }
 
-    .gallery {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 6px;
-    }
-
     .contact-link {
       padding: 10px 12px;
       gap: 12px;
@@ -620,6 +620,13 @@ const isPersonal = !!personal;
 
     .contact-text-value {
       font-size: 13px;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .gallery {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
     }
   }
 </style>

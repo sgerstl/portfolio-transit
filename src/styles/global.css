@@ -42,7 +42,8 @@ html, body {
 /* ── PAGE WRAPPER ──────────────────────────────────────── */
 .page {
   position: relative;
-  width: 1440px;
+  max-width: 1440px;
+  width: 100%;
   margin: 0 auto;
   background: #f6f6f6;
 }
@@ -51,11 +52,11 @@ html, body {
 .hero {
   position: fixed;
   top: 0;
-  /* Match the page's centering exactly: page uses margin:0 auto
-     (centers when viewport >= 1440, clamps to x=0 when narrower).
-     Hero must use the same math or hero cards drift from spine. */
+  /* Match the page's centering exactly: page uses margin:0 auto with
+     max-width:1440px. Hero clamps to viewport at narrower sizes so
+     hero cards stay aligned with spine and don't overflow. */
   left: max(0px, calc((100vw - 1440px) / 2));
-  width: 1440px;
+  width: min(100vw, 1440px);
   height: 100vh;
   min-height: 700px;
   z-index: 30;
@@ -70,6 +71,7 @@ html, body {
   position: relative;
   padding-top: 14px;
   width: 1024px;
+  max-width: 100%;
   list-style: none;
   display: flex;
   flex-direction: column;
@@ -219,6 +221,10 @@ html, body {
 
 /* ── SPINE CONTAINER + SVG ────────────────────────────── */
 .spine-container {
+  /* Spine.astro reads --rail-center-x to position the rail, rings,
+     arrow, and branch-line start points. Section/hero padding-left
+     should keep content right of this x to avoid overlapping the rail. */
+  --rail-center-x: 126;
   position: relative;
   width: 100%;
   z-index: 2;
@@ -294,6 +300,25 @@ html, body {
   .ns-led-inner {
     will-change: auto;
     transition-duration: 0.001ms !important;
+  }
+}
+
+/* ── MID-WIDTH (768–1199px) ─────────────────────────────
+   Shift rail and content left so cards sit closer to the
+   viewport's vertical center and the right edge gets some
+   breathing room (no more departure-board / content collision). */
+@media (max-width: 1199px) and (min-width: 768px) {
+  .spine-container {
+    --rail-center-x: 70;
+  }
+
+  .hero {
+    padding-left: 90px;
+    padding-right: 32px;
+  }
+
+  .hero-prelude {
+    font-size: 30px;
   }
 }
 

@@ -34,7 +34,7 @@ const RAIL_TOP_Y = 64;
 </svg>
 
 <script>
-  const RAIL_CENTER_X = 126;
+  const DEFAULT_RAIL_CENTER_X = 126;
   const RING_SIZE = 14;
   const ARROW_W = 25;
   const ARROW_H = 24;
@@ -94,6 +94,14 @@ const RAIL_TOP_Y = 64;
       pers: document.getElementById('spine-ind-pers') as SVGRectElement | null,
     };
 
+    const getRailCenterX = () => {
+      const val = getComputedStyle(spineContainer)
+        .getPropertyValue('--rail-center-x')
+        .trim();
+      const parsed = val ? parseFloat(val) : NaN;
+      return Number.isFinite(parsed) ? parsed : DEFAULT_RAIL_CENTER_X;
+    };
+
     const sizeSpineSvg = () => {
       const cw = spineContainer.offsetWidth;
       const ch = spineContainer.offsetHeight;
@@ -103,16 +111,18 @@ const RAIL_TOP_Y = 64;
     };
 
     const placeSpineGeometry = () => {
+      const railCenterX = getRailCenterX();
+      track.setAttribute('x', String(railCenterX - 3));
       const heroCards = Array.from(
         document.querySelectorAll<HTMLLIElement>('.hero-cards .hero-card'),
       );
       ringsGroup.innerHTML = '';
       heroCards.forEach((card) => {
         const r = card.getBoundingClientRect();
-        const center = r.top + r.height / 2 + window.scrollY;
+        const center = r.top + r.height / 2;
         const ring = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
         ring.setAttribute('class', 'spine-rail-ring');
-        ring.setAttribute('x', String(RAIL_CENTER_X - RING_SIZE / 2));
+        ring.setAttribute('x', String(railCenterX - RING_SIZE / 2));
         ring.setAttribute('y', String(center - RING_SIZE / 2));
         ring.setAttribute('width', String(RING_SIZE));
         ring.setAttribute('height', String(RING_SIZE));
@@ -124,9 +134,9 @@ const RAIL_TOP_Y = 64;
       let arrowTop = 642;
       if (lastCard) {
         const r = lastCard.getBoundingClientRect();
-        arrowTop = r.bottom + window.scrollY + 80;
+        arrowTop = r.bottom + 80;
       }
-      arrowGroup.setAttribute('transform', `translate(${RAIL_CENTER_X - ARROW_W / 2}, ${arrowTop})`);
+      arrowGroup.setAttribute('transform', `translate(${railCenterX - ARROW_W / 2}, ${arrowTop})`);
 
       const trackBottom = arrowTop + ARROW_H / 2;
       track.setAttribute('y', String(RAIL_TOP_Y));
@@ -134,6 +144,7 @@ const RAIL_TOP_Y = 64;
     };
 
     const regenerateBranchLines = () => {
+      const railCenterX = getRailCenterX();
       const sectionHeaders: Record<SectionKey, HTMLElement | null> = {
         ai: document.getElementById('section-ai'),
         ent: document.getElementById('section-ent'),
@@ -147,9 +158,9 @@ const RAIL_TOP_Y = 64;
       const lineStartY = arrowY + ARROW_H;
 
       const startXs: Record<SectionKey, number> = {
-        ai: RAIL_CENTER_X - 8,
-        ent: RAIL_CENTER_X,
-        pers: RAIL_CENTER_X + 8,
+        ai: railCenterX - 8,
+        ent: railCenterX,
+        pers: railCenterX + 8,
       };
 
       const verticalEnds: Partial<Record<SectionKey, number>> = {};
@@ -185,7 +196,7 @@ const RAIL_TOP_Y = 64;
       }
       if (lineIndicators.pers && verticalEnds.pers !== undefined) {
         const w = 8;
-        lineIndicators.pers.setAttribute('x', String(RAIL_CENTER_X + 8 - w / 2));
+        lineIndicators.pers.setAttribute('x', String(railCenterX + 8 - w / 2));
         lineIndicators.pers.setAttribute('y', String(verticalEnds.pers - MARKER_H - MARKER_OFFSET));
       }
     };
