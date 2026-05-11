@@ -5,7 +5,7 @@ import Header from '../components/Header.astro';
 const RESUME_PAGES = ['/images/resume/page-1.png', '/images/resume/page-2.png'];
 ---
 
-<Layout title="Resume — Scott Gerstl">
+<Layout title="Resume | Scott Gerstl">
   <Header />
 
   <main class="resume-page">
@@ -33,7 +33,7 @@ const RESUME_PAGES = ['/images/resume/page-1.png', '/images/resume/page-2.png'];
     <div class="pdf-pages">
       {RESUME_PAGES.map((src, i) => (
         <div class="pdf-page">
-          <img src={src} alt={`Scott Gerstl Resume — Page ${i + 1}`} loading={i === 0 ? 'eager' : 'lazy'} />
+          <img src={src} alt={`Scott Gerstl Resume | Page ${i + 1}`} loading={i === 0 ? 'eager' : 'lazy'} />
         </div>
       ))}
     </div>
