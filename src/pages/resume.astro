@@ -1,0 +1,201 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+---
+
+<Layout title="Resume — Scott Gerstl">
+  <Header />
+
+  <main class="resume-page">
+    <a class="back" href="/">← Back to home</a>
+
+    <header class="resume-head">
+      <h1>Resume</h1>
+      <p class="lede">Senior product designer. Berlin. Enterprise platforms and AI products.</p>
+    </header>
+
+    <div class="actions">
+      <a class="download-btn" href="/resume.pdf" download="Scott Gerstl Resume.pdf">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        Download PDF
+      </a>
+      <a class="open-btn" href="/resume.pdf" target="_blank" rel="noopener noreferrer">
+        Open in new tab ↗
+      </a>
+    </div>
+
+    <div class="pdf-wrap">
+      <object data="/resume.pdf#view=FitH&toolbar=0" type="application/pdf" class="pdf-object">
+        <div class="pdf-fallback">
+          <p>Your browser can't display the PDF inline.</p>
+          <a href="/resume.pdf" target="_blank" rel="noopener noreferrer">Open the resume PDF ↗</a>
+        </div>
+      </object>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .resume-page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 120px 32px 120px;
+  }
+
+  .back {
+    position: sticky;
+    top: 80px;
+    z-index: 50;
+    display: inline-block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text-soft);
+    text-decoration: none;
+    margin-bottom: 28px;
+    padding: 6px 12px;
+    background: rgba(246, 246, 246, 0.78);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 4px;
+  }
+
+  .back:hover {
+    color: var(--color-rail-blue);
+  }
+
+  .resume-head {
+    margin-bottom: 24px;
+  }
+
+  .resume-head h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--color-text);
+    margin-bottom: 12px;
+    border-left: 6px solid var(--color-rail-blue);
+    padding-left: 18px;
+  }
+
+  .lede {
+    font-family: 'Inter', sans-serif;
+    font-size: 19px;
+    line-height: 1.5;
+    color: var(--color-text);
+    padding-left: 24px;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 28px;
+    padding-left: 24px;
+  }
+
+  .download-btn,
+  .open-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 10px 18px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .download-btn {
+    background: var(--color-text);
+    color: white;
+    border: 1px solid var(--color-text);
+  }
+
+  .download-btn:hover {
+    background: #2a2a2a;
+    border-color: #2a2a2a;
+  }
+
+  .open-btn {
+    background: white;
+    color: var(--color-text);
+    border: 1px solid rgba(0, 0, 0, 0.18);
+  }
+
+  .open-btn:hover {
+    border-color: var(--color-text);
+  }
+
+  .pdf-wrap {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    aspect-ratio: 8.5 / 11;
+    max-height: 1400px;
+  }
+
+  .pdf-object {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border: 0;
+  }
+
+  .pdf-fallback {
+    padding: 60px 40px;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    color: var(--color-text);
+  }
+
+  .pdf-fallback p {
+    margin-bottom: 16px;
+  }
+
+  .pdf-fallback a {
+    color: var(--color-rail-blue);
+    font-weight: 600;
+  }
+
+  @media (max-width: 767px) {
+    .resume-page {
+      padding: 80px 16px 80px;
+    }
+
+    .resume-head h1 {
+      font-size: 42px;
+      padding-left: 14px;
+      border-left-width: 5px;
+    }
+
+    .lede {
+      font-size: 16px;
+      padding-left: 19px;
+    }
+
+    .actions {
+      padding-left: 19px;
+    }
+
+    /* On mobile, browser PDF rendering is unreliable. Hide the inline
+       embed and rely on the download/open buttons above. */
+    .pdf-wrap {
+      display: none;
+    }
+  }
+</style>

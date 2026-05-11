@@ -68,6 +68,28 @@ const isPersonal = !!personal;
   {personal && (
     <div class="personal-body">
       {personal.paragraphs?.map((p) => <p>{p}</p>)}
+      {personal.gallery && (
+        <>
+          <div class="gallery-caption">A few I've drawn in Procreate.</div>
+          <div class="gallery">
+            {personal.gallery.map((piece) => (
+              <button
+                class="gallery-tile"
+                type="button"
+                data-lightbox-src={piece.src}
+                data-lightbox-title={piece.title}
+                data-lightbox-subtitle={piece.subtitle}
+                aria-label={`Open ${piece.title}`}
+              >
+                <img src={piece.src} alt={piece.title} loading="lazy" draggable="false" />
+                <div class="gallery-overlay">
+                  <span class="gallery-title">{piece.title}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </>
+      )}
       {personal.links && (
         <div class="contact-links">
           {personal.links.map((link) => (
@@ -339,6 +361,78 @@ const isPersonal = !!personal;
     margin-top: 16px;
   }
 
+  .gallery-caption {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-soft);
+    margin-top: 24px;
+    margin-bottom: 12px;
+  }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .gallery-tile {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: #eee;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    aspect-ratio: 4 / 3;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .gallery-tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+    transition: transform 0.35s ease;
+  }
+
+  .gallery-tile:hover {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+  }
+
+  .gallery-tile:hover img {
+    transform: scale(1.04);
+  }
+
+  .gallery-overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 8px 10px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0));
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+  }
+
+  .gallery-tile:hover .gallery-overlay {
+    opacity: 1;
+  }
+
+  .gallery-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    letter-spacing: 0.01em;
+  }
+
   .contact-links {
     display: flex;
     flex-direction: column;
@@ -502,6 +596,11 @@ const isPersonal = !!personal;
     .personal-body p {
       font-size: 14px;
       margin-top: 14px;
+    }
+
+    .gallery {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
     }
 
     .contact-link {

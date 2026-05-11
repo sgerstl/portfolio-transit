@@ -31,9 +31,16 @@ export type ContactLink = {
   value: string;
 };
 
+export type GalleryPiece = {
+  src: string;
+  title: string;
+  subtitle: string;
+};
+
 export type PersonalBody = {
   paragraphs?: string[];
   links?: ContactLink[];
+  gallery?: GalleryPiece[];
 };
 
 export type CaseEntry = {
@@ -183,6 +190,15 @@ export const CASES: CaseEntry[] = [
       paragraphs: [
         "I've built and prepared cars for track days, driven them at their limits, and taught others to find theirs. Getting someone fast requires understanding exactly what's wrong before suggesting anything different.",
         "I've been riding since the 90s. Mountain bikes first, then road racing, cyclocross, and now back to the road and gravel in Berlin. The best days are the hard ones that remind you of how much further you can actually go.",
+      ],
+      gallery: [
+        { src: '/images/gallery/bmw-m3-e30.jpg', title: 'BMW M3 E30', subtitle: 'Digital illustration' },
+        { src: '/images/gallery/bmw-m2.jpg', title: 'BMW M2', subtitle: 'Digital illustration' },
+        { src: '/images/gallery/polestar-2.jpg', title: 'Polestar 2', subtitle: 'Digital illustration' },
+        { src: '/images/gallery/911-night-race.jpg', title: '911 Night Race', subtitle: 'Digital illustration' },
+        { src: '/images/gallery/singer-930.jpg', title: 'Singer 930', subtitle: 'Digital illustration' },
+        { src: '/images/gallery/merc-sl.jpg', title: 'Mercedes SL', subtitle: 'After Shane Baxley' },
+        { src: '/images/gallery/porsche-911-turbo.jpg', title: 'Porsche 911 Turbo', subtitle: 'Digital illustration' },
       ],
     },
   },
