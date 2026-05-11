@@ -23,13 +23,13 @@ const STAT_CARDS: StatCard[] = [
     num: '02',
     target: 'epilog',
     ariaLabel: 'Jump to Epilog case study',
-    text: 'Built an AI tool that changed a neurological treatment plan',
+    text: 'Built an AI tool that caught a drug interaction a doctor missed',
   },
   {
     num: '03',
     target: 'cal',
     ariaLabel: 'Jump to Cal case study',
-    text: 'Shipped a working app in a week using AI: research, design, build, deploy',
+    text: 'Shipped a working app in a week using AI to research, design, build, and deploy',
   },
 ];
 
@@ -159,7 +159,7 @@ export default function Hero() {
   return (
     <section className="hero" aria-label="Introduction" ref={heroRef}>
       <div className="hero-prelude" ref={preludeRef}>
-        Let's take a ride. Three stops. Destination: Value
+        All aboard! Three stops to my best work.
       </div>
       <ul className="hero-cards">
         {STAT_CARDS.map((card, i) => (
@@ -186,7 +186,7 @@ export default function Hero() {
         >
           <span className="prop-label">Proposition</span>
           <p className="prop-primary">
-            I bring enterprise design judgment to AI products and enterprise systems.
+            I bring senior product design judgment to AI features and the enterprise systems they ship into.
           </p>
           <p className="prop-secondary">
             Outcomes land in factories, schools, and hospitals, with the people who run them and

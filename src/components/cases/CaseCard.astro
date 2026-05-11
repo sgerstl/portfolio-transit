@@ -55,7 +55,12 @@ const isPersonal = !!personal;
           {body.metrics.map((m) => (
             <div class="case-metric">
               <div class="case-metric-num">{m.num}</div>
-              <div class="case-metric-label">{m.label}</div>
+              <div class="case-metric-label">
+                {m.label}
+                {m.linkHref && m.linkText && (
+                  <> <a class="case-metric-link" href={m.linkHref} target="_blank" rel="noopener noreferrer">{m.linkText}</a></>
+                )}
+              </div>
             </div>
           ))}
         </div>
@@ -72,7 +77,7 @@ const isPersonal = !!personal;
         <>
           <div class="gallery-caption">A few I've drawn in Procreate.</div>
           <div class="gallery">
-            {personal.gallery.map((piece) => (
+            {personal.gallery.slice(0, 3).map((piece) => (
               <button
                 class="gallery-tile"
                 type="button"
@@ -88,6 +93,31 @@ const isPersonal = !!personal;
               </button>
             ))}
           </div>
+          {personal.gallery.length > 3 && (
+            <details class="gallery-more">
+              <summary>
+                <span class="gallery-more-label more">View more ↓</span>
+                <span class="gallery-more-label less">Show less ↑</span>
+              </summary>
+              <div class="gallery gallery--extra">
+                {personal.gallery.slice(3).map((piece) => (
+                  <button
+                    class="gallery-tile"
+                    type="button"
+                    data-lightbox-src={piece.src}
+                    data-lightbox-title={piece.title}
+                    data-lightbox-subtitle={piece.subtitle}
+                    aria-label={`Open ${piece.title}`}
+                  >
+                    <img src={piece.src} alt={piece.title} loading="lazy" draggable="false" />
+                    <div class="gallery-overlay">
+                      <span class="gallery-title">{piece.title}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </details>
+          )}
         </>
       )}
       {personal.links && (
@@ -310,6 +340,17 @@ const isPersonal = !!personal;
     color: var(--color-text);
   }
 
+  .case-metric-link {
+    color: var(--card-color);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: opacity 0.15s ease;
+  }
+
+  .case-metric-link:hover {
+    opacity: 0.7;
+  }
+
   .case-claim {
     font-family: 'Inter', sans-serif;
     font-size: 15px;
@@ -431,6 +472,41 @@ const isPersonal = !!personal;
     font-weight: 600;
     color: white;
     letter-spacing: 0.01em;
+  }
+
+  .gallery-more {
+    margin-top: 8px;
+  }
+
+  .gallery-more summary {
+    list-style: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    margin-top: 4px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-rail-blue);
+    border-radius: 4px;
+    transition: background 0.15s ease;
+  }
+
+  .gallery-more summary::-webkit-details-marker { display: none; }
+
+  .gallery-more summary:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  .gallery-more[open] .gallery-more-label.more { display: none; }
+  .gallery-more:not([open]) .gallery-more-label.less { display: none; }
+
+  .gallery--extra {
+    margin-top: 8px;
   }
 
   .contact-links {
