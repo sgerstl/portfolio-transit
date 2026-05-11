@@ -1,6 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
+
+const RESUME_PAGES = ['/images/resume/page-1.png', '/images/resume/page-2.png'];
 ---
 
 <Layout title="Resume — Scott Gerstl">
@@ -28,13 +30,12 @@ import Header from '../components/Header.astro';
       </a>
     </div>
 
-    <div class="pdf-wrap">
-      <object data="/resume.pdf#view=FitH&toolbar=0" type="application/pdf" class="pdf-object">
-        <div class="pdf-fallback">
-          <p>Your browser can't display the PDF inline.</p>
-          <a href="/resume.pdf" target="_blank" rel="noopener noreferrer">Open the resume PDF ↗</a>
+    <div class="pdf-pages">
+      {RESUME_PAGES.map((src, i) => (
+        <div class="pdf-page">
+          <img src={src} alt={`Scott Gerstl Resume — Page ${i + 1}`} loading={i === 0 ? 'eager' : 'lazy'} />
         </div>
-      </object>
+      ))}
     </div>
   </main>
 </Layout>
@@ -47,8 +48,9 @@ import Header from '../components/Header.astro';
   }
 
   .back {
-    position: sticky;
+    position: fixed;
     top: 80px;
+    left: 32px;
     z-index: 50;
     display: inline-block;
     font-family: 'Barlow Condensed', sans-serif;
@@ -58,7 +60,6 @@ import Header from '../components/Header.astro';
     text-transform: uppercase;
     color: var(--color-text-soft);
     text-decoration: none;
-    margin-bottom: 28px;
     padding: 6px 12px;
     background: rgba(246, 246, 246, 0.78);
     backdrop-filter: blur(10px);
@@ -139,42 +140,35 @@ import Header from '../components/Header.astro';
     border-color: var(--color-text);
   }
 
-  .pdf-wrap {
+  .pdf-pages {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .pdf-page {
     background: white;
-    border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 4px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     overflow: hidden;
-    aspect-ratio: 8.5 / 11;
-    max-height: 1400px;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.06),
+      0 8px 24px rgba(0, 0, 0, 0.10),
+      0 24px 56px rgba(0, 0, 0, 0.12);
   }
 
-  .pdf-object {
-    width: 100%;
-    height: 100%;
+  .pdf-page img {
     display: block;
-    border: 0;
-  }
-
-  .pdf-fallback {
-    padding: 60px 40px;
-    text-align: center;
-    font-family: 'Inter', sans-serif;
-    color: var(--color-text);
-  }
-
-  .pdf-fallback p {
-    margin-bottom: 16px;
-  }
-
-  .pdf-fallback a {
-    color: var(--color-rail-blue);
-    font-weight: 600;
+    width: 100%;
+    height: auto;
   }
 
   @media (max-width: 767px) {
     .resume-page {
-      padding: 80px 16px 80px;
+      padding: 116px 16px 80px;
+    }
+
+    .back {
+      left: 16px;
     }
 
     .resume-head h1 {
@@ -192,10 +186,8 @@ import Header from '../components/Header.astro';
       padding-left: 19px;
     }
 
-    /* On mobile, browser PDF rendering is unreliable. Hide the inline
-       embed and rely on the download/open buttons above. */
-    .pdf-wrap {
-      display: none;
+    .pdf-pages {
+      gap: 12px;
     }
   }
 </style>
