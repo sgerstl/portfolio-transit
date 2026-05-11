@@ -47,6 +47,18 @@
       });
     });
 
+    const brand = document.querySelector<HTMLAnchorElement>('.site-header .brand-link');
+    if (brand) {
+      brand.addEventListener('click', (e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+        const url = new URL(brand.href, location.href);
+        if (url.pathname !== location.pathname) return;
+        e.preventDefault();
+        if (location.hash) history.replaceState(null, '', location.pathname);
+        smoothScrollTo(0);
+      });
+    }
+
     if (location.hash) {
       const hash = location.hash;
       window.scrollTo(0, 0);
