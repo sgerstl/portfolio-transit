@@ -19,23 +19,24 @@ const detail = entry.detail;
 <Layout title={`${entry.name} — Scott Gerstl`}>
   <Header />
 
-  <main class="case-page" style={`--accent: ${colorVar};`}>
+  <main class={`case-page ${detail?.demoUrl ? 'has-phone' : ''}`} style={`--accent: ${colorVar};`}>
     <a class="back" href="/#cases">← Back to cases</a>
 
-    <header class="case-page-head">
-      {detail?.chips && (
-        <div class="chips">
-          {detail.chips.map((c) => <span class="chip">{c}</span>)}
-        </div>
-      )}
-      <h1>{entry.name}</h1>
-      <p class="lede">{entry.tagline}</p>
-    </header>
-
     {detail ? (
+      <div class={`case-grid ${detail.demoUrl ? 'with-phone' : ''}`}>
       <section class="case-detail">
+        <header class="case-page-head">
+          {detail.chips && (
+            <div class="chips">
+              {detail.chips.map((c) => <span class="chip">{c}</span>)}
+            </div>
+          )}
+          <h1>{entry.name}</h1>
+          <p class="lede">{entry.tagline}</p>
+        </header>
+
         {detail.demoUrl && (
-          <div class="demo-cta">
+          <div class="demo-cta demo-cta--mobile">
             <a class="demo-btn" href={detail.demoUrl} target="_blank" rel="noopener noreferrer">
               Open interactive demo ↗
             </a>
@@ -122,15 +123,41 @@ const detail = entry.detail;
           </div>
         )}
       </section>
+
+      {detail.demoUrl && (
+        <aside class="phone-col" aria-hidden="false">
+          <div class="phone-sticky">
+            <div class="phone-frame">
+              <div class="phone-screen">
+                <iframe
+                  src={detail.demoUrl}
+                  title={`${entry.name} interactive demo`}
+                  loading="lazy"
+                />
+              </div>
+              <div class="phone-mask"></div>
+              <img class="phone-png" src="/images/iphone-frame.png" alt="" draggable="false" />
+            </div>
+            <p class="phone-caption">Interactive demo with sample data</p>
+          </div>
+        </aside>
+      )}
+      </div>
     ) : entry.body ? (
-      <section class="case-page-body">
-        <div class="domains">
-          {entry.body.domains.map((d) => <span>{d}</span>)}
-        </div>
-        <p class="outcome">{entry.body.outcome}</p>
-        <p class="claim">{entry.body.claim}</p>
-        <p class="placeholder">Full case study coming soon.</p>
-      </section>
+      <>
+        <header class="case-page-head">
+          <h1>{entry.name}</h1>
+          <p class="lede">{entry.tagline}</p>
+        </header>
+        <section class="case-page-body">
+          <div class="domains">
+            {entry.body.domains.map((d) => <span>{d}</span>)}
+          </div>
+          <p class="outcome">{entry.body.outcome}</p>
+          <p class="claim">{entry.body.claim}</p>
+          <p class="placeholder">Full case study coming soon.</p>
+        </section>
+      </>
     ) : null}
   </main>
 
@@ -144,9 +171,115 @@ const detail = entry.detail;
     padding: 120px 32px 120px;
   }
 
-  .back {
+  .case-page.has-phone {
+    max-width: 1200px;
+    padding-top: 80px;
+  }
+
+  .case-grid.with-phone {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 316px;
+    gap: 56px;
+    align-items: start;
+  }
+
+  .case-grid.with-phone .case-page-head {
+    margin-top: 40px;
+  }
+
+  .phone-col {
+    align-self: stretch;
+  }
+
+  .phone-sticky {
     position: sticky;
     top: 80px;
+  }
+
+  .phone-frame {
+    position: relative;
+    width: 316px;
+    height: 636px;
+  }
+
+  .phone-screen {
+    position: absolute;
+    overflow: hidden;
+    top: 22px;
+    left: 17px;
+    width: 281px;
+    height: 591px;
+  }
+
+  .phone-screen iframe {
+    width: 430px;
+    height: 904px;
+    transform: scale(0.6535);
+    transform-origin: top left;
+    border: 0;
+    display: block;
+  }
+
+  .phone-mask {
+    position: absolute;
+    pointer-events: none;
+    top: 2px;
+    left: -3px;
+    width: 321px;
+    height: 631px;
+    border-radius: 44px;
+    border: 16px solid var(--color-bg, #f6f6f6);
+    box-sizing: border-box;
+  }
+
+  .phone-png {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .phone-caption {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--color-text-soft);
+    text-align: center;
+    margin-top: 14px;
+  }
+
+  .demo-cta--mobile { display: none; }
+
+  @media (min-width: 1024px) {
+    .case-grid.with-phone .demo-cta--bottom {
+      display: none;
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .case-page.has-phone {
+      padding-top: 120px;
+    }
+    .case-grid.with-phone {
+      display: block;
+    }
+    .case-grid.with-phone .case-page-head {
+      margin-top: 0;
+    }
+    .phone-col {
+      display: none;
+    }
+    .demo-cta--mobile {
+      display: block;
+      margin-bottom: 28px;
+    }
+  }
+
+  .back {
+    position: fixed;
+    top: 80px;
+    left: 32px;
     z-index: 50;
     display: inline-block;
     font-family: 'Barlow Condensed', sans-serif;
@@ -156,7 +289,6 @@ const detail = entry.detail;
     text-transform: uppercase;
     color: var(--color-text-soft);
     text-decoration: none;
-    margin-bottom: 28px;
     padding: 6px 12px;
     background: rgba(246, 246, 246, 0.78);
     backdrop-filter: blur(10px);
@@ -497,7 +629,15 @@ const detail = entry.detail;
 
   @media (max-width: 767px) {
     .case-page {
-      padding: 80px 16px 80px;
+      padding: 116px 16px 80px;
+    }
+
+    .case-page.has-phone {
+      padding-top: 116px;
+    }
+
+    .back {
+      left: 16px;
     }
 
     .chips {
