@@ -314,15 +314,15 @@ export const CASES: CaseEntry[] = [
   },
   {
     slug: 'racemake',
-    name: 'RaceMake',
+    name: 'Sim Racing Coach',
     tagline: 'Race-engineer practice, designed into an AI product.',
     line: 'ai',
-    readingMinutes: 4,
+    readingMinutes: 6,
     body: {
       domains: ['Motorsports', 'AI Products', 'Domain Depth'],
       outcome:
         "Design consulting on an AI sim-racing telemetry tool. Reframed the analysis app as the AI agent's workspace, not a chat panel beside it. Designed a race engineer pattern that translates expert practice into UX for sim-racers who don't have an engineer. Four worked archetypes shipped against the product's telemetry schemas.",
-      visualLabel: 'RACEMAKE · TELEMETRY VIEW',
+      visualLabel: 'SIM RACING COACH · TELEMETRY VIEW',
       metrics: [
         { num: 'Domain', label: 'Race-engineer perspective brought to AI tooling for sim-racers' },
         { num: 'Reframe', label: 'Analysis surface as agent workspace, not chat panel' },
@@ -331,6 +331,142 @@ export const CASES: CaseEntry[] = [
       claim:
         'I bring motorsports domain knowledge to AI product design. I use AI to scale expert practice and analysis so drivers at every level can benefit.',
       ctaHref: '/work/racemake',
+    },
+    detail: {
+      chips: ['Consulting', 'AI', 'Agent UX', 'Sim-Racing'],
+      hook: [
+        'A founder shipping an AI sim-racing telemetry product asked for a design pass. The product had real telemetry data, a chat agent, and a polished analysis surface. Three working pieces, living in different containers.',
+        'The user got data, an algorithmic score, and a chat window that could run queries. What they did not get was the experience of being walked through their own session by someone who knew what to look for.',
+      ],
+      sections: [
+        {
+          title: 'The agent and the workspace',
+          subtitle: 'What the product already had, and what it was missing',
+          paragraphs: [
+            'The web app already had an AI surface: ten dimensions scored, each with a short coaching tip, all inside a modal. The desktop capture tool had a chat agent that ran corner queries and returned annotated track visualizations. The analysis surface was dense, accurate, demanding.',
+            'The team had even shipped the right intent in one agentic feature: click a low-scoring dimension and dots appear on the track marking where the issue occurs. The execution stops halfway. The dots are not labeled. The view does not zoom. The user is left to manually find the corner and read it back to themselves.',
+            'The agent had the data. The workspace had no agent thinking with the user inside it. Each surface was doing one piece of the job a real race engineer does in a single conversation.',
+          ],
+          decisions: [
+            {
+              title: 'Algorithmic scoring returns a conclusion, not an investigation.',
+              body: 'A number on a dimension hides the analysis that produced it. The analysis is the part a self-coached racer needs to see, not the score.',
+            },
+            {
+              title: 'A chat agent in a separate window is architecturally severed from the workspace.',
+              body: 'The chat is functional but the user has to carry insights back into their own analysis context by hand. The agent and the work it is supposed to help with are in different rooms.',
+            },
+            {
+              title: 'An agentic feature that stops halfway is worse than none.',
+              body: 'A few dots on a map without labels or framing tells the user the agent saw something and then declined to explain it. The user does the rest of the agent\'s job for it.',
+            },
+          ],
+          italicOutro:
+            'The product had every ingredient. They were architected as if they belonged to different products.',
+        },
+        {
+          title: 'Agent-as-workspace',
+          subtitle: 'One structural move that reframed the whole product',
+          paragraphs: [
+            'The reframe was a single architectural commitment. The web app stops being an analysis tool with a chat panel. It becomes an AI agent surface, with the analysis view as the workspace the agent operates inside.',
+            'Not chat-adjacent-to-data. Not three modes the user toggles between. Three states of one persistent agent rail: idle when the user opens a session and the agent has the floor, investigating when the agent narrates while the workspace annotates, exploring when the agent recedes and the user drives.',
+            'Under that architecture sits the behavioral spec. A race engineer pattern, not a chat persona. Diagnose before prescribe. One primary correction per cycle. Specificity over generality. Annotate the workspace, do not just describe it. Suggest a follow-up so the conversation has somewhere to go.',
+          ],
+          decisions: [
+            {
+              title: 'Race engineer, not coach.',
+              body: 'Coaching is one of the modes a race engineer operates in. Setup work, strategy, tire management are others. Naming the pattern at the role level keeps the door open wherever the product roadmap goes next, instead of pinning it to one of the modes.',
+            },
+            {
+              title: 'Three states, not three modes.',
+              body: "States shift the agent's prominence based on what the user is doing. Modes would have made the user choose. The transitions are the agent's responsibility, not the user's.",
+            },
+            {
+              title: 'Diagnose before prescribe.',
+              body: 'Tell the user what is wrong before suggesting anything different. The same restraint a real engineer applies, and the restraint that earns trust from a self-coached racer with strong opinions about their own driving.',
+            },
+          ],
+          italicOutro:
+            'The architecture is not a coaching tool that will need replacing when the next model arrives. It is the shape of the conversation the user will eventually have with the product wherever it grows.',
+          screenshots: {
+            columns: 2,
+            images: [
+              {
+                src: '/images/cases/racemake/racemake-prototype-web-idle.png',
+                alt: 'Web prototype, idle state with agent rail and surfaced findings',
+                caption: 'Web: agent rail with findings surfaced',
+              },
+              {
+                src: '/images/cases/racemake/racemake-prototype-desktop-trailer.png',
+                alt: 'Desktop prototype, trailer surface with capture and findings preview',
+                caption: 'Desktop: capture and trailer',
+              },
+            ],
+          },
+        },
+        {
+          title: 'Four worked archetypes',
+          subtitle: 'Proving the pattern across question shapes',
+          paragraphs: [
+            'The pattern is generalizable, but generalizability needs proof. Four archetypes shipped, each handling a different shape of question, all running inside the same shell.',
+            'Spatial questions: where on the track is this happening? The agent zooms the canvas, labels the moments through a corner, walks through what it sees, suggests the next thread to pull.',
+            'Temporal questions: where in the session did something change, and why? Same architecture, different canvas, different supporting data, same investigative pattern around it.',
+            'Distributional questions: how consistent is the driver across the session, and where should they look closer? The agent walks the lap, points out what is working before flagging what is not, then hands the depth navigation to the user.',
+            'State-along-line questions: what was the car doing as it moved through that moment? A different visualization shape, the same conversational shell around it.',
+            'The four archetypes were the proof, not the point. The point was that the architecture can carry the kind of question the product roadmap implies but does not yet have a surface for.',
+          ],
+          decisions: [
+            {
+              title: 'Each archetype is a question shape, not a screen.',
+              body: 'Spatial, temporal, distributional, state-along-line. Four examples prove the architecture handles whatever question comes next, not that there are four views to ship.',
+            },
+            {
+              title: 'Depth navigation lives inside an archetype.',
+              body: 'An overview view and a drill-down view are two states of the same investigation, not two separate ones. The pattern handles the transition without leaving the conversation.',
+            },
+            {
+              title: "Designed against the product's existing data.",
+              body: 'Each archetype shaped to what the capture layer already produces. The design extends what the team has already built rather than asking for new infrastructure to land first.',
+            },
+          ],
+          italicOutro:
+            'The point of working four archetypes was never that there should be four. It was that one architecture can hold whatever the product asks of it next.',
+          screenshots: {
+            columns: 2,
+            images: [
+              {
+                src: '/images/cases/racemake/racemake-corner-investigation.png',
+                alt: 'Spatial investigation through a corner',
+                caption: 'Spatial question',
+              },
+              {
+                src: '/images/cases/racemake/racemake-session-arc.png',
+                alt: 'Temporal investigation across a session',
+                caption: 'Temporal question',
+              },
+              {
+                src: '/images/cases/racemake/racemake-consistency-overview.png',
+                alt: 'Distributional investigation across the lap',
+                caption: 'Distributional question',
+              },
+              {
+                src: '/images/cases/racemake/racemake-handling-state.png',
+                alt: 'State-along-line investigation through a corner',
+                caption: 'State-along-line question',
+              },
+            ],
+          },
+        },
+      ],
+      outcomeBeat: {
+        title: 'What the engagement delivered',
+        paragraphs: [
+          "A conceptual diagnostic carrying the architectural argument. A working web prototype with the four archetypes. A desktop role redefinition from chat host to capture-and-trailer surface. All designed against the product's existing data layer. All aligned with the long-term direction the founder was building toward.",
+          'The 20-hour timebox held. The handoff carried the architectural commitment, the worked archetypes, and a clean list of open questions for the next round.',
+        ],
+        highlight:
+          "The honest test of a design engagement isn't whether it shipped. It's whether the architecture can carry the product where the founder said he wanted to take it.",
+      },
     },
   },
   {
@@ -353,6 +489,111 @@ export const CASES: CaseEntry[] = [
         'I lead design vision that holds up under acquisition-grade scrutiny.',
       ctaHref: '/work/brightly',
     },
+    detail: {
+      chips: ['Enterprise', 'Platform Vision', 'Design System', 'B2B SaaS'],
+      hook: [
+        'Brightly was acquired by Siemens for $1.575B. Before the deal closed, the platform vision was previewed to existing customers: 74% of conference attendees expressed excitement about the future product direction, 36% said they were more likely to renew. User testing on the functional prototypes saw time on dashboard pages increase 5×. NPS verbatims, gathered independently, validated the survey findings.',
+        'The work behind those signals: vision design across 12 siloed products at Brightly, anchored to a complete corporate rebrand and a major client conference. A new design language. A unified design system and front-end-agnostic component library. North star designs for the integrated portfolio. A transition plan from siloed products to platform.',
+      ],
+      sections: [
+        {
+          title: 'Three surfaces, three arguments',
+          subtitle: 'The hero screens, and the design intention behind each',
+          paragraphs: [
+            'Three hero surfaces did most of the work of carrying the platform claim. Each was a different argument the vision had to make.',
+            'The dashboard was the moment a customer landed in the product and saw all of their work in one place: planned maintenance, team availability, at-risk assets, work orders waiting on triage. The decision was that the dashboard had to be role-based, customizable, actionable, and data-driven. Every part of that list answered a specific complaint customers had raised in the research.',
+            "Asset health and suggested actions extended the dashboard's logic. Asset health was the system saying which equipment was likely to fail, on what timeline, with what financial exposure: predicted failure, estimated losses, recommended course of action. Suggested actions was the system proposing the next move with the recommended option marked. Together they collapsed the old workflow (jump between tools, read the data yourself, decide alone) into a single surface where the system did the analysis and the operator made the call.",
+            'The design system itself was the third surface. A front-end-agnostic component library, branded and unified, paired with the new corporate design language. Not a documentation site. A working library that any product team could pull from regardless of stack, which is what made the platform claim implementable across 12 different products at once.',
+          ],
+          decisions: [
+            {
+              title: 'Dashboard principles framed as customer answers.',
+              body: 'Role-based, customizable, actionable, data-driven. Each principle answered a specific complaint surfaced in the research mix (Pendo analytics, Aha! product feedback, Client Advisory Boards, client visits, internal SME interviews). The principles were not aesthetic. They were arguments back at the field.',
+            },
+            {
+              title: 'Asset health as a three-part decision support surface.',
+              body: 'Predicted failure plus estimated losses plus recommended course of action. The three together turn the surface from "data point about a piece of equipment" into "decision the operator can make right now." The pattern propagated through the suggested actions surface and gave the platform a consistent operator-AI relationship across products.',
+            },
+            {
+              title: 'Component library as front-end agnostic.',
+              body: 'A unified design system is worth less than a unified component library, because a design system still has to be re-implemented by every product team. The library was built front-end-agnostic so any product, on any stack, in any office, could pull components directly. That is what made the platform claim implementable rather than aspirational.',
+            },
+          ],
+          italicOutro:
+            'Hero screens earn their position by showing what the platform claim looks like when a customer scrolls through it. The argument lives in the screens, not next to them.',
+          screenshots: {
+            columns: 3,
+            images: [
+              {
+                src: '/images/cases/brightly/brightly-dashboard.jpeg',
+                alt: 'Brightly admin dashboard with planned maintenance, work performance, team center, and at-risk assets',
+                caption: 'The Dashboard',
+              },
+              {
+                src: '/images/cases/brightly/brightly-asset-health.jpeg',
+                alt: 'Asset health surface with predicted failure trend, estimated losses, and recommended actions',
+                caption: 'Asset Health',
+              },
+              {
+                src: '/images/cases/brightly/brightly-suggested-actions.jpeg',
+                alt: 'Suggested actions modal with options and a recommended action highlighted',
+                caption: 'Suggested Actions',
+              },
+            ],
+          },
+        },
+        {
+          title: 'Twelve silos, one platform vision',
+          subtitle: 'What the vision had to compress into a single product story',
+          paragraphs: [
+            "Brightly had assembled a portfolio of 12 siloed software products serving manufacturing, healthcare, education, and government. The portfolio's strategy said \"platform.\" The user experience said twelve different products under one logo, each with its own dashboard, its own data, its own workflows. Customers were saying it directly: poor landing-page experience, products that did not share datasets, disjointed workflows, no clear expectation for what the future looked like.",
+            'Two business events anchored the work. A complete corporate rebrand, which gave the design language room to be redrawn from scratch rather than nudged from where it had been. And a major client conference, which set a deadline that everything had to be ready to show to existing customers in functional prototype form.',
+            'As Manager of Product Design at Brightly, I led a team of seven designers distributed across Melbourne, London, Noida, Montreal, and the US. The structural work, the executive presentation, and the case for the reframe were mine. A senior designer on the team paired with me on the visual execution; most of what you would see in the prototypes is their craft. The two halves of the work fit together: the architecture decided what to argue, the visual design decided how to argue it.',
+            'The deliverables stacked on each other. A new corporate design language anchored to the rebrand. A unified design system built on top. A front-end-agnostic UI component library any product team could implement against. North star designs for the integrated portfolio. A transition plan from current siloed products to the platform shape. The point of the stack was that each layer made the next one implementable rather than aspirational.',
+          ],
+          decisions: [
+            {
+              title: 'Tie the vision to two business events, not one.',
+              body: 'The rebrand gave the design language permission to break with the past. The client conference gave the prototypes a real deadline and a real audience. Anchoring the vision to both meant the work had business justification on two axes, not just one.',
+            },
+            {
+              title: 'Lead the structure, partner on the craft.',
+              body: 'Managing a distributed seven-person design team while running the structural and presentation work meant getting clear on what I owned and what others owned. I led the architecture, the systems thinking, and the case to executives. A senior designer led the visual execution. Both halves had to be excellent for the work to be defensible.',
+            },
+            {
+              title: 'A transition plan, not just a destination.',
+              body: 'Vision design is easy to dismiss as aspirational. Pairing the North star designs with a transition plan from current products to platform made the work answerable to engineering: here is what we propose, here is how the existing portfolio gets there from where it is.',
+            },
+          ],
+          italicOutro:
+            'Strategic narratives say "platform." Design evidence says what the platform actually looks like when a customer clicks through it, what the design language allows, and how the existing products get there.',
+          screenshots: {
+            columns: 2,
+            images: [
+              {
+                src: '/images/cases/brightly/brightly-new-brand.jpeg',
+                alt: 'New Brightly brand identity with photography treatment showing three customers across industries',
+                caption: 'The new brand',
+              },
+              {
+                src: '/images/cases/brightly/brightly-design-system.jpeg',
+                alt: 'Lumos Design System rendered as a product page, showing input field states and information graphics',
+                caption: 'Design system as a product',
+              },
+            ],
+          },
+        },
+      ],
+      outcomeBeat: {
+        title: 'What the work was for',
+        paragraphs: [
+          'The Chief Product Officer was happy enough with the work to put the prototypes into multiple high-stakes rooms. They went into board presentations supporting funding requests. They went into the acquisition-stage meetings with Siemens leading up to the deal. Brightly was acquired by Siemens for $1.575B.',
+          'The design work did not cause the acquisition. It was the part of the story the acquirer needed to see to evaluate whether the platform claim had design proof underneath the strategic narrative.',
+        ],
+        highlight:
+          'Design judgment at the layer above craft is what enterprise design vision actually means. Not making things prettier. Making the strategic claim verifiable before the business commits to it.',
+      },
+    },
   },
   {
     slug: 'fleet',
@@ -373,6 +614,101 @@ export const CASES: CaseEntry[] = [
       claim:
         'I own design end-to-end on industrial products that have to work in physical-world conditions.',
       ctaHref: '/work/fleet',
+    },
+    detail: {
+      chips: ['Industrial', 'Logistics', '0→1', 'Sole UX'],
+      hook: [
+        'Sole UX lead on a 0→1 yard-management product at Ndustrial. The shipped pilot consolidated three software tools and two paper forms into a single yard-management interface, deployed at a cold-storage third-party-logistics facility tracking hybrid electric trailers.',
+        "Industrial conditions don't tolerate friction. Gloves on. Dust on the screen. Twelve trucks waiting on dock assignments. Every design decision was answerable to whether it survived the dock, not whether it looked clean in design review.",
+      ],
+      sections: [
+        {
+          title: 'Three surfaces, one workflow',
+          subtitle: 'The hero screens, and the design intention behind each',
+          paragraphs: [
+            'Three hero surfaces carried the workflow. Each replaced a piece of the old way of doing things. Together they collapsed the jump-between-tools-and-clipboards model into a single screen the yard manager could run their dock from.',
+            "The yard management view was the operational center. An aerial map rendered every dock door and yard spot as a chip showing what was plugged in, plugged out, or empty. The trailer list on the left was searchable and sortable. Selecting any chip or list item opened a detail panel alongside the map: trailer ID, carrier, eTRU status, driver, and an audit log, all without losing the manager's sense of the whole yard.",
+            'Driver communication moved off radios and phone calls onto text-based messages inside the interface. Asynchronous, recordable, threaded against the trailer. Quick-action templates for the most common messages (load ready for check-out, return to front desk, await further instruction) handled the bulk of routine traffic with one tap.',
+            'Check-in was the consolidation made visible. What used to require three software tools and two paper forms became a single modal: pick a spot, confirm the eTRU status, done. When the yard was at capacity, the waitlist absorbed the overflow without breaking the main flow.',
+          ],
+          decisions: [
+            {
+              title: 'Consolidation, not aggregation.',
+              body: 'Three software tools and two paper forms were not consolidated by bundling them into one screen. They were consolidated by deciding which jobs each had been doing, which jobs the new interface had to do, and which ones could disappear entirely because they had been workarounds in the first place.',
+            },
+            {
+              title: 'Driver comms as text, not radio.',
+              body: "Radio works for one person speaking to one driver at a time, in real time, in their general direction. Text works for a yard manager handling twelve trucks in parallel. The change was not a UI choice. It was a choice about which job comms was supposed to do in this product.",
+            },
+            {
+              title: 'Detail alongside the map, not a page away from it.',
+              body: "The trailer detail opens as a side panel, not as a navigation. The map stays visible the whole time. That decision keeps the yard manager oriented to the whole facility while drilling into one trailer, which matters because the next decision is almost never about the trailer in isolation. It's about how that trailer fits into the dock assignment, the waitlist, and the eight other trailers waiting their turn.",
+            },
+          ],
+          italicOutro:
+            'Three hero screens did the work of replacing three software tools and two paper forms. Each one named what the old way had been doing, what the new way was doing instead, and which job the user was actually trying to get done.',
+          screenshots: {
+            columns: 2,
+            images: [
+              {
+                src: '/images/cases/fleet/fleet-yard-map.jpeg',
+                alt: 'Yard management view with aerial map showing dock and yard spots, trailer list on the left',
+                caption: 'Yard map',
+              },
+              {
+                src: '/images/cases/fleet/fleet-trailer-detail.jpeg',
+                alt: 'Trailer detail panel with carrier, driver, eTRU status, and audit log, alongside the dock spots',
+                caption: 'Trailer detail',
+              },
+              {
+                src: '/images/cases/fleet/fleet-driver-comms.jpeg',
+                alt: 'Driver messaging panel with auto-sent appointment confirmation and quick-action templates',
+                caption: 'Driver comms',
+              },
+              {
+                src: '/images/cases/fleet/fleet-check-in.jpeg',
+                alt: 'Check-in trailer modal with yard spot grid and eTRU trailer indicator, with waitlist fallback',
+                caption: 'Check-in',
+              },
+            ],
+          },
+        },
+        {
+          title: 'Sole UX, research through ship',
+          subtitle: 'What it took to design end-to-end for an industrial pilot',
+          paragraphs: [
+            "Sole UX at Ndustrial meant being the only UX resource at the company, not just on this project. Yard management was running in parallel with the Power Quality and Demand Response work for industrial customers, plus whatever else needed design judgment that week. Research, workflow design, visual design, prototypes, hand-off to engineering, pilot support: the work either happened or it didn't get done, across whichever project was loudest at the moment.",
+            'Research happened on the dock. The product was not designed in a conference room and shipped to operators to use. It was shaped by watching yard managers work, watching drivers wait, watching paperwork accumulate. The constraints (gloves, dust, time pressure) were not assumptions. They were observations from the people who were going to use the thing.',
+            'Industrial conditions shaped every design decision. Every minute spent in the interface was a minute not spent moving a truck, so cognitive load had to come down. The interface had to compete with paper, radios, and walking the dock, and lose less often than it won.',
+            "The pilot deployed at one facility. Not an enterprise rollout, not a category-wide product, not a broad-scale launch. One real customer site, with real yard managers running their actual dock through it. That is what 'shipped' meant in this case, and what made the work credible: the interface worked under the actual conditions where it would have to work.",
+          ],
+          decisions: [
+            {
+              title: 'Sole UX for the whole company, end to end.',
+              body: 'I was the only UX resource at Ndustrial, owning the entire design function for the company while balancing the needs of multiple active projects in parallel. No design partner to defer to, no specialist to hand off to, and no other UX work happening anywhere else in the org that would have gotten done on its own. A different competency than leading a team, and worth claiming as a separate signal.',
+            },
+            {
+              title: 'Research where the work happens.',
+              body: 'User research at the customer site was not a methodology choice. It was the only way to know what the actual constraints were. The conditions a yard manager works under cannot be reproduced in an office, and assumptions that get past the conference room get caught on the dock.',
+            },
+            {
+              title: 'Pilot scope as honest framing.',
+              body: 'One facility shipping a real pilot is different from a category-wide rollout. Naming the scope (a single customer site, a single pilot) keeps the work credible and lets the reader trust the rest of the case. Overclaiming on scale undermines everything else the case is trying to say.',
+            },
+          ],
+          italicOutro:
+            "Industrial design judgment doesn't come from working on industrial products. It comes from being in the rooms where industrial work actually happens. The interface either survives those rooms or it doesn't.",
+        },
+      ],
+      outcomeBeat: {
+        title: 'What shipped',
+        paragraphs: [
+          'The pilot shipped during my tenure at Ndustrial. Yard managers at a cold-storage third-party-logistics facility ran their dock through it instead of jumping between three software tools and two paper forms. The broader Ndustrial program (including shore-power infrastructure for the hybrid electric trailers) continued after I was laid off in mid-2025.',
+          "The case here is not about scale. It is about whether an industrial product designed by one person, at one company, for one pilot site, can hold up in real industrial conditions. This one did.",
+        ],
+        highlight:
+          "Industrial design end-to-end means sole UX, research through ship, no specialists to hand off to, and an interface that either survives the dock or it doesn't.",
+      },
     },
   },
   {
