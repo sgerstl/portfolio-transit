@@ -159,7 +159,7 @@ export default function Hero() {
   return (
     <section className="hero" aria-label="Introduction" ref={heroRef}>
       <div className="hero-prelude" ref={preludeRef}>
-        All aboard! Three stops to my best work.
+        All aboard! Three stops to your destination.
       </div>
       <ul className="hero-cards">
         {STAT_CARDS.map((card, i) => (

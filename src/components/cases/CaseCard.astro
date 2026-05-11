@@ -75,7 +75,6 @@ const isPersonal = !!personal;
       {personal.paragraphs?.map((p) => <p>{p}</p>)}
       {personal.gallery && (
         <>
-          <div class="gallery-caption">A few I've drawn in Procreate.</div>
           <div class="gallery">
             {personal.gallery.slice(0, 3).map((piece) => (
               <button
@@ -402,18 +401,8 @@ const isPersonal = !!personal;
     margin-top: 16px;
   }
 
-  .gallery-caption {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--color-text-soft);
-    margin-top: 24px;
-    margin-bottom: 12px;
-  }
-
   .gallery {
+    margin-top: 16px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
