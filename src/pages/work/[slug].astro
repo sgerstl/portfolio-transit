@@ -714,4 +714,111 @@ const detail = entry.detail;
       font-size: 20px;
     }
   }
+
+  /* ── Print ───────────────────────────────────────────────
+     Goal: a clean, paper-ready case study PDF suitable for
+     sharing with clients for review. Hides site chrome,
+     resets layout, keeps the substance.
+  ──────────────────────────────────────────────────────── */
+  @media print {
+    /* Hide site chrome */
+    :global(.site-header),
+    :global(.naechste-station),
+    :global(.map-background),
+    :global(.contact-fab),
+    :global(.lightbox-root),
+    :global(.lightbox-overlay),
+    :global(.lightbox-img) {
+      display: none !important;
+    }
+
+    /* Hide page chrome */
+    .back,
+    .phone-col {
+      display: none !important;
+    }
+
+    /* Reset page layout for print */
+    .case-page,
+    .case-page.has-phone {
+      max-width: 100% !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+
+    .case-grid.with-phone {
+      display: block !important;
+      grid-template-columns: none !important;
+      gap: 0 !important;
+    }
+
+    .case-grid.with-phone .case-page-head {
+      margin-top: 0 !important;
+    }
+
+    /* White paper background, solid dark text */
+    :global(body) {
+      background: white !important;
+      color: black !important;
+    }
+
+    /* Preserve colors where they carry meaning (accent borders,
+       chips, screenshot captions, decision cards, etc.) */
+    .decision,
+    .outcome-beat,
+    .screenshot,
+    .screenshot-caption,
+    .try-it,
+    .section-head,
+    .chip {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    /* Tighten spacing for paper */
+    .sections {
+      gap: 28px !important;
+    }
+
+    .hook {
+      margin-bottom: 36px !important;
+    }
+
+    /* Avoid awkward page breaks inside key blocks */
+    .section,
+    .outcome-beat,
+    .decision,
+    .screenshot,
+    .try-it {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    h1, h2, h3, h4 {
+      page-break-after: avoid;
+      break-after: avoid;
+    }
+
+    /* Images sized for paper width */
+    img {
+      max-width: 100% !important;
+      height: auto !important;
+    }
+
+    /* Print URLs after external/email links so they're visible
+       on paper. Internal nav links don't need URLs printed. */
+    a[href^="http"]::after,
+    a[href^="mailto"]::after {
+      content: " (" attr(href) ")";
+      font-size: 0.85em;
+      color: #666;
+      word-wrap: break-word;
+    }
+
+    a.back::after,
+    a[href^="#"]::after,
+    a[href^="/"]::after {
+      content: none;
+    }
+  }
 </style>
