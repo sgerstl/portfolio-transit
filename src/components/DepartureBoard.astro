@@ -45,7 +45,22 @@ const stops = [
   const ROW_HEIGHT = 24;
   const CYCLE_MS = 5000;
 
+  let controller: AbortController | null = null;
+  let cycleTimer: number | null = null;
+  let intersectionObserver: IntersectionObserver | null = null;
+
   function init() {
+    controller?.abort();
+    controller = new AbortController();
+    const { signal } = controller;
+
+    if (cycleTimer !== null) {
+      clearInterval(cycleTimer);
+      cycleTimer = null;
+    }
+    intersectionObserver?.disconnect();
+    intersectionObserver = null;
+
     const ledInner = document.querySelector<HTMLElement>('.ns-led-inner');
     const ledRows = Array.from(document.querySelectorAll<HTMLElement>('.ns-row--led'));
     const board = document.querySelector<HTMLElement>('.naechste-station');
@@ -70,23 +85,27 @@ const stops = [
     showPage(0);
 
     if (pageOffsets.length > 1 && !reducedMotion) {
-      setInterval(() => {
+      cycleTimer = window.setInterval(() => {
         if (paused) return;
         pageIdx = (pageIdx + 1) % pageOffsets.length;
         showPage(pageIdx);
       }, CYCLE_MS);
     }
 
-    board.addEventListener('mouseenter', () => { paused = true; });
-    board.addEventListener('mouseleave', () => { paused = false; });
+    board.addEventListener('mouseenter', () => { paused = true; }, { signal });
+    board.addEventListener('mouseleave', () => { paused = false; }, { signal });
 
     // Click → request the matching case (Accordion handles open-or-scroll)
     ledRows.forEach((row) => {
-      row.addEventListener('click', () => {
-        const slug = row.dataset.target;
-        if (!slug) return;
-        window.dispatchEvent(new CustomEvent('case:open', { detail: { slug } }));
-      });
+      row.addEventListener(
+        'click',
+        () => {
+          const slug = row.dataset.target;
+          if (!slug) return;
+          window.dispatchEvent(new CustomEvent('case:open', { detail: { slug } }));
+        },
+        { signal },
+      );
     });
 
     // Current-stop tracking — observe [data-case] elements; the most-
@@ -98,7 +117,7 @@ const stops = [
         if (slug) labels[slug] = row.querySelector('.cell--ziel')?.textContent?.trim() ?? slug;
       });
 
-      const observer = new IntersectionObserver(
+      intersectionObserver = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
             if (!entry.isIntersecting) return;
@@ -110,7 +129,7 @@ const stops = [
         },
         { threshold: 0.4 },
       );
-      document.querySelectorAll<HTMLElement>('[data-case]').forEach((el) => observer.observe(el));
+      document.querySelectorAll<HTMLElement>('[data-case]').forEach((el) => intersectionObserver!.observe(el));
 
       let ticking = false;
       window.addEventListener(
@@ -123,7 +142,7 @@ const stops = [
             ticking = false;
           });
         },
-        { passive: true },
+        { passive: true, signal },
       );
     }
 
@@ -165,16 +184,21 @@ const stops = [
     };
 
     checkOverlap();
-    window.addEventListener('scroll', scheduleOverlapCheck, { passive: true });
-    window.addEventListener('resize', scheduleOverlapCheck);
-    window.addEventListener('spine:redraw', scheduleOverlapCheck);
+    window.addEventListener('scroll', scheduleOverlapCheck, { passive: true, signal });
+    window.addEventListener('resize', scheduleOverlapCheck, { signal });
+    window.addEventListener('spine:redraw', scheduleOverlapCheck, { signal });
+
+    signal.addEventListener('abort', () => {
+      if (cycleTimer !== null) {
+        clearInterval(cycleTimer);
+        cycleTimer = null;
+      }
+      intersectionObserver?.disconnect();
+      intersectionObserver = null;
+    });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+  document.addEventListener('astro:page-load', init);
 </script>
 
 <style>

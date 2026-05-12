@@ -112,8 +112,15 @@
 </style>
 
 <script>
-  const lb = document.getElementById('lightbox');
-  if (lb) {
+  let controller: AbortController | null = null;
+
+  function init() {
+    controller?.abort();
+    controller = new AbortController();
+    const { signal } = controller;
+
+    const lb = document.getElementById('lightbox');
+    if (!lb) return;
     const img = lb.querySelector('.lightbox-img') as HTMLImageElement;
     const title = lb.querySelector('.lightbox-title') as HTMLElement;
     const subtitle = lb.querySelector('.lightbox-subtitle') as HTMLElement;
@@ -135,23 +142,37 @@
       document.body.style.overflow = '';
     };
 
-    document.addEventListener('click', (e) => {
-      const trigger = (e.target as HTMLElement)?.closest('[data-lightbox-src]') as HTMLElement | null;
-      if (!trigger) return;
-      const src = trigger.getAttribute('data-lightbox-src') || '';
-      const t = trigger.getAttribute('data-lightbox-title') || '';
-      const s = trigger.getAttribute('data-lightbox-subtitle') || '';
-      if (src) open(src, t, s);
-    });
+    document.addEventListener(
+      'click',
+      (e) => {
+        const trigger = (e.target as HTMLElement)?.closest('[data-lightbox-src]') as HTMLElement | null;
+        if (!trigger) return;
+        const src = trigger.getAttribute('data-lightbox-src') || '';
+        const t = trigger.getAttribute('data-lightbox-title') || '';
+        const s = trigger.getAttribute('data-lightbox-subtitle') || '';
+        if (src) open(src, t, s);
+      },
+      { signal },
+    );
 
-    closeBtn.addEventListener('click', close);
+    closeBtn.addEventListener('click', close, { signal });
 
-    lb.addEventListener('click', (e) => {
-      if (e.target === lb) close();
-    });
+    lb.addEventListener(
+      'click',
+      (e) => {
+        if (e.target === lb) close();
+      },
+      { signal },
+    );
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && lb.classList.contains('is-open')) close();
-    });
+    document.addEventListener(
+      'keydown',
+      (e) => {
+        if (e.key === 'Escape' && lb.classList.contains('is-open')) close();
+      },
+      { signal },
+    );
   }
+
+  document.addEventListener('astro:page-load', init);
 </script>

@@ -174,8 +174,15 @@
 </style>
 
 <script>
-  const modal = document.getElementById('demo-modal');
-  if (modal) {
+  let controller: AbortController | null = null;
+
+  function init() {
+    controller?.abort();
+    controller = new AbortController();
+    const { signal } = controller;
+
+    const modal = document.getElementById('demo-modal');
+    if (!modal) return;
     const iframe = modal.querySelector('.demo-modal-iframe') as HTMLIFrameElement;
     const title = modal.querySelector('.demo-modal-title') as HTMLElement;
     const link = modal.querySelector('.demo-modal-link') as HTMLAnchorElement;
@@ -198,27 +205,41 @@
       iframe.src = 'about:blank';
     };
 
-    document.addEventListener('click', (e) => {
-      const trigger = (e.target as HTMLElement)?.closest('[data-demo]') as HTMLAnchorElement | null;
-      if (!trigger) return;
-      // Cmd/Ctrl/middle-click → let the browser open in a new tab.
-      const me = e as MouseEvent;
-      if (me.metaKey || me.ctrlKey || me.shiftKey || me.button === 1) return;
-      const href = trigger.getAttribute('href') || trigger.getAttribute('data-demo-href') || '';
-      const t = trigger.getAttribute('data-demo-title') || trigger.textContent?.trim() || '';
-      if (!href) return;
-      e.preventDefault();
-      open(href, t);
-    });
+    document.addEventListener(
+      'click',
+      (e) => {
+        const trigger = (e.target as HTMLElement)?.closest('[data-demo]') as HTMLAnchorElement | null;
+        if (!trigger) return;
+        // Cmd/Ctrl/middle-click → let the browser open in a new tab.
+        const me = e as MouseEvent;
+        if (me.metaKey || me.ctrlKey || me.shiftKey || me.button === 1) return;
+        const href = trigger.getAttribute('href') || trigger.getAttribute('data-demo-href') || '';
+        const t = trigger.getAttribute('data-demo-title') || trigger.textContent?.trim() || '';
+        if (!href) return;
+        e.preventDefault();
+        open(href, t);
+      },
+      { signal },
+    );
 
-    closeBtn.addEventListener('click', close);
+    closeBtn.addEventListener('click', close, { signal });
 
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) close();
-    });
+    modal.addEventListener(
+      'click',
+      (e) => {
+        if (e.target === modal) close();
+      },
+      { signal },
+    );
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && modal.classList.contains('is-open')) close();
-    });
+    document.addEventListener(
+      'keydown',
+      (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('is-open')) close();
+      },
+      { signal },
+    );
   }
+
+  document.addEventListener('astro:page-load', init);
 </script>

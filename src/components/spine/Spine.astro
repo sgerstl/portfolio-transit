@@ -42,6 +42,9 @@ const RAIL_TOP_Y = 64;
 
   type SectionKey = 'ai' | 'ent' | 'pers';
 
+  let controller: AbortController | null = null;
+  let resizeObserver: ResizeObserver | null = null;
+
   function buildBranchPath(startX: number, startY: number, endX: number, endY: number): string {
     const dx = endX - startX;
     const dy = endY - startY;
@@ -68,6 +71,13 @@ const RAIL_TOP_Y = 64;
   }
 
   function init() {
+    controller?.abort();
+    controller = new AbortController();
+    const { signal } = controller;
+
+    resizeObserver?.disconnect();
+    resizeObserver = null;
+
     const svg = document.getElementById('spine') as SVGSVGElement | null;
     if (!svg) return;
     const spineContainer = svg.parentElement as HTMLElement | null;
@@ -218,19 +228,21 @@ const RAIL_TOP_Y = 64;
       if (resizeTimeout) clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(draw, 100);
     };
-    window.addEventListener('resize', onResize);
-    const ro = new ResizeObserver(onResize);
-    ro.observe(spineContainer);
+    window.addEventListener('resize', onResize, { signal });
+    resizeObserver = new ResizeObserver(onResize);
+    resizeObserver.observe(spineContainer);
 
     // Accordion toggle requests an undebounced redraw on every animation
     // frame during its 420ms max-height transition so branch lines stay
     // glued to the moving section headers.
-    window.addEventListener('spine:redraw', draw);
+    window.addEventListener('spine:redraw', draw, { signal });
+
+    signal.addEventListener('abort', () => {
+      resizeObserver?.disconnect();
+      resizeObserver = null;
+      if (resizeTimeout) clearTimeout(resizeTimeout);
+    });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+  document.addEventListener('astro:page-load', init);
 </script>
