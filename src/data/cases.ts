@@ -731,7 +731,7 @@ export const CASES: CaseEntry[] = [
     name: 'Power Quality and Demand Response',
     tagline: 'AI insight, operator decision. 200+ industrial locations.',
     line: 'ent',
-    readingMinutes: 4,
+    readingMinutes: 5,
     body: {
       domains: ['Energy', 'Industrial', 'Operator UX'],
       outcome:
@@ -745,6 +745,76 @@ export const CASES: CaseEntry[] = [
       claim:
         'I design operator-facing surfaces that turn AI insight into industrial-scale operational decisions.',
       ctaHref: '/work/pqdr',
+    },
+    detail: {
+      chips: ['Enterprise', 'AI Insight', 'Operator UX', 'Industrial'],
+      hook: [
+        'AI-powered energy intelligence at industrial facilities. Operator-facing surfaces deployed across 200+ industrial locations of a single large customer at Ndustrial.',
+        'Two distinct surfaces on one underlying AI system. Power Quality, a dashboard where facility managers identify equipment likely causing efficiency losses. Demand Response, an alert surface where operators curtail operations in time to avoid utility penalties that can run into six figures annually. Both fed by the same AI analysis layer underneath.',
+      ],
+      sections: [
+        {
+          title: 'Two surfaces, one system',
+          subtitle: 'What each surface was designed to make decidable',
+          paragraphs: [
+            "One AI analysis layer. Two operator-facing surfaces. The decision to split the operator view rather than the AI was structural: the AI did the same kind of analysis in both cases, but the human work it triggered was fundamentally different in shape.",
+            'Power Quality was the diagnostic surface. The AI analyzed power quality data across the facility and the dashboard surfaced which equipment was most likely causing efficiency losses. Facility managers could see, at a glance, where their power was being wasted and which assets to investigate first.',
+            'Demand Response was the time-sensitive surface. When the utility signaled an impending peak-demand event, the alert surface notified facility or regional managers in time to curtail operations and comply with the program. The penalty for non-compliance with peak-shaving events can run into six figures annually for an industrial site. The interface was designed to make the curtailment decision fast, clear, and accountable.',
+            "Treating these as two operator views on one AI system, rather than one combined screen or two separate products, was the move. The AI's job was the same in both cases: analyze the data, surface what mattered. The operator's job was different. Diagnostic decisions take minutes or hours. Demand-response decisions take seconds. The two surfaces let each decision happen at its own speed.",
+          ],
+          decisions: [
+            {
+              title: 'Split the operator view, not the AI.',
+              body: 'The AI analysis is shared. The decisions it triggers are not. Power Quality is a diagnostic decision (which equipment to investigate next) measured in minutes or hours. Demand Response is a time-sensitive decision (curtail now or pay the penalty) measured in seconds. Pretending one surface could serve both would have made both worse.',
+            },
+            {
+              title: 'Diagnostic surface: surface what matters, not all the data.',
+              body: "The Power Quality dashboard's job was to point at the equipment most likely causing efficiency losses, not to show every event in the facility's history. Facility managers were already drowning in data. The AI's job was to filter; the design's job was to make the filter trustworthy.",
+            },
+            {
+              title: 'Time-sensitive surface: design for the window, not the user.',
+              body: 'Demand Response had a fixed clock. The utility signal arrived, the curtailment window opened, the penalty avoidance depended on action within that window. The surface had to make the decision visible, the consequences clear, and the action trivial to execute. Anything else competed with the window.',
+            },
+          ],
+          italicOutro:
+            "Operator-facing UX for AI insight is not the same problem as designing the AI itself. The AI's correctness is one question. Whether the operator can act on it within the time the situation allows is a different one.",
+        },
+        {
+          title: 'AI insight, operator decision',
+          subtitle: 'Where AI output meets the people who have to act on it',
+          paragraphs: [
+            "Designing operator-facing surfaces for AI output is a different competency than designing AI features. The AI engineer's question is whether the model produces correct output. The operator UX designer's question is whether the human downstream can recognize the output, trust it, and act on it within the time the situation allows.",
+            "Power Quality and Demand Response were the same answer to two versions of that question. Both surfaces gave the operator a view onto AI-generated analysis. Neither gave the operator the AI itself. The design move in both cases was to find the place where the operator's decision actually happens, then to surface the AI's contribution at that exact place.",
+            'Deployed across 200+ industrial locations of one customer, the system met operators where their decisions happened. Facility managers at the site for the diagnostic work. Facility or regional managers in the curtailment window for time-sensitive response. The operator was always the actor. The AI was always the analyst.',
+            'The structural value claim is the honest version: penalty avoidance built into the operator decision flow at industrial scale. Measured savings at a given site depended on operational data I never personally saw post-deployment. Naming the structural framing keeps the case credible; claiming dollars I cannot verify would not.',
+          ],
+          decisions: [
+            {
+              title: 'Designing for AI output, not designing the AI.',
+              body: "Different problem than designing the model. The AI's correctness is one question. Whether the operator can act on what the AI surfaces in the time the situation allows is a different one. Operator UX for AI insight is its own design competency.",
+            },
+            {
+              title: 'The operator is the actor. The AI is the analyst.',
+              body: "The system was never designed to replace the operator's judgment. It was designed to make the operator's judgment faster and better informed. Every surface decision followed from that division of labor.",
+            },
+            {
+              title: 'Structural value, not measured savings.',
+              body: 'The product was designed to help facilities avoid utility penalties that can run into six figures annually per industrial site. That is the structural framing. Measured savings at a specific site depended on conditions I never saw post-deployment, so the honest version of value is the structural one, not a dollar figure I cannot verify.',
+            },
+          ],
+          italicOutro:
+            "The portfolio claim is not 'I shipped a feature that saved X dollars.' It is 'I designed the surfaces that turn AI insight into operator action at industrial scale.' One of those is provable from the design. The other depends on operational data I don't have.",
+        },
+      ],
+      outcomeBeat: {
+        title: 'What the system was for',
+        paragraphs: [
+          'Deployed across more than 200 industrial locations of a single large customer at Ndustrial. Two operator surfaces, Power Quality and Demand Response, running on one AI analysis layer underneath. Designed to help facilities avoid utility penalties that can run into six figures annually for non-compliance with peak-shaving events.',
+          'Post-deployment performance data is not mine to claim. I designed the system; I did not personally see how each of the 200+ sites used it after rollout. The honest version of the work is what was shipped and what it was structured to enable, not a measured outcome number.',
+        ],
+        highlight:
+          "Operator UX for AI insight is its own kind of design judgment. The AI can be right and the design can still fail if the operator can't act on what the AI surfaces in the time the situation allows.",
+      },
     },
   },
   {
