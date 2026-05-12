@@ -364,8 +364,14 @@ img:not([data-allow-save]) {
 
   .hero-prelude {
     margin-bottom: 18px;
-    /* Clear the 9px blue rail at viewport x=16-25 with breathing room. */
-    padding-left: 18px;
+    /* Solid page-bg block so the prelude text reads cleanly on top of the
+       map wallpaper. Left padding clears the 9px blue rail at viewport
+       x=16-25 with breathing room; the block visually covers the very top
+       segment of the rail, which is acceptable since the rail extends well
+       past the prelude downward. */
+    padding: 10px 14px 12px 18px;
+    background: var(--color-bg);
+    border-radius: 4px;
   }
 
   .hero-prelude-line {
