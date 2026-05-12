@@ -21,6 +21,9 @@ export type CaseBody = {
   domains: string[];
   outcome: string;
   visualLabel: string;
+  visualImage?: string;
+  visualImageAlt?: string;
+  visualLayout?: 'split' | 'full';
   metrics: CaseMetric[];
   claim: string;
   ctaHref: string;
@@ -94,6 +97,9 @@ export const CASES: CaseEntry[] = [
       outcome:
         "An app built for one user with epilepsy. It's used daily to log events as the user experiences them. The AI Insights built into the app used the tracked data to surface an adverse drug interaction. A drug prescribed by the user's primary care physician was inhibiting the absorption of the anti-epileptic drugs the user depends on. This information was brought to the neurologist and they confirmed the interaction. The neurologist independently arrived at the same treatment direction the AI had suggested.",
       visualLabel: 'EPILOG · INSIGHTS SCREEN',
+      visualImage: '/images/cases/epilog/epilog-events-framed.png',
+      visualImageAlt: 'Epilog app Events screen in an iPhone frame, listing tracked seizures and auras',
+      visualLayout: 'split',
       metrics: [
         { num: '1', label: 'Active daily user with epilepsy' },
         { num: 'Confirmed', label: 'Neurologist independently reached the same conclusion' },
@@ -202,6 +208,9 @@ export const CASES: CaseEntry[] = [
       outcome:
         'Workout planning app with AI at three layers: as design deliverable, as builder, and inside the product. Research to shipped in 5 days. Three real users. End-to-end ownership from prompt to PWA.',
       visualLabel: 'CAL · LIVE PLAN DEMO',
+      visualImage: '/images/cases/cal/cal-dashboard.jpeg',
+      visualImageAlt: 'Cal app dashboard screen',
+      visualLayout: 'split',
       metrics: [
         { num: '3', label: 'Layers of AI: as deliverable, as builder, in product' },
         { num: '5 days', label: 'Research to shipped, end-to-end' },
@@ -323,6 +332,8 @@ export const CASES: CaseEntry[] = [
       outcome:
         "Design consulting on an AI sim-racing telemetry tool. Reframed the analysis app as the AI agent's workspace, not a chat panel beside it. Designed a race engineer pattern that translates expert practice into UX for sim-racers who don't have an engineer. Four worked archetypes shipped against the product's telemetry schemas.",
       visualLabel: 'SIM RACING COACH · TELEMETRY VIEW',
+      visualImage: '/images/cases/racemake/racemake-prototype-web-idle.png',
+      visualImageAlt: 'Sim Racing Coach web prototype, idle state with agent rail',
       metrics: [
         { num: 'Domain', label: 'Race-engineer perspective brought to AI tooling for sim-racers' },
         { num: 'Reframe', label: 'Analysis surface as agent workspace, not chat panel' },
@@ -480,6 +491,8 @@ export const CASES: CaseEntry[] = [
       outcome:
         'Vision design across 12 siloed products at Brightly. A unified design language and integration model proposed across the portfolio. Designs were used in acquisition-stage presentations to Siemens to demonstrate the platform vision and integration roadmap. Brightly was acquired for $1.575B.',
       visualLabel: 'BRIGHTLY · PLATFORM VISION HERO',
+      visualImage: '/images/cases/brightly/brightly-dashboard.jpeg',
+      visualImageAlt: 'Brightly platform dashboard with planned maintenance and at-risk assets',
       metrics: [
         { num: '$1.575B', label: 'Siemens acquisition' },
         { num: '74%', label: 'Customers excited by the future product direction' },
@@ -606,6 +619,8 @@ export const CASES: CaseEntry[] = [
       outcome:
         '0→1 industrial fleet operations product. Sole UX designer from initial research through shipped pilot. Consolidated three software tools and two paper forms into a single workflow. Gloves, dust, time pressure.',
       visualLabel: 'FLEET · WORKFLOW BEFORE & AFTER',
+      visualImage: '/images/cases/fleet/fleet-yard-map.jpeg',
+      visualImageAlt: 'Fleet yard management view with aerial map of dock and yard spots',
       metrics: [
         { num: '3 + 2 → 1', label: 'Tools and forms consolidated to a single workflow' },
         { num: 'Sole UX', label: 'Research, design, and pilot delivery' },

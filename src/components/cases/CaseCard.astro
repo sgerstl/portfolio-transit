@@ -49,8 +49,25 @@ const isPersonal = !!personal;
         <div class="case-domains">
           {body.domains.map((d) => <span>{d}</span>)}
         </div>
-        <p class="case-outcome">{body.outcome}</p>
-        <div class="case-visual">{body.visualLabel}</div>
+        {body.visualLayout === 'split' && body.visualImage ? (
+          <div class="case-row">
+            <p class="case-outcome">{body.outcome}</p>
+            <div class="case-visual case-visual--split">
+              <img src={body.visualImage} alt={body.visualImageAlt ?? ''} loading="lazy" draggable="false" />
+            </div>
+          </div>
+        ) : (
+          <>
+            <p class="case-outcome">{body.outcome}</p>
+            <div class="case-visual case-visual--full">
+              {body.visualImage ? (
+                <img src={body.visualImage} alt={body.visualImageAlt ?? ''} loading="lazy" draggable="false" />
+              ) : (
+                <span class="case-visual-label">{body.visualLabel}</span>
+              )}
+            </div>
+          </>
+        )}
         <div class="case-metrics">
           {body.metrics.map((m) => (
             <div class="case-metric">
@@ -285,6 +302,14 @@ const isPersonal = !!personal;
     opacity: 0.6;
   }
 
+  .case-row {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: 22px;
+    align-items: start;
+    margin-bottom: 22px;
+  }
+
   .case-outcome {
     font-family: 'Inter', sans-serif;
     font-size: 15px;
@@ -293,21 +318,58 @@ const isPersonal = !!personal;
     margin-bottom: 18px;
   }
 
+  .case-row > .case-outcome {
+    margin-bottom: 0;
+  }
+
   .case-visual {
-    height: 220px;
-    background: linear-gradient(135deg, #ececec, #f6f6f6);
-    border: 1px dashed rgba(0, 0, 0, 0.18);
     border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 22px;
+  }
+
+  .case-visual--full {
+    background: linear-gradient(135deg, #ececec, #f6f6f6);
+    display: block;
+  }
+
+  .case-visual--full img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .case-visual--split {
+    background: linear-gradient(135deg, #ececec, #f6f6f6);
     display: flex;
     align-items: center;
     justify-content: center;
+    min-height: 160px;
+  }
+
+  .case-visual--split img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 360px;
+    object-fit: contain;
+  }
+
+  .case-visual-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 220px;
+    border: 1px dashed rgba(0, 0, 0, 0.18);
+    border-radius: 4px;
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 13px;
     font-weight: 600;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--color-text-soft);
-    margin-bottom: 22px;
+    text-align: center;
+    padding: 16px;
   }
 
   .case-metrics {
@@ -613,15 +675,23 @@ const isPersonal = !!personal;
       gap: 8px;
     }
 
+    .case-row {
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
     .case-outcome {
       font-size: 14px;
       line-height: 1.55;
-      margin-bottom: 14px;
     }
 
     .case-visual {
-      height: 160px;
-      margin-bottom: 18px;
+      min-height: 0;
+    }
+
+    .case-visual img {
+      max-height: 240px;
     }
 
     .case-metrics {
