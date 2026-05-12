@@ -737,6 +737,8 @@ export const CASES: CaseEntry[] = [
       outcome:
         'Operator surfaces for AI-powered energy intelligence. Power Quality and Demand Response as two distinct operator views on one underlying AI system. Deployed across more than 200 industrial sites of a single customer. Penalty avoidance was the structural value, not a measured-savings claim.',
       visualLabel: 'PQ + DR · OPERATOR DASHBOARD',
+      visualImage: '/images/cases/pqdr/pq-one-line.png',
+      visualImageAlt: 'Power Quality at-a-glance dashboard surfacing high-impact assets and efficiency losses',
       metrics: [
         { num: '200+', label: 'Industrial locations of one customer' },
         { num: '2 surfaces', label: 'Power Quality and Demand Response built on one AI system' },
@@ -778,6 +780,21 @@ export const CASES: CaseEntry[] = [
           ],
           italicOutro:
             "Operator-facing UX for AI insight is not the same problem as designing the AI itself. The AI's correctness is one question. Whether the operator can act on it within the time the situation allows is a different one.",
+          screenshots: {
+            columns: 2,
+            images: [
+              {
+                src: '/images/cases/pqdr/pq-one-line.png',
+                alt: 'Power Quality at-a-glance dashboard surfacing the assets most likely causing efficiency losses',
+                caption: 'Power Quality: at a glance',
+              },
+              {
+                src: '/images/cases/pqdr/dr-overview.png',
+                alt: 'Demand Response overview showing peak-demand events and curtailment status across facilities',
+                caption: 'Demand Response: overview',
+              },
+            ],
+          },
         },
         {
           title: 'AI insight, operator decision',
@@ -804,6 +821,21 @@ export const CASES: CaseEntry[] = [
           ],
           italicOutro:
             "The portfolio claim is not 'I shipped a feature that saved X dollars.' It is 'I designed the surfaces that turn AI insight into operator action at industrial scale.' One of those is provable from the design. The other depends on operational data I don't have.",
+          screenshots: {
+            columns: 2,
+            images: [
+              {
+                src: '/images/cases/pqdr/pq-detail.png',
+                alt: 'Power Quality detail view drilling into a specific asset, with event timeline and analysis',
+                caption: 'Power Quality: asset detail',
+              },
+              {
+                src: '/images/cases/pqdr/dr-facility-detail.png',
+                alt: 'Demand Response facility detail with curtailment window, action, and accountability',
+                caption: 'Demand Response: facility detail',
+              },
+            ],
+          },
         },
       ],
       outcomeBeat: {
