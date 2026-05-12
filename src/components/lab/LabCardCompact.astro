@@ -28,43 +28,83 @@ const statusClass = `status-${statusKey}`;
     </span>
   </summary>
 
-  <div class="body">
-    <section>
-      <span class="label">Tried</span>
-      <p>{entry.tried}</p>
-    </section>
-    <section>
-      <span class="label">Learned</span>
-      <p>{entry.learned}</p>
-    </section>
-    {entry.didntWork && (
+  <div class="body-wrap">
+    <div class="body">
       <section>
-        <span class="label">What didn't work</span>
-        <p>{entry.didntWork}</p>
+        <span class="label">Tried</span>
+        <p>{entry.tried}</p>
       </section>
-    )}
-    {entry.forYourTeam && (
       <section>
-        <span class="label">For your team</span>
-        <p>{entry.forYourTeam}</p>
+        <span class="label">Learned</span>
+        <p>{entry.learned}</p>
       </section>
-    )}
+      {entry.didntWork && (
+        <section>
+          <span class="label">What didn't work</span>
+          <p>{entry.didntWork}</p>
+        </section>
+      )}
+      {entry.forYourTeam && (
+        <section>
+          <span class="label">For your team</span>
+          <p>{entry.forYourTeam}</p>
+        </section>
+      )}
 
-    {entry.links && entry.links.length > 0 && (
-      <div class="links">
-        {entry.links.map((l) => (
-          <a href={l.url} target="_blank" rel="noopener noreferrer">{l.label} ↗</a>
-        ))}
-      </div>
-    )}
+      {entry.links && entry.links.length > 0 && (
+        <div class="links">
+          {entry.links.map((l) => (
+            <a href={l.url} target="_blank" rel="noopener noreferrer">{l.label} ↗</a>
+          ))}
+        </div>
+      )}
 
-    {entry.demoUrl && !entry.links && (
-      <div class="links">
-        <a href={entry.demoUrl} data-demo data-demo-title={entry.title} target="_blank" rel="noopener noreferrer">Open demo ↗</a>
-      </div>
-    )}
+      {entry.demoUrl && !entry.links && (
+        <div class="links">
+          <a href={entry.demoUrl} data-demo data-demo-title={entry.title} target="_blank" rel="noopener noreferrer">Open demo ↗</a>
+        </div>
+      )}
+    </div>
   </div>
 </details>
+
+<script>
+  let controller: AbortController | null = null;
+
+  function init() {
+    controller?.abort();
+    controller = new AbortController();
+    const { signal } = controller;
+
+    document.querySelectorAll<HTMLDetailsElement>('details.lab-compact').forEach((details) => {
+      const summary = details.querySelector('summary');
+      const wrap = details.querySelector<HTMLElement>('.body-wrap');
+      if (!summary || !wrap) return;
+
+      summary.addEventListener(
+        'click',
+        (e) => {
+          e.preventDefault();
+          if (details.open) {
+            details.classList.add('is-closing');
+            const onEnd = (ev: TransitionEvent) => {
+              if (ev.propertyName !== 'grid-template-rows') return;
+              wrap.removeEventListener('transitionend', onEnd);
+              details.open = false;
+              details.classList.remove('is-closing');
+            };
+            wrap.addEventListener('transitionend', onEnd);
+          } else {
+            details.open = true;
+          }
+        },
+        { signal },
+      );
+    });
+  }
+
+  document.addEventListener('astro:page-load', init);
+</script>
 
 <style>
   .lab-compact {
@@ -163,11 +203,33 @@ const statusClass = `status-${statusKey}`;
   .lab-compact[open] .toggle-more { display: none; }
   .lab-compact:not([open]) .toggle-less { display: none; }
 
+  .body-wrap {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.35s cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+
+  .lab-compact:not([open]) .body-wrap,
+  .lab-compact.is-closing .body-wrap {
+    grid-template-rows: 0fr;
+  }
+
+  .body-wrap > .body {
+    min-height: 0;
+    overflow: hidden;
+  }
+
   .body {
     padding: 0 20px 20px;
     display: flex;
     flex-direction: column;
     gap: 14px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .body-wrap {
+      transition: none;
+    }
   }
 
   .body section {
