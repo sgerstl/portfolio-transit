@@ -17,14 +17,4 @@
     -webkit-user-drag: none;
     filter: saturate(0.30) opacity(0.45);
   }
-
-  /* Hidden on mobile — a 1440px-wide fixed-position SVG with a CSS filter
-     is the most expensive paint on the page, and Firefox Android is
-     particularly bad at compositing filtered fixed layers during scroll.
-     The map is decorative; mobile loses nothing structural without it. */
-  @media (max-width: 767px) {
-    .map-background {
-      display: none;
-    }
-  }
 </style>
