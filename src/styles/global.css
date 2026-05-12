@@ -39,6 +39,12 @@ html, body {
   box-sizing: border-box;
 }
 
+img:not([data-allow-save]) {
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 /* ── PAGE WRAPPER ──────────────────────────────────────── */
 .page {
   position: relative;

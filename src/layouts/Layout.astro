@@ -25,6 +25,14 @@ const { title = 'Scott Gerstl | Portfolio' } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <ClientRouter />
+    <script>
+      document.addEventListener('contextmenu', (e) => {
+        const target = e.target as HTMLElement | null;
+        if (target?.tagName === 'IMG' && !target.hasAttribute('data-allow-save')) {
+          e.preventDefault();
+        }
+      });
+    </script>
   </head>
   <body>
     <slot />
