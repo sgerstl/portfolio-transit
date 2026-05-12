@@ -81,17 +81,31 @@ html, body {
 
 .hero-prelude {
   --slide-x: 0px;
+  display: block;
+  margin-bottom: 30px;
+  will-change: transform, opacity;
+  position: relative;
+  transform: translate3d(var(--slide-x), 0, 0);
+}
+
+.hero-prelude-line {
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 38px;
   font-weight: 500;
   line-height: 1.1;
   letter-spacing: 0.01em;
   color: var(--color-text-soft);
-  display: block;
-  margin-bottom: 30px;
-  will-change: transform, opacity;
-  position: relative;
-  transform: translate3d(var(--slide-x), 0, 0);
+}
+
+.hero-qualifiers {
+  margin-top: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--color-text-soft);
+  opacity: 0.85;
+  max-width: 720px;
 }
 
 /* Card transform uses CSS variables so the scroll-driven slide-X
@@ -317,7 +331,7 @@ html, body {
     padding-right: 32px;
   }
 
-  .hero-prelude {
+  .hero-prelude-line {
     font-size: 30px;
   }
 }
@@ -343,11 +357,19 @@ html, body {
   }
 
   .hero-prelude {
-    font-size: 18px;
-    line-height: 1.25;
     margin-bottom: 18px;
     /* Clear the 9px blue rail at viewport x=16-25 with breathing room. */
     padding-left: 18px;
+  }
+
+  .hero-prelude-line {
+    font-size: 18px;
+    line-height: 1.25;
+  }
+
+  .hero-qualifiers {
+    font-size: 13px;
+    margin-top: 8px;
   }
 
   .hero-cards {

@@ -159,7 +159,12 @@ export default function Hero() {
   return (
     <section className="hero" aria-label="Introduction" ref={heroRef}>
       <div className="hero-prelude" ref={preludeRef}>
-        All aboard! Three stops to your destination.
+        <p className="hero-prelude-line">
+          All aboard! Three stops to your destination.
+        </p>
+        <p className="hero-qualifiers">
+          15 years · Enterprise systems and AI products · US/German citizen, EU work-authorized
+        </p>
       </div>
       <ul className="hero-cards">
         {STAT_CARDS.map((card, i) => (
@@ -186,7 +191,7 @@ export default function Hero() {
         >
           <span className="prop-label">Proposition</span>
           <p className="prop-primary">
-            I bring senior product design judgment to AI features and the enterprise systems they ship into.
+            Senior product design judgment for AI features and enterprise systems.
           </p>
           <p className="prop-secondary">
             Outcomes land in factories, schools, and hospitals, with the people who run them and
