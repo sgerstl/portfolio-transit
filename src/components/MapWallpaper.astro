@@ -17,4 +17,16 @@
     -webkit-user-drag: none;
     filter: saturate(0.30) opacity(0.45);
   }
+
+  /* Mobile: drop the saturate() filter and use the plain opacity property
+     instead. CSS filters force per-pixel compositing on every scroll frame
+     and Firefox Android is particularly bad at it; opacity composites on
+     the GPU for free. The map looks slightly more colorful on mobile than
+     desktop, but at 45% over a light bg the difference is minor. */
+  @media (max-width: 767px) {
+    .map-background {
+      filter: none;
+      opacity: 0.45;
+    }
+  }
 </style>
