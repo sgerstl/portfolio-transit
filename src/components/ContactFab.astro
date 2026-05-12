@@ -1,0 +1,203 @@
+---
+---
+
+<a
+  class="contact-fab"
+  id="contact-fab"
+  href="/#case-contact"
+  aria-label="Jump to contact section"
+  data-visible="false"
+>
+  <span class="contact-fab-chip" aria-hidden="true"></span>
+  <span class="contact-fab-label">Contact Me</span>
+  <svg
+    class="contact-fab-chevron"
+    viewBox="0 0 24 24"
+    width="14"
+    height="14"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2.25"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</a>
+
+<script>
+  import { smoothScrollTo } from '../lib/scroll';
+
+  let controller: AbortController | null = null;
+  let heroObserver: IntersectionObserver | null = null;
+  let contactObserver: IntersectionObserver | null = null;
+
+  function init() {
+    controller?.abort();
+    controller = new AbortController();
+    const { signal } = controller;
+
+    heroObserver?.disconnect();
+    heroObserver = null;
+    contactObserver?.disconnect();
+    contactObserver = null;
+
+    const fab = document.getElementById('contact-fab');
+    if (!fab) return;
+
+    const isHomepage = location.pathname === '/' || location.pathname === '/index.html';
+
+    const setVisible = (visible: boolean) => {
+      fab.dataset.visible = visible ? 'true' : 'false';
+    };
+
+    if (isHomepage) {
+      let heroInView = true;
+      let contactInView = false;
+
+      const apply = () => setVisible(!heroInView && !contactInView);
+      apply();
+
+      const heroEl = document.querySelector<HTMLElement>('.hero');
+      const contactEl = document.getElementById('case-contact');
+
+      if (heroEl) {
+        heroObserver = new IntersectionObserver(
+          (entries) => {
+            heroInView = entries[0]?.isIntersecting ?? false;
+            apply();
+          },
+          { threshold: 0.05 },
+        );
+        heroObserver.observe(heroEl);
+      } else {
+        heroInView = false;
+      }
+
+      if (contactEl) {
+        contactObserver = new IntersectionObserver(
+          (entries) => {
+            contactInView = entries[0]?.isIntersecting ?? false;
+            apply();
+          },
+          { threshold: 0.25 },
+        );
+        contactObserver.observe(contactEl);
+      }
+
+      fab.addEventListener(
+        'click',
+        (e) => {
+          if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+          e.preventDefault();
+          const target = document.getElementById('case-contact');
+          if (!target) {
+            location.href = '/#case-contact';
+            return;
+          }
+          history.replaceState(null, '', '/#case-contact');
+          const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          const r = target.getBoundingClientRect();
+          const y = window.scrollY + r.top - 80;
+          if (reduced) {
+            window.scrollTo(0, y);
+          } else {
+            smoothScrollTo(y);
+          }
+        },
+        { signal },
+      );
+    } else {
+      setVisible(true);
+    }
+
+    signal.addEventListener('abort', () => {
+      heroObserver?.disconnect();
+      heroObserver = null;
+      contactObserver?.disconnect();
+      contactObserver = null;
+    });
+  }
+
+  document.addEventListener('astro:page-load', init);
+</script>
+
+<style>
+  .contact-fab {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 90;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px 12px 22px;
+    background: white;
+    color: var(--color-text);
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14);
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition:
+      opacity 0.25s ease,
+      transform 0.25s ease,
+      box-shadow 0.2s ease,
+      background-color 0.15s ease;
+  }
+
+  .contact-fab[data-visible='true'] {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .contact-fab:hover {
+    background: #fafafa;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+  }
+
+  .contact-fab:focus-visible {
+    outline: 2px solid var(--color-line-pers);
+    outline-offset: 3px;
+  }
+
+  .contact-fab-chip {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 6px;
+    background: var(--color-line-pers);
+  }
+
+  .contact-fab-chevron {
+    color: var(--color-text-soft);
+    transition: transform 0.2s ease, color 0.15s ease;
+  }
+
+  .contact-fab:hover .contact-fab-chevron {
+    color: var(--color-text);
+    transform: translateX(2px);
+  }
+
+  @media (min-width: 768px) {
+    .contact-fab {
+      display: inline-flex;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .contact-fab {
+      transition-duration: 0.001ms !important;
+    }
+  }
+</style>
