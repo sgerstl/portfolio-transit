@@ -3,7 +3,7 @@ export type LineKey = 'ai' | 'ent' | 'pers';
 export type CaseSlug =
   | 'epilog'
   | 'cal'
-  | 'racemake'
+  | 'sim-racing'
   | 'brightly'
   | 'fleet'
   | 'pqdr'
@@ -322,7 +322,7 @@ export const CASES: CaseEntry[] = [
     },
   },
   {
-    slug: 'racemake',
+    slug: 'sim-racing',
     name: 'Sim Racing Coach',
     tagline: 'Race-engineer practice, designed into an AI product.',
     line: 'ai',
@@ -332,7 +332,7 @@ export const CASES: CaseEntry[] = [
       outcome:
         "Design consulting on an AI sim-racing telemetry tool. Reframed the analysis app as the AI agent's workspace, not a chat panel beside it. Designed a race engineer pattern that translates expert practice into UX for sim-racers who don't have an engineer. Four worked archetypes shipped against the product's telemetry schemas.",
       visualLabel: 'SIM RACING COACH · TELEMETRY VIEW',
-      visualImage: '/images/cases/racemake/racemake-prototype-web-idle.png',
+      visualImage: '/images/cases/sim-racing/prototype-web-idle.png',
       visualImageAlt: 'Sim Racing Coach web prototype, idle state with agent rail',
       metrics: [
         { num: 'Domain', label: 'Race-engineer perspective brought to AI tooling for sim-racers' },
@@ -341,7 +341,7 @@ export const CASES: CaseEntry[] = [
       ],
       claim:
         'I bring motorsports domain knowledge to AI product design. I use AI to scale expert practice and analysis so drivers at every level can benefit.',
-      ctaHref: '/work/racemake',
+      ctaHref: '/work/sim-racing',
     },
     detail: {
       chips: ['Consulting', 'AI', 'Agent UX', 'Sim-Racing'],
@@ -403,12 +403,12 @@ export const CASES: CaseEntry[] = [
             columns: 2,
             images: [
               {
-                src: '/images/cases/racemake/racemake-prototype-web-idle.png',
+                src: '/images/cases/sim-racing/prototype-web-idle.png',
                 alt: 'Web prototype, idle state with agent rail and surfaced findings',
                 caption: 'Web: agent rail with findings surfaced',
               },
               {
-                src: '/images/cases/racemake/racemake-prototype-desktop-trailer.png',
+                src: '/images/cases/sim-racing/prototype-desktop-trailer.png',
                 alt: 'Desktop prototype, trailer surface with capture and findings preview',
                 caption: 'Desktop: capture and trailer',
               },
@@ -446,22 +446,22 @@ export const CASES: CaseEntry[] = [
             columns: 2,
             images: [
               {
-                src: '/images/cases/racemake/racemake-corner-investigation.png',
+                src: '/images/cases/sim-racing/corner-investigation.png',
                 alt: 'Spatial investigation through a corner',
                 caption: 'Spatial question',
               },
               {
-                src: '/images/cases/racemake/racemake-session-arc.png',
+                src: '/images/cases/sim-racing/session-arc.png',
                 alt: 'Temporal investigation across a session',
                 caption: 'Temporal question',
               },
               {
-                src: '/images/cases/racemake/racemake-consistency-overview.png',
+                src: '/images/cases/sim-racing/consistency-overview.png',
                 alt: 'Distributional investigation across the lap',
                 caption: 'Distributional question',
               },
               {
-                src: '/images/cases/racemake/racemake-handling-state.png',
+                src: '/images/cases/sim-racing/handling-state.png',
                 alt: 'State-along-line investigation through a corner',
                 caption: 'State-along-line question',
               },
