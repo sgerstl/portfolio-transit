@@ -321,6 +321,12 @@ export const CASES: CaseEntry[] = [
       },
     },
   },
+  /* PENDING CLIENT APPROVAL — re-enable when Milan signs off.
+     See Slack DM 2026-05-12. Restoration: remove this comment
+     wrapper, restore SECTIONS subtitle to "3 stops · AI features,
+     AI products, AI as the design medium", re-add the CS1 row
+     to DepartureBoard stops, and uncomment the matching lab
+     anonymization entry in data/lab.ts.
   {
     slug: 'sim-racing',
     name: 'Sim Racing Coach',
@@ -480,6 +486,7 @@ export const CASES: CaseEntry[] = [
       },
     },
   },
+  */
   {
     slug: 'brightly',
     name: 'Brightly',
@@ -904,7 +911,7 @@ export const CASES: CaseEntry[] = [
 ];
 
 export const SECTIONS: { line: LineKey; code: string; title: string; subtitle: string }[] = [
-  { line: 'ai',   code: 'CS1', title: 'AI Case Studies',         subtitle: '3 stops · AI features, AI products, AI as the design medium' },
+  { line: 'ai',   code: 'CS1', title: 'AI Case Studies',         subtitle: '2 stops · AI features and AI as the design medium' },
   { line: 'ent',  code: 'CS2', title: 'Enterprise Case Studies', subtitle: '3 stops · vision, workflows, and operator surfaces' },
   { line: 'pers', code: 'P',   title: 'Personal',                subtitle: '2 stops · who I am off the clock, and how to reach me' },
 ];

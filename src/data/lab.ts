@@ -136,6 +136,8 @@ export const LAB_CATEGORIES: LabCategory[] = [
         forYourTeam:
           "AI collaborators have specializations. A team adopting AI shouldn't pick one tool and force-fit it to every job. Different parts of the work benefit from different AI affordances. Build the workflow around the affordances, not around the brand.",
       },
+      /* PENDING CLIENT APPROVAL — re-enable when Milan signs off on the
+         Sim Racing Coach case study. See Slack DM 2026-05-12.
       {
         title: 'Anonymizing a Client Case Study Without Losing the Substance',
         type: 'Workflow',
@@ -151,6 +153,7 @@ export const LAB_CATEGORIES: LabCategory[] = [
         forYourTeam:
           "Building a portfolio that includes active client engagements requires deciding up front what level of attribution is comfortable. The strongest case studies attribute design moves to the designer, not to overheard client conversations. If you can't say it as yours, it probably shouldn't be in the portfolio.",
       },
+      */
       {
         title: 'Playable Case Studies: Live Demo Embeds',
         type: 'Workflow',
