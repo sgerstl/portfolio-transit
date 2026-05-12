@@ -22,61 +22,61 @@ export type LabEntry = {
 export type LabCategory = {
   name: string;
   entries: LabEntry[];
-  heroTitles?: string[];
 };
 
 export const LAB_CATEGORIES: LabCategory[] = [
   {
     name: 'Products & Tools',
-    heroTitles: ['Epilog: Epilepsy Tracker'],
     entries: [
       {
-        title: 'Cal: AI Personal Trainer',
-        type: 'Product',
+        title: 'Metro Metaphor: A Visual Identity That Reached the Data Structures',
+        type: 'Experiment',
         status: 'Live',
         summary:
-          'A fully functional AI training app built in 5 days: 6-week programs, live voice-guided workouts, adaptive to injuries and equipment.',
+          'How a Berlin departure board became the structural identity of the entire site, after five other metaphors fell apart in execution.',
         tried:
-          'Used Claude Sonnet 4.6 to generate structured 6-week training programs from onboarding inputs. Treated the AI prompt as a design artifact, iterating on it like a UI component with heuristic evaluation on the output rather than the code. Directed the full implementation through Claude Code, reviewing live output against design intent in real time.',
+          "Tried five visual metaphors for the portfolio redesign: vintage transit poster, mission control panel, library, departure board / metro map, and minimalist Swiss design. Each had a hook. Four fell apart in execution. The departure board / metro stuck because the metaphor reached past the brand mark and into the data structures: lines became case categories (CS1 = AI, CS2 = Enterprise, P = Personal), stops became individual cases, ziel became the case name, Lesezeit became the reading time, and the current scroll position became the current stop.",
         learned:
-          'AI accelerates execution but does not replace judgment; it sharpens the demand for it. The feedback loop compresses from days to minutes, and your evaluation criteria become the bottleneck, not production speed. The prompt is the most important design deliverable in an AI-powered product. Every hour spent refining it pays back across every user session.',
+          "A sustained metaphor is harder than picking a strong one. The first three I tried were visually distinctive but stopped at the brand mark. The departure board worked because every level of the design system had a place in the metaphor's vocabulary. When the metaphor reaches into the data, it stops being decoration and becomes navigation.",
         didntWork:
-          'The voice control system is functional but rough. Two-tier parsing (local regex with Claude Haiku as fallback) works architecturally, but edge cases (commands fired mid-exercise, background noise triggering transitions) exposed how fragile voice UX is without tight environmental constraints. Still being refined.',
+          "Vintage transit poster was beautiful but read as nostalgic, not professional. Mission control was on-brand for AI but felt cliché. Library felt warm but disconnected from technical work. Swiss minimalist disappeared into the page background. The test for whether a metaphor sticks: can you describe a case study's information architecture using the metaphor's vocabulary without straining? Departure board passed. The others all failed at this exact step.",
         forYourTeam:
-          'Any team shipping AI features needs this distinction: the prompt is a design artifact, not an engineering concern. Owning that gap (deciding what the AI says, in what tone, with what constraints) is a UX responsibility. The quality of AI output is a design outcome.',
-        links: [
-          { label: 'Interactive demo', url: 'https://cal-demo.scottgerstl.com' },
-          { label: 'cal.scottgerstl.com', url: 'https://cal.scottgerstl.com' },
-        ],
+          "Visual identity for portfolios benefits from a metaphor that reaches the data structures, not just the surface styling. If you can't name your case studies' major fields in the metaphor's language, you'll fall back on conventional UI patterns and lose the brand.",
       },
       {
-        title: 'Epilog: Epilepsy Tracker',
+        title: 'Departure Board UX: BVG-Styled Scroll-Linked Navigation',
         type: 'Product',
         status: 'Live',
         summary:
-          'A Progressive Web App for tracking seizures, medication adherence, and generating shareable medical reports, built for a family member living with epilepsy.',
+          'A persistent navigation element styled as a Berlin train station departure display, updating in real time as visitors scroll through case studies.',
         tried:
-          'Designed a medical tracking tool with a specific person in mind. Someone who is logging an event while still recovering from it, trying to recall details that are already fading, and doing it on a phone in a moment of exhaustion. Every interaction was shaped by that reality: short steps, sensible defaults, minimal required fields. The goal was a tool that asks as little as possible while capturing everything that matters.',
+          "Built a fixed-position departure board in the top-right corner of every page. Mimics the BVG (Berlin transit authority) departure display: yellow LED-style monospaced text on black, German header labels (Linie, Ziel, Lesezeit). Each case is a stop with a line code, case name, and reading time. A 'Current Stop' indicator updates dynamically as the visitor scrolls, using IntersectionObserver against the case cards on the homepage.",
         learned:
-          'Proximity to the problem changes how you design. When you know the person using the app, you stop optimizing for the average case and start designing for the hard ones. The most valuable feature turned out to be the PDF export, because patients frequently arrive at neurology appointments without organized records of what has been happening. A well-structured report hands the doctor exactly what they need. That was not a technical insight. It came from sitting in the room.',
-        demoUrl: 'https://epilog-demo.scottgerstl.com',
+          "A piece of UI that looks decorative can do real navigation work if it's syntactically familiar. Anyone who has ridden the U-Bahn recognizes the departure-board format instantly. They read it correctly without instructions: Line, Destination, Time. The German labels convert the metaphor from 'transit-themed' to 'located in Berlin.' The board tells the visitor where I am without putting 'Based in Berlin' into copy.",
+        didntWork:
+          "First version updated on every scroll event, which was wasteful and visually flickery. Switched to IntersectionObserver against the case cards, which produces a clean 'you are now at X' signal only when a card crosses the viewport's midline. Also tried rendering the board with bitmap pixel-style text. Looked great in mockup but didn't scale across browsers. Reverted to a clean monospaced webfont with tight letter-spacing.",
+        forYourTeam:
+          "Navigation elements that look decorative can still be load-bearing. If a UI element resembles familiar infrastructure (a thermometer, a clock, a departure board, a weather widget), users will read it correctly without instructions. That's a design budget that costs nothing once you commit to the metaphor.",
       },
       {
-        title: 'This Portfolio Site',
-        type: 'Product',
-        status: 'Live',
+        title: 'Three Portfolio Patterns I Prototyped and Dropped',
+        type: 'Experiment',
+        status: 'Archived',
         summary:
-          'Rebuilt from a Figma Make export to a hand-owned React/Vite project, directed through Claude Code.',
+          'What the redesign tried and rejected: a password wall on case studies, modal-revealed services, and a philosophical hero headline. Three honest did-not-works.',
         tried:
-          'Used Claude Code to strip out Figma-specific dependencies, wire in proper TypeScript config, move hardcoded values to env vars, and extend the site with new features. Directed implementation in design language and evaluated output against the existing visual system in real time.',
+          "The old portfolio had three patterns I assumed I'd keep. A password wall on enterprise case studies (rationale: NDA content gating). Modal interactions for surfacing service categories on hover (rationale: keeping the homepage clean). A philosophical hero headline 'The hardest part of software has always been knowing what to build' (rationale: signaling depth). Each had a defensible case. Each tested poorly against the redesign rubric.",
         learned:
-          'The designer-developer relationship changes when the AI is the developer. Instead of handoff and wait, it becomes continuous evaluation of live output against design intent. You need clearer mental models of what "right" looks like, and you need to be able to articulate them fast.',
+          "All three failed the same way: they made the visitor do extra work to find out what I do. Hiring managers spend thirty seconds before deciding whether to scroll further. Anything that introduces friction in that window is paying for itself with their time. The redesign's organizing principle became: the page should give a recruiter the answer before they have to ask the question. Every removal followed from that.",
+        didntWork:
+          "Password walls signal 'trust me' but read as 'won't show you.' Modals require commitment before reveal; visitors arrived skeptical, and commitment was the wrong direction. Philosophical headlines flatter the writer but force the reader to do interpretation in a five-second window where they should be receiving a claim. Three different rationales, one same failure mode.",
+        forYourTeam:
+          "The portfolio patterns that get cut are often the ones that felt smart. 'Smart' usually means requires interpretation, which usually means loses the casual reader. Portfolios are casual-reader artifacts. Save the interpretation density for the case study bodies, not the navigation.",
       },
     ],
   },
   {
     name: 'Systems & Workflows',
-    heroTitles: ['Employment Panopticon: AI-Powered Job Hunt Command Center'],
     entries: [
       {
         title: 'Employment Panopticon: AI-Powered Job Hunt Command Center',
@@ -122,19 +122,34 @@ export const LAB_CATEGORIES: LabCategory[] = [
           'Messaging-based AI agents have a fundamentally different failure surface than web apps. There is no network tab, no console, no visual state to inspect. Every failure mode must be surfaced through the same text channel the user is communicating on, which means error handling is not just engineering hygiene but part of the UX. If your team is building conversational agents, invest in observability from day one. The feedback loop between "something is broken" and "I can see what broke" should be measured in seconds, not sessions.',
       },
       {
-        title: 'Cal Voice Control: Finding the Right Fallback',
-        type: 'Experiment',
-        status: 'In Progress',
+        title: 'Cowork as Design Collaborator: A Two-Claude Workflow',
+        type: 'Workflow',
+        status: 'Live',
         summary:
-          'Building a reliable voice command system for a live workout app, and learning where the hard limits of voice UX actually are.',
+          'The portfolio redesign was driven by two Claude instances working in parallel. Cowork handled the strategy and editorial work; Warp handled the implementation. Each played to a different affordance.',
         tried:
-          'Implemented a two-tier voice parsing system: local regex handles approximately 90% of commands instantly with no network round-trip, and Claude Haiku handles edge cases as a fallback. Added ElevenLabs TTS for synthesized coaching cues, with IndexedDB caching to avoid re-fetching repeated phrases and browser synthesis as a 6-second timeout fallback.',
+          "Used Claude Cowork (a file-editing, strategy, and writing collaborator) for the substantive design work: case study reviews, copy decisions, structural choices, reading source decks and notes, drafting the scoring rubric, and editing TypeScript content data. In parallel, used Claude in Warp (terminal-based coding collaborator) as the implementation arm: build verification, component layout work, integration changes, image asset handling. I sat between them as the editor and decision-maker, passing state through structured handoff prompts.",
         learned:
-          'Voice UX in a gym environment is harder than it looks because the failure modes are physical, not digital. A missed "done" command mid-set means the user has to touch their phone between reps, exactly the friction the feature was supposed to eliminate. The architecture is right; the calibration of when to trigger Haiku versus when to ignore ambient noise is still being tuned.',
+          'Different AI collaborators are good at different things, and forcing one to do the other one\'s job always feels suboptimal. Cowork excels at substantive judgment: reading source materials, scoring against benchmarks, drafting copy with specific voice rules, deciding what should change. Warp excels at implementation: running builds, systematic find-and-replace, executing layout work, running diffs. Separating their roles and writing handoff prompts to bridge them improved both the speed and the output.',
         didntWork:
-          'The 8-second transition window between exercises was swallowing commands. Commands fired twice when the transcript updated incrementally. Haiku triggered on background noise that regex correctly ignored. Each fix revealed a new edge case. This is not a solvable problem; it is a calibration problem that requires real-world testing with real users in actual gyms.',
+          'Started by treating both Claudes as interchangeable. The result was Cowork doing implementation work it could do but slower than Warp, and Warp doing copy work it could do but with less judgment than Cowork. Both worked. Both were suboptimal. The fix was a deliberate division of labor and a discipline around writing self-contained handoff prompts between sessions.',
         forYourTeam:
-          'Voice UX requires a different evaluation methodology than visual UX. Heuristic evaluation in a quiet office catches maybe 30% of failure modes. The other 70% only appear under physical use conditions. If your product has voice features, the test environment is part of the design spec, not an afterthought.',
+          "AI collaborators have specializations. A team adopting AI shouldn't pick one tool and force-fit it to every job. Different parts of the work benefit from different AI affordances. Build the workflow around the affordances, not around the brand.",
+      },
+      {
+        title: 'Anonymizing a Client Case Study Without Losing the Substance',
+        type: 'Workflow',
+        status: 'Live',
+        summary:
+          'When an active client engagement needs to live in a portfolio but the client has not reviewed the writeup yet, anonymization is a design problem of its own.',
+        tried:
+          'Renamed a sim-racing telemetry case study from the actual product name to a descriptive label. Stripped specific feature names (the AI surface name, the chat agent name) and replaced them with generic descriptors. Genericized the four worked archetypes by question shape (spatial, temporal, distributional, state-along-line) rather than by product-internal terms. Kept the architectural reframe and the design moves visible. The case is still recognizable as itself but no longer leaks specifics that would identify the client to a competitor.',
+        learned:
+          "Anonymizing a case study is a constraint that pushes you toward the most defensible version of the design claim. Without the product name to lean on, the case has to stand on the design judgment alone. The reframe ('the agent and the workspace are architecturally separated') is more durable when it's not attached to a specific product's specific features, because the same reframe could apply to other products in the same space. That generality is a feature, not a bug.",
+        didntWork:
+          "First draft used direct quotes from the founder. Even paraphrased, attributed quotes risk identification. Reworked to take ownership of the claims rather than attribute them. The result is tighter and less dependent on a third party's voice. If the case can't stand without that quote, the case is leaning on the wrong thing.",
+        forYourTeam:
+          "Building a portfolio that includes active client engagements requires deciding up front what level of attribution is comfortable. The strongest case studies attribute design moves to the designer, not to overheard client conversations. If you can't say it as yours, it probably shouldn't be in the portfolio.",
       },
       {
         title: 'Playable Case Studies: Live Demo Embeds',
@@ -156,6 +171,21 @@ export const LAB_CATEGORIES: LabCategory[] = [
   {
     name: 'Research & Evaluation',
     entries: [
+      {
+        title: 'Scoring My Old Portfolio: Building a Rubric, Then Designing From the Diagnosis',
+        type: 'Evaluation',
+        status: 'Live',
+        summary:
+          'Built a 9-category rubric against six celebrated portfolios. Scored my old site at 60%. Used the category-level gaps to direct the redesign. Estimated new score: 93%.',
+        tried:
+          "Identified six celebrated designer portfolios as benchmark references: Simon Pan, Robin Noguier, Adham Dannaway, Buzz Usborne, Alin Buda, and James Foo. Derived a 9-category rubric covering first impression, visual craft, content hierarchy, case study quality, voice, technical execution, strategic positioning, conversion, and originality. Scored my old portfolio against each at a 1-to-5 scale. Total: 27 out of 45, or 60%. Compared against Alin Buda's 42 out of 45 (93%), the top reference. The 15-point gap became the redesign brief.",
+        learned:
+          "Working from a rubric instead of a vibe-based 'redesign my site' brief gave the work an objective compass. Every change could be evaluated against a specific category's score. The biggest single-category jump was Content Hierarchy (2 to 5), achieved by removing password walls, dropping modals, and adopting the single-page scroll-through structure. The smallest gain was Case Study Quality (held at 4), because the prior cases were already strong; the gain came from breadth (five detail pages instead of one) rather than depth per case.",
+        didntWork:
+          'The rubric is opinionated. It privileges scannability, evidence density, and distinctive identity. It under-values depth-on-click for technical readers and accessibility-as-design-statement. The estimated 93% score on the new site is self-assessment against the same opinionated lens. Anyone using a different rubric would score it differently.',
+        forYourTeam:
+          "Self-assessment against a rubric you wrote yourself is biased. The mitigation is to write the rubric before doing the redesign and to benchmark against external references. That doesn't remove the bias entirely, but it keeps the work honest. Without a rubric, 'this looks better' is the only available standard; with one, the conversation moves to which category moved how many points and why.",
+      },
       {
         title: 'Gemini to Claude: Evaluating AI Provider Quality',
         type: 'Evaluation',

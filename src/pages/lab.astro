@@ -1,7 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
-import LabCard from '../components/lab/LabCard.astro';
 import LabCardCompact from '../components/lab/LabCardCompact.astro';
 import DemoModal from '../components/DemoModal.astro';
 import { LAB_CATEGORIES } from '../data/lab';
@@ -21,39 +20,25 @@ import { LAB_CATEGORIES } from '../data/lab';
       </p>
     </header>
 
-    {LAB_CATEGORIES.map((category) => {
-      const heroSet = new Set(category.heroTitles ?? []);
-      const heroEntries = category.entries.filter((e) => heroSet.has(e.title));
-      const compactEntries = category.entries.filter((e) => !heroSet.has(e.title));
+    {LAB_CATEGORIES.map((category) => (
+      <section class="lab-category">
+        <div class="cat-head">
+          <h2>{category.name}</h2>
+          <div class="rule"></div>
+        </div>
 
-      return (
-        <section class="lab-category">
-          <div class="cat-head">
-            <h2>{category.name}</h2>
-            <div class="rule"></div>
-          </div>
-
-          {heroEntries.length > 0 && (
-            <div class="hero-entries">
-              {heroEntries.map((entry) => <LabCard entry={entry} />)}
-            </div>
-          )}
-
-          {compactEntries.length > 0 && (
-            <div class="compact-grid">
-              {compactEntries.map((entry) => <LabCardCompact entry={entry} />)}
-            </div>
-          )}
-        </section>
-      );
-    })}
+        <div class="compact-grid">
+          {category.entries.map((entry) => <LabCardCompact entry={entry} />)}
+        </div>
+      </section>
+    ))}
   </main>
   <DemoModal />
 </Layout>
 
 <style>
   .lab-page {
-    max-width: 860px;
+    max-width: 940px;
     margin: 0 auto;
     padding: 120px 32px 120px;
   }
@@ -134,13 +119,6 @@ import { LAB_CATEGORIES } from '../data/lab';
     background: rgba(0, 0, 0, 0.12);
   }
 
-  .hero-entries {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    margin-bottom: 18px;
-  }
-
   .compact-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -183,11 +161,6 @@ import { LAB_CATEGORIES } from '../data/lab';
 
     .cat-head h2 {
       font-size: 18px;
-    }
-
-    .hero-entries {
-      gap: 14px;
-      margin-bottom: 14px;
     }
   }
 </style>
