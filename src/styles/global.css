@@ -362,16 +362,9 @@ img:not([data-allow-save]) {
     padding-top: 72px;
   }
 
+  /* Prelude hidden on mobile — proposition takes over as the lead-in. */
   .hero-prelude {
-    margin-bottom: 18px;
-    /* Solid page-bg block so the prelude text reads cleanly on top of the
-       map wallpaper. Left padding clears the 9px blue rail at viewport
-       x=16-25 with breathing room; the block visually covers the very top
-       segment of the rail, which is acceptable since the rail extends well
-       past the prelude downward. */
-    padding: 10px 14px 12px 18px;
-    background: var(--color-bg);
-    border-radius: 4px;
+    display: none;
   }
 
   .hero-prelude-line {
@@ -412,7 +405,13 @@ img:not([data-allow-save]) {
 
   .hero-card--proposition {
     width: 100%;
-    margin-top: 8px;
+    /* Proposition leads on mobile: visually pulled above the 3 stat cards.
+       Source order is unchanged (proposition stays last in the DOM) so the
+       JS animation stagger still slides it out last — meaning the most
+       important card both arrives first visually AND lingers longest as
+       the reader starts scrolling. */
+    order: -1;
+    margin-top: 0;
     padding: 22px 22px 26px;
   }
 
