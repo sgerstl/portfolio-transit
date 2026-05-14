@@ -360,6 +360,11 @@ img:not([data-allow-save]) {
     padding-left: 16px;
     padding-right: 16px;
     padding-top: 72px;
+    /* Some mobile browsers (notably Firefox Android) keep their URL bar
+       and bottom nav visible while still resolving 100vh against the
+       large viewport, which pushes the bottom hero card below the visible
+       area. svh = small viewport height, sized for toolbars-visible. */
+    height: 100svh;
   }
 
   /* Prelude hidden on mobile — proposition takes over as the lead-in. */

@@ -99,6 +99,34 @@
       },
       { signal },
     );
+
+    // Auto-reopen the case the user just came from. Two sources, checked
+    // in order: (1) URL hash like #case-cal, set by the in-page back link
+    // on case detail pages; (2) document.referrer pointing at /work/[slug],
+    // which covers the browser back button when no hash is present.
+    const reopenFromContext = () => {
+      let slug: string | null = null;
+
+      const hash = window.location.hash;
+      if (hash.startsWith('#case-')) {
+        slug = hash.slice('#case-'.length);
+      } else if (document.referrer) {
+        try {
+          const url = new URL(document.referrer);
+          if (url.origin === window.location.origin) {
+            const m = url.pathname.match(/^\/work\/([^/]+)\/?$/);
+            if (m) slug = m[1];
+          }
+        } catch {
+          /* malformed referrer — ignore */
+        }
+      }
+
+      if (slug) {
+        window.dispatchEvent(new CustomEvent('case:open', { detail: { slug } }));
+      }
+    };
+    reopenFromContext();
   }
 
   document.addEventListener('astro:page-load', init);

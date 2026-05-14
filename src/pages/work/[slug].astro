@@ -20,7 +20,7 @@ const detail = entry.detail;
   <Header />
 
   <main class={`case-page ${detail?.demoUrl ? 'has-phone' : ''}`} style={`--accent: ${colorVar};`}>
-    <a class="back" href="/#cases">← Back to cases</a>
+    <a class="back" href={`/#case-${entry.slug}`}>← Back to cases</a>
 
     {detail ? (
       <div class={`case-grid ${detail.demoUrl ? 'with-phone' : ''}`}>
@@ -702,6 +702,13 @@ const detail = entry.detail;
     .screenshot-caption {
       font-size: 11px;
       padding: 6px 4px;
+    }
+
+    /* Hidden on mobile — these prompt the reader to interact with the
+       embedded live demo, which is desktop-only. On mobile the case shows
+       screenshots instead, so the prompts have no corresponding affordance. */
+    .try-it {
+      display: none;
     }
 
     .outcome-beat {
