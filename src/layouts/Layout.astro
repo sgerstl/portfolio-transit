@@ -24,6 +24,15 @@ const { title = 'Scott Gerstl | Portfolio' } = Astro.props;
     />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <meta property="og:title" content="Scott Gerstl — Senior product designer" />
+    <meta property="og:description" content="15 years shipping enterprise platforms and AI products. Berlin." />
+    <meta property="og:image" content="https://ux.scottgerstl.com/og-image.png" />
+    <meta property="og:url" content="https://ux.scottgerstl.com/" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://ux.scottgerstl.com/og-image.png" />
+    <meta name="twitter:title" content="Scott Gerstl — Senior product designer" />
+    <meta name="twitter:description" content="15 years shipping enterprise platforms and AI products. Berlin." />
     <ClientRouter />
     <script>
       document.addEventListener('contextmenu', (e) => {
