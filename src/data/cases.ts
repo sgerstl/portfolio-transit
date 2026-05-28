@@ -860,8 +860,8 @@ export const CASES: CaseEntry[] = [
         'I love wheeled things. Bikes, cars, and even public transit.',
         "I've built and prepped cars for high performance track driving, driven them at the limit, and coached others to find theirs. Helping someone get fast means understanding what needs to happen, and what can go wrong, before you suggest anything different.",
         "I've been a cyclist since the 90s. I cut my teeth on mountain bikes, then fell headlong into road cycling, racing, endurance rides, cyclocross, and commuting. Now I'm combining it all, on and off road, in and around Berlin.",
-        "I'm also a fan of public transit and the freedom it offers. As an American in Berlin, the freedom of not needing a car is a welcome change, even with how much I love cars and driving. This page is themed in celebration of that freedom.",
-        "It's all about the user experience.",
+        "Public transit is the third wheel, and the reason this site is built around a transit map. A subway has to work for a tourist who doesn't speak the language, a commuter who is late, a kid riding alone, an elderly rider with a cane, a wheelchair user, and somebody running on no sleep at the end of a long day. The route map, the signage, the ticket machine, the platform announcements, and more, all have to clear the same accessibility and clarity bar for every one of those people, in seconds, with no instructions. That is a serious bar.",
+        "It is also the bar I want to clear with my designs. The transit metaphor here is a statement about what design is for, and not simply a styling choice.",
         'I also like to draw sometimes...',
       ],
       gallery: [
