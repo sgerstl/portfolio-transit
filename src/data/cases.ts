@@ -142,7 +142,7 @@ export const CASES: CaseEntry[] = [
       hook: [
         t(
           'A seizure and aura tracker built for a family member. Log an event in seconds, find patterns across months, and surface insights that change a clinical conversation.',
-          'Ein Anfalls- und Aura-Tracker, gebaut für ein Familienmitglied. Ein Ereignis in Sekunden erfassen, Muster über Monate erkennen, und Erkenntnisse zutage bringen, die ein klinisches Gespräch verändern.',
+          'Ein Anfalls- und Aura-Tracker, gebaut für ein Familienmitglied. Ein Ereignis in Sekunden erfassen, Muster über Monate erkennen, und Erkenntnisse zutage bringen, die ein klinisches Gespräch verändern können.',
         ),
         t(
           "Its AI analysis caught a drug interaction their GP had missed: a fiber supplement was interfering with their anti-epileptic medication. They brought the finding to their neurologist, stopped the supplement, and seizure activity went down.",
@@ -156,7 +156,7 @@ export const CASES: CaseEntry[] = [
           paragraphs: [
             t(
               "Someone you love has epilepsy. You watch them try to log an event after a seizure or aura, still foggy, motor control off, cognitive function not fully back online. The event is over, but the aftermath is real. That's not a user story you write on a whiteboard. It's something you understand by being in the room.",
-              'Jemand, den du liebst, hat Epilepsie. Du siehst zu, wie er versucht, ein Ereignis nach einem Anfall oder einer Aura zu protokollieren, noch benommen, Motorik beeinträchtigt, kognitive Funktion noch nicht ganz wieder da. Das Ereignis ist vorbei, aber die Nachwirkungen sind real. Das ist keine User Story, die man auf einem Whiteboard schreibt. Das versteht man, indem man im Raum ist.',
+              'Jemand, den du liebst, hat Epilepsie. Du siehst zu, wie diese Person versucht, ein Ereignis nach einem Anfall oder einer Aura zu protokollieren, noch benommen, Motorik beeinträchtigt, kognitive Funktion noch nicht ganz wieder da. Das Ereignis ist vorbei, aber die Nachwirkungen sind real. Das ist keine User Story, die man auf einem Whiteboard schreibt. Das versteht man, indem man im Raum ist.',
             ),
             t('Three constraints came out of that proximity:', 'Drei Einschränkungen sind aus dieser Nähe entstanden:'),
           ],
@@ -185,7 +185,7 @@ export const CASES: CaseEntry[] = [
           ],
           italicOutro: t(
             'AI can build a health tracker in an afternoon. Knowing which three constraints actually matter requires sitting in the room where the problem lives.',
-            'KI kann einen Health-Tracker an einem Nachmittag bauen. Zu wissen, welche drei Einschränkungen tatsächlich zählen, erfordert es, im Raum zu sitzen, in dem das Problem lebt.',
+            'KI kann einen Gesundheits-Tracker an einem Nachmittag bauen. Zu wissen, welche drei Einschränkungen tatsächlich zählen, erfordert es, im Raum zu sitzen, in dem das Problem lebt.',
           ),
           tryIts: [
             t(
@@ -334,7 +334,7 @@ export const CASES: CaseEntry[] = [
         ),
         t(
           "When production velocity is cheap, judgment becomes expensive. That's the shift this project is about.",
-          'Wenn Produktionsgeschwindigkeit billig ist, wird Urteilsvermögen teuer. Um diese Verschiebung geht es in diesem Projekt.',
+          'Wenn Umsetzung kostenlos ist, wird Urteilsvermögen teuer. Um diese Verschiebung geht es in diesem Projekt.',
         ),
       ],
       sections: [
@@ -383,7 +383,7 @@ export const CASES: CaseEntry[] = [
             ),
             t(
               "I treated this prompt the way I'd treat any design artifact: iterating on it, running heuristic evaluations against its output, and refining based on what the AI produced rather than what I expected. The prompt went through more revisions than any single screen in the app.",
-              'Ich habe diesen Prompt behandelt, wie ich jedes Designartefakt behandeln würde: an ihm iteriert, heuristische Bewertungen gegen seine Ausgabe gefahren und auf Basis dessen verfeinert, was die KI produziert hat, statt dessen, was ich erwartet habe. Der Prompt hat mehr Revisionen durchlaufen als irgendein einzelner Screen in der App.',
+              'Ich habe diesen Prompt wie jedes andere Designartefakt behandelt: daran iteriert, seine Ausgabe heuristisch bewertet und auf Basis dessen verfeinert, was die KI tatsächlich produziert hat, nicht auf Basis dessen, was ich erwartet hatte. Der Prompt hat mehr Revisionen durchlaufen als irgendein einzelner Screen in der App.',
             ),
           ],
           decisions: [
@@ -395,7 +395,7 @@ export const CASES: CaseEntry[] = [
               ),
             },
             {
-              title: t('"No exceptions" is load-bearing.', '„Keine Ausnahmen" ist tragend.'),
+              title: t('"No exceptions" is load-bearing.', '„Keine Ausnahmen" ist das tragende Element.'),
               body: t(
                 '"Max 3 working sets per exercise. No exceptions." Removed that phrase once in testing. The model added a 4th set "for advanced athletes." Constraint specificity replaces judgment calls you don\'t want delegated.',
                 '„Maximal 3 Arbeitssätze pro Übung. Keine Ausnahmen." Diesen Satz einmal beim Testen entfernt. Das Modell hat einen 4. Satz „für fortgeschrittene Athleten" hinzugefügt. Die Spezifität von Einschränkungen ersetzt Urteile, die man nicht delegieren möchte.',
@@ -437,7 +437,7 @@ export const CASES: CaseEntry[] = [
             ),
             t(
               'The architecture is sound: two-tier parsing with local regex handling ~90% of commands instantly (no network round-trip) and Claude Haiku as a fallback for edge cases. ElevenLabs TTS for synthesized coaching cues, with IndexedDB caching to avoid re-fetching repeated phrases.',
-              'Die Architektur ist solide: zweistufiges Parsing, bei dem lokales Regex etwa 90 % der Befehle sofort verarbeitet (kein Netzwerk-Round-Trip), mit Claude Haiku als Fallback für Sonderfälle. ElevenLabs TTS für synthetisierte Coaching-Hinweise, mit IndexedDB-Caching, um wiederholte Phrasen nicht erneut abzurufen.',
+              'Die Architektur ist solide: zweistufiges Parsing, bei dem lokale Regex-Verarbeitung etwa 90 % der Befehle sofort verarbeitet (kein Netzwerk-Round-Trip), mit Claude Haiku als Fallback für Sonderfälle. ElevenLabs TTS für synthetisierte Coaching-Hinweise, mit IndexedDB-Caching, um wiederholte Phrasen nicht erneut abzurufen.',
             ),
             t(
               'The failure modes are physical, not digital. A missed "done" command mid-set means the user has to touch their phone between reps, exactly the friction the feature was supposed to eliminate. Commands fired twice when the transcript updated incrementally. Haiku triggered on background noise that regex correctly ignored. Each fix revealed a new edge case.',
@@ -499,7 +499,7 @@ export const CASES: CaseEntry[] = [
       ],
       outcome: t(
         "Design consulting on an AI sim-racing telemetry tool. Reframed the analysis app as the AI agent's workspace, not a chat panel beside it. Designed a race engineer pattern that translates expert practice into UX for sim-racers who don't have an engineer. Four worked archetypes shipped against the product's telemetry schemas.",
-        'Designberatung für ein KI-Telemetrie-Tool im Sim-Racing. Die Analyse-App neu gerahmt als Arbeitsfläche des KI-Agenten, nicht als Chat-Panel daneben. Ein Race-Engineer-Pattern entworfen, das Expertenpraxis in UX für Sim-Racer übersetzt, die keinen Ingenieur haben. Vier ausgearbeitete Archetypen ausgeliefert, gegen die Telemetrie-Schemata des Produkts.',
+        'Designberatung für ein KI-Telemetrie-Tool im Sim-Racing. Die Analyse-App umgedeutet als Arbeitsbereich des KI-Agenten, nicht als Chat-Panel daneben. Ein Race-Engineer-Pattern entworfen, das Expertenpraxis in UX für Sim-Racer übersetzt, die keinen Ingenieur haben. Vier ausgearbeitete Archetypen ausgeliefert, gegen die Telemetrie-Schemata des Produkts.',
       ),
       visualLabel: t('SIM RACING COACH · TELEMETRY VIEW', 'SIM RACING COACH · TELEMETRIE-ANSICHT'),
       visualImage: '/images/cases/sim-racing/prototype-web-idle.png',
@@ -519,7 +519,7 @@ export const CASES: CaseEntry[] = [
           num: t('Reframe', 'Umdeutung'),
           label: t(
             'Analysis surface as agent workspace, not chat panel',
-            'Analyse-Oberfläche als Agenten-Arbeitsfläche, nicht als Chat-Panel',
+            'Analyse-Oberfläche als Agenten-Arbeitsbereich, nicht als Chat-Panel',
           ),
         },
         {
@@ -550,7 +550,7 @@ export const CASES: CaseEntry[] = [
       ],
       sections: [
         {
-          title: t('The agent and the workspace', 'Der Agent und die Arbeitsfläche'),
+          title: t('The agent and the workspace', 'Der Agent und der Arbeitsbereich'),
           subtitle: t('What the product already had, and what it was missing', 'Was das Produkt schon hatte, und was ihm fehlte'),
           paragraphs: [
             t(
@@ -563,7 +563,7 @@ export const CASES: CaseEntry[] = [
             ),
             t(
               'The agent had the data. The workspace had no agent thinking with the user inside it. Each surface was doing one piece of the job a real race engineer does in a single conversation.',
-              'Der Agent hatte die Daten. Die Arbeitsfläche hatte keinen Agenten, der mit dem Nutzer darin nachdachte. Jede Oberfläche machte ein Stück der Aufgabe, die ein echter Race-Engineer in einem einzigen Gespräch erledigt.',
+              'Der Agent hatte die Daten. Der Arbeitsbereich hatte keinen Agenten, der mit dem Nutzer darin nachdachte. Jede Oberfläche machte ein Stück der Aufgabe, die ein echter Race-Engineer in einem einzigen Gespräch erledigt.',
             ),
           ],
           decisions: [
@@ -575,7 +575,7 @@ export const CASES: CaseEntry[] = [
               ),
             },
             {
-              title: t('A chat agent in a separate window is architecturally severed from the workspace.', 'Ein Chat-Agent in einem separaten Fenster ist architektonisch von der Arbeitsfläche getrennt.'),
+              title: t('A chat agent in a separate window is architecturally severed from the workspace.', 'Ein Chat-Agent in einem separaten Fenster ist architektonisch vom Arbeitsbereich getrennt.'),
               body: t(
                 'The chat is functional but the user has to carry insights back into their own analysis context by hand. The agent and the work it is supposed to help with are in different rooms.',
                 'Der Chat funktioniert, aber der Nutzer muss Erkenntnisse von Hand in seinen eigenen Analyse-Kontext zurücktragen. Der Agent und die Arbeit, bei der er helfen soll, sind in unterschiedlichen Räumen.',
@@ -595,20 +595,20 @@ export const CASES: CaseEntry[] = [
           ),
         },
         {
-          title: t('Agent-as-workspace', 'Agent-als-Arbeitsfläche'),
-          subtitle: t('One structural move that reframed the whole product', 'Ein struktureller Zug, der das ganze Produkt neu gerahmt hat'),
+          title: t('Agent-as-workspace', 'Der Agent als Arbeitsbereich'),
+          subtitle: t('One structural move that reframed the whole product', 'Ein struktureller Zug, der das ganze Produkt umgedeutet hat'),
           paragraphs: [
             t(
               'The reframe was a single architectural commitment. The web app stops being an analysis tool with a chat panel. It becomes an AI agent surface, with the analysis view as the workspace the agent operates inside.',
-              'Die Neurahmung war eine einzige architektonische Festlegung. Die Web-App hört auf, ein Analysetool mit einem Chat-Panel zu sein. Sie wird zu einer KI-Agenten-Oberfläche, mit der Analyse-Ansicht als Arbeitsfläche, in der der Agent operiert.',
+              'Die Umdeutung war eine einzige architektonische Festlegung. Die Web-App hört auf, ein Analysetool mit einem Chat-Panel zu sein. Sie wird zu einer KI-Agenten-Oberfläche, mit der Analyse-Ansicht als Arbeitsbereich, in dem der Agent operiert.',
             ),
             t(
               'Not chat-adjacent-to-data. Not three modes the user toggles between. Three states of one persistent agent rail: idle when the user opens a session and the agent has the floor, investigating when the agent narrates while the workspace annotates, exploring when the agent recedes and the user drives.',
-              'Nicht Chat-neben-Daten. Nicht drei Modi, zwischen denen der Nutzer wechselt. Drei Zustände einer einzigen, dauerhaft präsenten Agenten-Leiste: ruhend, wenn der Nutzer eine Session öffnet und der Agent das Wort hat; untersuchend, wenn der Agent erzählt, während die Arbeitsfläche annotiert; erkundend, wenn der Agent zurücktritt und der Nutzer fährt.',
+              'Nicht Chat-neben-Daten. Nicht drei Modi, zwischen denen der Nutzer wechselt. Drei Zustände eines einzigen, dauerhaft präsenten Agenten-Panels: ruhend, wenn der Nutzer eine Session öffnet und der Agent das Wort hat; untersuchend, wenn der Agent erzählt, während der Arbeitsbereich annotiert; erkundend, wenn der Agent zurücktritt und der Nutzer fährt.',
             ),
             t(
               'Under that architecture sits the behavioral spec. A race engineer pattern, not a chat persona. Diagnose before prescribe. One primary correction per cycle. Specificity over generality. Annotate the workspace, do not just describe it. Suggest a follow-up so the conversation has somewhere to go.',
-              'Unter dieser Architektur sitzt die Verhaltensspezifikation. Ein Race-Engineer-Pattern, keine Chat-Persona. Diagnose vor Verschreibung. Eine primäre Korrektur pro Zyklus. Spezifität vor Allgemeinheit. Die Arbeitsfläche annotieren, nicht nur beschreiben. Eine Folgefrage vorschlagen, damit das Gespräch irgendwo hingehen kann.',
+              'Unter dieser Architektur sitzt die Verhaltensspezifikation. Ein Race-Engineer-Pattern, keine Chat-Persona. Diagnose vor Verschreibung. Eine primäre Korrektur pro Zyklus. Spezifität vor Allgemeinheit. Den Arbeitsbereich annotieren, nicht nur beschreiben. Eine Folgefrage vorschlagen, damit das Gespräch irgendwo hingehen kann.',
             ),
           ],
           decisions: [
@@ -643,8 +643,8 @@ export const CASES: CaseEntry[] = [
             images: [
               {
                 src: '/images/cases/sim-racing/prototype-web-idle.png',
-                alt: t('Web prototype, idle state with agent rail and surfaced findings', 'Web-Prototyp, ruhender Zustand mit Agenten-Leiste und zutage gebrachten Befunden'),
-                caption: t('Web: agent rail with findings surfaced', 'Web: Agenten-Leiste mit zutage gebrachten Befunden'),
+                alt: t('Web prototype, idle state with agent rail and surfaced findings', 'Web-Prototyp, ruhender Zustand mit Agenten-Panel und zutage gebrachten Befunden'),
+                caption: t('Web: agent rail with findings surfaced', 'Web: Agenten-Panel mit zutage gebrachten Befunden'),
               },
               {
                 src: '/images/cases/sim-racing/prototype-desktop-trailer.png',
@@ -901,7 +901,7 @@ export const CASES: CaseEntry[] = [
             ),
             t(
               'As Manager of Product Design at Brightly, I led a team of seven designers distributed across Melbourne, London, Noida, Montreal, and the US. The structural work, the executive presentation, and the case for the reframe were mine. A senior designer on the team paired with me on the visual execution; most of what you would see in the prototypes is their craft. The two halves of the work fit together: the architecture decided what to argue, the visual design decided how to argue it.',
-              'Als Manager of Product Design bei Brightly habe ich ein Team von sieben Designern geführt, verteilt über Melbourne, London, Noida, Montreal und die USA. Die strukturelle Arbeit, die Executive-Präsentation und das Argument für die Neurahmung waren meine. Eine Senior-Designerin im Team hat sich mit mir an der visuellen Umsetzung gepaart; das meiste, was du in den Prototypen sehen würdest, ist ihr Handwerk. Die beiden Hälften der Arbeit passten zusammen: die Architektur entschied, was zu argumentieren ist, das visuelle Design entschied, wie es zu argumentieren ist.',
+              'Als Manager of Product Design bei Brightly habe ich ein Team von sieben Designern geführt, verteilt über Melbourne, London, Noida, Montreal und die USA. Die strukturelle Arbeit, die Executive-Präsentation und das Argument für die Umdeutung waren meine. Eine Senior-Designerin im Team hat sich mit mir an der visuellen Umsetzung gepaart; das meiste, was du in den Prototypen sehen würdest, ist ihr Handwerk. Die beiden Hälften der Arbeit passten zusammen: die Architektur entschied, was zu argumentieren ist, das visuelle Design entschied, wie es zu argumentieren ist.',
             ),
             t(
               'The deliverables stacked on each other. A new corporate design language anchored to the rebrand. A unified design system built on top. A front-end-agnostic UI component library any product team could implement against. North star designs for the integrated portfolio. A transition plan from current siloed products to the platform shape. The point of the stack was that each layer made the next one implementable rather than aspirational.',
@@ -1412,11 +1412,11 @@ export const CASES: CaseEntry[] = [
         ),
         t(
           "Public transit is the third wheel, and the reason this site is built around a transit map. A subway has to work for a tourist who doesn't speak the language, a commuter who is late, a kid riding alone, an elderly rider with a cane, a wheelchair user, and somebody running on no sleep at the end of a long day. The route map, the signage, the ticket machine, the platform announcements, and more, all have to clear the same accessibility and clarity bar for every one of those people, in seconds, with no instructions. That is a serious bar.",
-          'Der öffentliche Nahverkehr ist das dritte Rad, und der Grund, warum diese Seite um einen Liniennetzplan herum gebaut ist. Eine U-Bahn muss funktionieren, und zwar für eine Touristin, die kein Deutsch spricht, für einen Pendler, der zu spät dran ist, für ein Kind, das alleine fährt, für eine ältere Frau mit Gehstock, für einen Rollstuhlfahrer und für jemanden, der am Ende eines langen Tages auf dem Zahnfleisch geht. Der Liniennetzplan, die Beschilderung, der Fahrkartenautomat, die Bahnsteigansagen und mehr, alles muss für jede dieser Personen dieselbe Latte an Zugänglichkeit und Klarheit nehmen, in Sekunden, ohne Anleitung. Das ist eine hohe Latte.',
+          'Der öffentliche Nahverkehr ist das dritte Rad, und der Grund, warum diese Seite um einen Liniennetzplan herum gebaut ist. Eine U-Bahn muss funktionieren, und zwar für eine Touristin, die kein Deutsch spricht, für einen Pendler, der zu spät dran ist, für ein Kind, das alleine fährt, für eine ältere Frau mit Gehstock, für einen Rollstuhlfahrer und für jemanden, der am Ende eines langen Tages auf dem Zahnfleisch geht. Der Liniennetzplan, die Beschilderung, der Fahrkartenautomat, die Bahnsteigansagen und mehr, alles muss für jede dieser Personen dieselbe hohe Latte bei Zugänglichkeit und Klarheit nehmen, in Sekunden, ohne Anleitung. Das ist eine hohe Latte.',
         ),
         t(
           'It is also the bar I want to clear with my designs. The transit metaphor here is a statement about what design is for, and not simply a styling choice.',
-          'Das ist auch die Latte, die ich mit meinen Designs überspringen will. Die ÖPNV-Metapher hier ist eine Aussage darüber, wofür Design da ist. Und keine bloße Stilfrage.',
+          'Das ist auch die Latte, die ich mit meinen Designs überspringen will. Die ÖPNV-Metapher ist eine inhaltliche Aussage über den Zweck von Design. Und keine bloße Stilfrage.',
         ),
         t('I also like to draw sometimes...', 'Ich zeichne auch manchmal...'),
       ],

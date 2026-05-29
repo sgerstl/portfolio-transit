@@ -142,14 +142,14 @@ export const UI: Record<UIKey, L10n> = {
   'lab.title': t('AI Lab', 'AI Lab'),
   'lab.lede': t(
     "A running log of experiments, systems, and tools built at the intersection of UX and AI. Not polished case studies, just honest notes from the process, including what's still unresolved.",
-    'Ein laufendes Protokoll von Experimenten, Systemen und Tools an der Schnittstelle von UX und KI. Keine geschliffenen Fallstudien, nur ehrliche Notizen aus dem Prozess, inklusive dem, was noch ungelöst ist.',
+    'Ein laufendes Protokoll von Experimenten, Systemen und Tools an der Schnittstelle von UX und KI. Keine geschliffenen Fallstudien, nur ehrliche Notizen aus dem Prozess, inklusive dessen, was noch ungelöst ist.',
   ),
   'lab.readMore': t('Read more ↓', 'Mehr lesen ↓'),
   'lab.collapse': t('Collapse ↑', 'Einklappen ↑'),
   'lab.tried': t('Tried', 'Versucht'),
   'lab.learned': t('Learned', 'Gelernt'),
   'lab.didntWork': t("What didn't work", 'Was nicht funktioniert hat'),
-  'lab.forYourTeam': t('For your team', 'Für Ihr Team'),
+  'lab.forYourTeam': t('For your team', 'Für dein Team'),
   'lab.openDemo': t('Open demo ↗', 'Demo öffnen ↗'),
   'resume.title': t('Resume', 'Lebenslauf'),
   'resume.lede': t(
@@ -166,9 +166,9 @@ export const UI: Record<UIKey, L10n> = {
   ),
   'hero.qualifiers': t(
     '15 years · Enterprise systems and AI products · US/German citizen, EU work-authorized',
-    '15 Jahre · Enterprise-Systeme und KI-Produkte · US-/deutsche Staatsbürgerschaft, EU-arbeitsberechtigt',
+    '15 Jahre · Enterprise-Systeme und KI-Produkte · US-/deutsche Staatsbürgerschaft · in der EU arbeitsberechtigt',
   ),
-  'hero.propLabel': t('Proposition', 'Position'),
+  'hero.propLabel': t('Proposition', 'Proposition'),
   'hero.propPrimary': t(
     'Senior product design judgment for AI features and enterprise systems.',
     'Senior Product Design Urteilsvermögen für KI-Features und Enterprise-Systeme.',
