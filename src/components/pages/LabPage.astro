@@ -1,0 +1,166 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../Header.astro';
+import LabCardCompact from '../lab/LabCardCompact.astro';
+import DemoModal from '../DemoModal.astro';
+import { LAB_CATEGORIES } from '../../data/lab';
+import { asLocale, localizePath, pick, ui } from '../../lib/i18n';
+
+const locale = asLocale(Astro.currentLocale);
+---
+
+<Layout title={ui('siteTitleLab', locale)} canonicalPath="/lab/">
+  <Header />
+
+  <main class="lab-page">
+    <a class="back" href={localizePath('/', locale)}>{ui('lab.back', locale)}</a>
+
+    <header class="lab-page-head">
+      <h1>{ui('lab.title', locale)}</h1>
+      <p class="lede">{ui('lab.lede', locale)}</p>
+    </header>
+
+    {LAB_CATEGORIES.map((category) => (
+      <section class="lab-category">
+        <div class="cat-head">
+          <h2>{pick(category.name, locale)}</h2>
+          <div class="rule"></div>
+        </div>
+
+        <div class="compact-grid">
+          {category.entries.map((entry) => <LabCardCompact entry={entry} />)}
+        </div>
+      </section>
+    ))}
+  </main>
+  <DemoModal />
+</Layout>
+
+<style>
+  .lab-page {
+    max-width: 940px;
+    margin: 0 auto;
+    padding: 120px 32px 120px;
+  }
+
+  .back {
+    position: fixed;
+    top: 80px;
+    left: 32px;
+    z-index: 50;
+    display: inline-block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text-soft);
+    text-decoration: none;
+    padding: 6px 12px;
+    background: rgba(246, 246, 246, 0.78);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 4px;
+  }
+
+  .back:hover {
+    color: var(--color-rail-blue);
+  }
+
+  .lab-page-head {
+    margin-bottom: 56px;
+  }
+
+  .lab-page-head h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--color-text);
+    margin-bottom: 12px;
+    border-left: 6px solid var(--color-rail-blue);
+    padding-left: 18px;
+  }
+
+  .lede {
+    font-family: 'Inter', sans-serif;
+    font-size: 19px;
+    line-height: 1.5;
+    color: var(--color-text);
+    padding-left: 24px;
+    max-width: 620px;
+  }
+
+  .lab-category {
+    margin-bottom: 56px;
+  }
+
+  .cat-head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+
+  .cat-head h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text);
+    flex-shrink: 0;
+  }
+
+  .rule {
+    flex: 1;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.12);
+  }
+
+  .compact-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  @media (max-width: 640px) {
+    .compact-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .lab-page {
+      padding: 116px 16px 80px;
+    }
+
+    .back {
+      left: 16px;
+    }
+
+    .lab-page-head {
+      margin-bottom: 36px;
+    }
+
+    .lab-page-head h1 {
+      font-size: 42px;
+      padding-left: 14px;
+      border-left-width: 5px;
+    }
+
+    .lede {
+      font-size: 16px;
+      padding-left: 19px;
+    }
+
+    .lab-category {
+      margin-bottom: 40px;
+    }
+
+    .cat-head h2 {
+      font-size: 18px;
+    }
+  }
+</style>

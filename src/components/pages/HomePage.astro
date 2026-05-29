@@ -1,0 +1,62 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../Header.astro';
+import MapWallpaper from '../MapWallpaper.astro';
+import DepartureBoard from '../DepartureBoard.astro';
+import Hero from '../hero/Hero.tsx';
+import Spine from '../spine/Spine.astro';
+import MobileSpine from '../spine/MobileSpine.astro';
+import Section from '../cases/Section.astro';
+import SectionHeader from '../cases/SectionHeader.astro';
+import Cases from '../cases/Cases.astro';
+import CaseCard from '../cases/CaseCard.astro';
+import Accordion from '../cases/Accordion.astro';
+import Lightbox from '../Lightbox.astro';
+import DemoModal from '../DemoModal.astro';
+import { SECTIONS, casesForLine } from '../../data/cases';
+import { asLocale, ui } from '../../lib/i18n';
+
+const locale = asLocale(Astro.currentLocale);
+---
+
+<Layout title={ui('siteTitle', locale)} canonicalPath="/">
+  <Header />
+  <DepartureBoard />
+
+  <div class="page">
+    <MapWallpaper />
+    <Hero client:load locale={locale} />
+
+    <div class="spine-container" id="cases">
+      <Spine />
+      <MobileSpine />
+
+      {SECTIONS.map((section) => (
+        <Section line={section.line}>
+          <SectionHeader
+            line={section.line}
+            code={section.code}
+            title={section.title}
+            subtitle={section.subtitle}
+          />
+          <Cases>
+            {casesForLine(section.line).map((c) => (
+              <CaseCard
+                slug={c.slug}
+                name={c.name}
+                tagline={c.tagline}
+                line={c.line}
+                body={c.body}
+                personal={c.personal}
+              />
+            ))}
+          </Cases>
+        </Section>
+      ))}
+    </div>
+  </div>
+
+  <Accordion />
+  <Lightbox />
+  <DemoModal />
+</Layout>
