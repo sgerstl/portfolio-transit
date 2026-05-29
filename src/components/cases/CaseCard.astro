@@ -1,6 +1,6 @@
 ---
 import type { LineKey, CaseSlug, CaseBody, PersonalBody } from '../../data/cases';
-import { asLocale, pick, ui, type L10n } from '../../lib/i18n';
+import { asLocale, localizePath, pick, ui, type L10n } from '../../lib/i18n';
 
 interface Props {
   slug: CaseSlug;
@@ -84,7 +84,7 @@ const isPersonal = !!personal;
           ))}
         </div>
         <p class="case-claim">{pick(body.claim, locale)}</p>
-        <a class="case-cta" href={body.ctaHref}>{ui('casecard.cta', locale)}</a>
+        <a class="case-cta" href={localizePath(body.ctaHref, locale)}>{ui('casecard.cta', locale)}</a>
       </div>
     </div>
   )}
