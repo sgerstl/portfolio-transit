@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { smoothScrollTo } from '../../lib/scroll';
+import { ui, type Locale } from '../../lib/i18n';
 
 type StatCard = {
   num: string;
@@ -8,37 +9,56 @@ type StatCard = {
   text: React.ReactNode;
 };
 
-const STAT_CARDS: StatCard[] = [
-  {
-    num: '01',
-    target: 'brightly',
-    ariaLabel: 'Jump to Brightly case study',
-    text: (
-      <>
-        Set the design direction for a <strong>$1.575B</strong> acquisition
-      </>
-    ),
-  },
-  {
-    num: '02',
-    target: 'epilog',
-    ariaLabel: 'Jump to Epilog case study',
-    text: 'Built an AI tool that caught a drug interaction a doctor missed',
-  },
-  {
-    num: '03',
-    target: 'cal',
-    ariaLabel: 'Jump to Cal case study',
-    text: 'Shipped a working app in a week using AI to research, design, build, and deploy',
-  },
-];
-
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 
-export default function Hero() {
+// Brightly stat 01 highlights the dollar figure in bold. Split the localized
+// string on the figure and re-wrap. Falls back to plain text if the locale
+// translation doesn't contain the EN figure literal.
+function renderBrightlyText(text: string): React.ReactNode {
+  const candidates = ['$1.575B', '1,575 Mrd. $', '1.575 Mrd. $'];
+  for (const candidate of candidates) {
+    const idx = text.indexOf(candidate);
+    if (idx === -1) continue;
+    return (
+      <>
+        {text.slice(0, idx)}
+        <strong>{candidate}</strong>
+        {text.slice(idx + candidate.length)}
+      </>
+    );
+  }
+  return text;
+}
+
+interface HeroProps {
+  locale?: Locale;
+}
+
+export default function Hero({ locale = 'en' }: HeroProps) {
   const heroRef = useRef<HTMLElement | null>(null);
   const preludeRef = useRef<HTMLDivElement | null>(null);
   const cardsRef = useRef<HTMLLIElement[]>([]);
+
+  const STAT_CARDS: StatCard[] = [
+    {
+      num: '01',
+      target: 'brightly',
+      ariaLabel: ui('hero.ariaBrightly', locale),
+      text: renderBrightlyText(ui('hero.statBrightly', locale)),
+    },
+    {
+      num: '02',
+      target: 'epilog',
+      ariaLabel: ui('hero.ariaEpilog', locale),
+      text: ui('hero.statEpilog', locale),
+    },
+    {
+      num: '03',
+      target: 'cal',
+      ariaLabel: ui('hero.ariaCal', locale),
+      text: ui('hero.statCal', locale),
+    },
+  ];
 
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -157,13 +177,13 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="hero" aria-label="Introduction" ref={heroRef}>
+    <section className="hero" aria-label={ui('hero.ariaIntro', locale)} ref={heroRef}>
       <div className="hero-prelude" ref={preludeRef}>
         <p className="hero-prelude-line">
-          All aboard! Three stops to your destination.
+          {ui('hero.prelude', locale)}
         </p>
         <p className="hero-qualifiers">
-          15 years · Enterprise systems and AI products · US/German citizen, EU work-authorized
+          {ui('hero.qualifiers', locale)}
         </p>
       </div>
       <ul className="hero-cards">
@@ -189,13 +209,12 @@ export default function Hero() {
             if (el) cardsRef.current[STAT_CARDS.length] = el;
           }}
         >
-          <span className="prop-label">Proposition</span>
+          <span className="prop-label">{ui('hero.propLabel', locale)}</span>
           <p className="prop-primary">
-            Senior product design judgment for AI features and enterprise systems.
+            {ui('hero.propPrimary', locale)}
           </p>
           <p className="prop-secondary">
-            Outcomes land in factories, schools, and hospitals, with the people who run them and
-            the people they serve.
+            {ui('hero.propSecondary', locale)}
           </p>
         </li>
       </ul>

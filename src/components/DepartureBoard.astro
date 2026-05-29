@@ -1,4 +1,8 @@
 ---
+import { asLocale, ui } from '../lib/i18n';
+
+const locale = asLocale(Astro.currentLocale);
+
 const stops = [
   { line: 'CS1', target: 'epilog',   ziel: 'Epilog',   time: '4 min' },
   { line: 'CS1', target: 'cal',      ziel: 'Cal',      time: '3 min' },
@@ -9,6 +13,9 @@ const stops = [
   { line: 'P',   target: 'about',    ziel: 'About',    time: '2 min' },
   { line: 'P',   target: 'contact',  ziel: 'Contact',  time: '1 min' },
 ];
+
+const currentStopLabel = ui('departureBoard.currentStop', locale);
+const homeLabel = ui('departureBoard.home', locale);
 ---
 
 <aside class="naechste-station" aria-label="Upcoming case studies">
@@ -33,9 +40,9 @@ const stops = [
       </div>
     </div>
 
-    <div class="ns-band ns-band--footer">
-      <span class="footer-prefix">Current stop:</span>
-      <span class="footer-station">Home</span>
+    <div class="ns-band ns-band--footer" data-home-label={homeLabel}>
+      <span class="footer-prefix">{currentStopLabel}</span>
+      <span class="footer-station">{homeLabel}</span>
     </div>
   </div>
 </aside>
@@ -138,7 +145,10 @@ const stops = [
           if (ticking) return;
           ticking = true;
           requestAnimationFrame(() => {
-            if (window.scrollY < 100) footerStation.textContent = 'Home';
+            if (window.scrollY < 100) {
+              const homeLabel = document.querySelector<HTMLElement>('.ns-band--footer')?.dataset.homeLabel ?? 'Home';
+              footerStation.textContent = homeLabel;
+            }
             ticking = false;
           });
         },

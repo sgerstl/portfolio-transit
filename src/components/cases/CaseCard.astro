@@ -1,16 +1,18 @@
 ---
 import type { LineKey, CaseSlug, CaseBody, PersonalBody } from '../../data/cases';
+import { asLocale, pick, ui, type L10n } from '../../lib/i18n';
 
 interface Props {
   slug: CaseSlug;
   name: string;
-  tagline: string;
+  tagline: L10n;
   line: LineKey;
   body?: CaseBody;
   personal?: PersonalBody;
 }
 
 const { slug, name, tagline, line, body, personal } = Astro.props;
+const locale = asLocale(Astro.currentLocale);
 const colorVar = `var(--color-line-${line})`;
 const hasBody = !!body;
 const isPersonal = !!personal;
@@ -26,7 +28,7 @@ const isPersonal = !!personal;
   <div class="case-header">
     <div class="case-header-text">
       <h3 class="case-name">{name}</h3>
-      <p class="case-tagline">{tagline}</p>
+      <p class="case-tagline">{pick(tagline, locale)}</p>
     </div>
     {hasBody && (
       <button class="case-toggle" aria-label="Toggle case study" type="button">
@@ -47,23 +49,23 @@ const isPersonal = !!personal;
     <div class="case-body">
       <div class="case-body-inner">
         <div class="case-domains">
-          {body.domains.map((d) => <span>{d}</span>)}
+          {body.domains.map((d) => <span>{pick(d, locale)}</span>)}
         </div>
         {body.visualLayout === 'split' && body.visualImage ? (
           <div class="case-row">
-            <p class="case-outcome">{body.outcome}</p>
+            <p class="case-outcome">{pick(body.outcome, locale)}</p>
             <div class="case-visual case-visual--split">
-              <img src={body.visualImage} alt={body.visualImageAlt ?? ''} loading="lazy" draggable="false" />
+              <img src={body.visualImage} alt={body.visualImageAlt ? pick(body.visualImageAlt, locale) : ''} loading="lazy" draggable="false" />
             </div>
           </div>
         ) : (
           <>
-            <p class="case-outcome">{body.outcome}</p>
+            <p class="case-outcome">{pick(body.outcome, locale)}</p>
             <div class="case-visual case-visual--full">
               {body.visualImage ? (
-                <img src={body.visualImage} alt={body.visualImageAlt ?? ''} loading="lazy" draggable="false" />
+                <img src={body.visualImage} alt={body.visualImageAlt ? pick(body.visualImageAlt, locale) : ''} loading="lazy" draggable="false" />
               ) : (
-                <span class="case-visual-label">{body.visualLabel}</span>
+                <span class="case-visual-label">{pick(body.visualLabel, locale)}</span>
               )}
             </div>
           </>
@@ -71,9 +73,9 @@ const isPersonal = !!personal;
         <div class="case-metrics">
           {body.metrics.map((m) => (
             <div class="case-metric">
-              <div class="case-metric-num">{m.num}</div>
+              <div class="case-metric-num">{pick(m.num, locale)}</div>
               <div class="case-metric-label">
-                {m.label}
+                {pick(m.label, locale)}
                 {m.linkHref && m.linkText && (
                   <> <a class="case-metric-link" href={m.linkHref} data-demo data-demo-title={name} target="_blank" rel="noopener noreferrer">{m.linkText}</a></>
                 )}
@@ -81,15 +83,15 @@ const isPersonal = !!personal;
             </div>
           ))}
         </div>
-        <p class="case-claim">{body.claim}</p>
-        <a class="case-cta" href={body.ctaHref}>Read the full case study →</a>
+        <p class="case-claim">{pick(body.claim, locale)}</p>
+        <a class="case-cta" href={body.ctaHref}>{ui('casecard.cta', locale)}</a>
       </div>
     </div>
   )}
 
   {personal && (
     <div class="personal-body">
-      {personal.paragraphs?.map((p) => <p>{p}</p>)}
+      {personal.paragraphs?.map((p) => <p>{pick(p, locale)}</p>)}
       {personal.gallery && (
         <>
           <div class="gallery">
@@ -99,7 +101,7 @@ const isPersonal = !!personal;
                 type="button"
                 data-lightbox-src={piece.src}
                 data-lightbox-title={piece.title}
-                data-lightbox-subtitle={piece.subtitle}
+                data-lightbox-subtitle={pick(piece.subtitle, locale)}
                 aria-label={`Open ${piece.title}`}
               >
                 <img src={piece.src} alt={piece.title} loading="lazy" draggable="false" />
@@ -112,8 +114,8 @@ const isPersonal = !!personal;
           {personal.gallery.length > 3 && (
             <details class="gallery-more">
               <summary>
-                <span class="gallery-more-label more">View more ↓</span>
-                <span class="gallery-more-label less">Show less ↑</span>
+                <span class="gallery-more-label more">{ui('casecard.galleryMore', locale)}</span>
+                <span class="gallery-more-label less">{ui('casecard.galleryLess', locale)}</span>
               </summary>
               <div class="gallery gallery--extra">
                 {personal.gallery.slice(3).map((piece) => (
@@ -122,7 +124,7 @@ const isPersonal = !!personal;
                     type="button"
                     data-lightbox-src={piece.src}
                     data-lightbox-title={piece.title}
-                    data-lightbox-subtitle={piece.subtitle}
+                    data-lightbox-subtitle={pick(piece.subtitle, locale)}
                     aria-label={`Open ${piece.title}`}
                   >
                     <img src={piece.src} alt={piece.title} loading="lazy" draggable="false" />
@@ -161,7 +163,7 @@ const isPersonal = !!personal;
                 )}
               </span>
               <span class="contact-text">
-                <span class="contact-text-label">{link.label}</span>
+                <span class="contact-text-label">{pick(link.label, locale)}</span>
                 <span class="contact-text-value">{link.value}</span>
               </span>
             </a>

@@ -1,22 +1,24 @@
 ---
 import type { LineKey } from '../../data/cases';
+import { asLocale, pick, type L10n } from '../../lib/i18n';
 
 interface Props {
   line: LineKey;
   code: string;
-  title: string;
-  subtitle: string;
+  title: L10n;
+  subtitle: L10n;
 }
 
 const { line, code, title, subtitle } = Astro.props;
+const locale = asLocale(Astro.currentLocale);
 const colorVar = `var(--color-line-${line})`;
 ---
 
 <div class="section-header" style={`--section-color: ${colorVar};`} id={`section-${line}`}>
   <div class="l-top"></div>
   <div class="l-left">{code}</div>
-  <h2>{title}</h2>
-  <div class="section-sub">{subtitle}</div>
+  <h2>{pick(title, locale)}</h2>
+  <div class="section-sub">{pick(subtitle, locale)}</div>
 </div>
 
 <style>
