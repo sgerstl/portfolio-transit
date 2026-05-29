@@ -240,16 +240,26 @@ const menuCloseLabel = ui('header.menuClose', locale);
 </script>
 
 <style>
+  /* Frosted glass with a medium-strength Liquid-Glass treatment.
+     Three layers stacked over the backdrop-filter blur:
+       1. Top-down sheen gradient (~30px white fade) for soft brightness
+       2. The base 0.55 white frost layer
+       3. Inset 1px specular top-edge highlight via box-shadow
+     The same recipe is applied to the mobile menu so both surfaces
+     read as the same glass material. */
   .site-header {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     height: 60px;
-    background: rgba(246, 246, 246, 0.55);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 30px),
+      rgba(246, 246, 246, 0.55);
     backdrop-filter: blur(18px) saturate(170%);
     -webkit-backdrop-filter: blur(18px) saturate(170%);
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
     z-index: 100;
     display: flex;
     align-items: center;
@@ -447,10 +457,10 @@ const menuCloseLabel = ui('header.menuClose', locale);
 
     /* The mobile menu is a SIBLING of the header in the DOM so its
        backdrop-filter is not nested inside the header's. Same
-       frosted-glass treatment as the header bar, except the white
-       layer is slightly more opaque (0.7 vs the header's 0.55) so
-       the menu masks the underlying transit-map colors at parity
-       with how the header masks its (less colorful) backdrop. */
+       Liquid-Glass treatment as the header bar (sheen gradient +
+       0.55 frost + 1px specular top highlight). The matching
+       highlight + sheen do the visual unification work between the
+       two surfaces, so opacity stays at 0.55 to match. */
     .nav-primary--mobile {
       display: flex;
       position: fixed;
@@ -461,10 +471,13 @@ const menuCloseLabel = ui('header.menuClose', locale);
       flex-direction: column;
       align-items: stretch;
       gap: 0;
-      background: rgba(246, 246, 246, 0.7);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 30px),
+        rgba(246, 246, 246, 0.55);
       backdrop-filter: blur(18px) saturate(170%);
       -webkit-backdrop-filter: blur(18px) saturate(170%);
       border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
       clip-path: inset(0 0 100% 0);
       -webkit-clip-path: inset(0 0 100% 0);
       transition: clip-path 0.26s ease-out, -webkit-clip-path 0.26s ease-out;
