@@ -95,12 +95,20 @@ const menuCloseLabel = ui('header.menuClose', locale);
   function buildSwitchPath(targetLocale: 'en' | 'de'): string {
     const path = location.pathname.replace(/^\/de(\/|$)/, '/');
     const base = targetLocale === 'en' ? path : (path === '/' ? '/de/' : `/de${path}`);
-    return base + location.search + location.hash;
+    // Intentionally drop location.hash. The hash may be a stale anchor
+    // from an earlier nav-link click ("Cases" sets #section-ai via
+    // replaceState and we never clear it on subsequent scroll), and
+    // preserving it would force the new-locale page to auto-scroll to
+    // that anchor on load. Scroll preservation happens via sessionStorage
+    // below instead.
+    return base + location.search;
   }
 
   function setLocaleCookie(loc: 'en' | 'de') {
     document.cookie = `pref-locale=${loc}; Path=/; Max-Age=31536000; SameSite=Lax`;
   }
+
+  const SCROLL_RESTORE_KEY = 'pref-locale-scroll-y';
 
   function init() {
     controller?.abort();
@@ -204,6 +212,15 @@ const menuCloseLabel = ui('header.menuClose', locale);
           if (!target) return;
           e.preventDefault();
           setLocaleCookie(target);
+          // Stash the current scroll position so the new-locale page can
+          // restore it on load. Pages are mostly text-replacement of the
+          // same components, so Y position maps to roughly the same content.
+          try {
+            sessionStorage.setItem(SCROLL_RESTORE_KEY, String(window.scrollY));
+          } catch {
+            // sessionStorage can throw in some private-browsing modes; OK
+            // to skip the restore in that case.
+          }
           location.assign(buildSwitchPath(target));
         },
         { signal },
@@ -228,8 +245,29 @@ const menuCloseLabel = ui('header.menuClose', locale);
       );
     }
 
-    // ---- Initial hash scroll on page load -------------------------
-    if (location.hash) {
+    // ---- Initial scroll on page load ------------------------------
+    // Priority: if the language toggle just navigated us, restore the
+    // saved Y position from sessionStorage. Otherwise honor the URL hash.
+    let restoredFromToggle = false;
+    try {
+      const saved = sessionStorage.getItem(SCROLL_RESTORE_KEY);
+      if (saved !== null) {
+        sessionStorage.removeItem(SCROLL_RESTORE_KEY);
+        const y = parseInt(saved, 10);
+        if (!isNaN(y)) {
+          // Wait two frames so the page has laid out before scrolling.
+          // Avoids landing short when fonts / images still affect height.
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => window.scrollTo(0, y)),
+          );
+          restoredFromToggle = true;
+        }
+      }
+    } catch {
+      // sessionStorage unavailable; fall through to hash handling
+    }
+
+    if (!restoredFromToggle && location.hash) {
       const hash = location.hash;
       window.scrollTo(0, 0);
       requestAnimationFrame(() => requestAnimationFrame(() => scrollToHash(hash)));
