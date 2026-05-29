@@ -91,41 +91,54 @@ export const CASES: CaseEntry[] = [
   {
     slug: 'epilog',
     name: 'Epilog',
-    tagline: t('AI caught a drug interaction. The neurologist confirmed it.'),
+    tagline: t(
+      'AI caught a drug interaction. The neurologist confirmed it.',
+      'Die KI hat eine Wechselwirkung erkannt. Der Neurologe hat sie bestätigt.',
+    ),
     line: 'ai',
     readingMinutes: 4,
     body: {
-      domains: [t('Healthcare'), t('Personal AI'), t('Wearables-adjacent')],
+      domains: [
+        t('Healthcare', 'Gesundheitswesen'),
+        t('Personal AI', 'Persönliche KI'),
+        t('Wearables-adjacent', 'Wearables-nah'),
+      ],
       outcome: t(
         "An app built for one user with epilepsy. It's used daily to log events as the user experiences them. The AI Insights built into the app used the tracked data to surface an adverse drug interaction. A drug prescribed by the user's primary care physician was inhibiting the absorption of the anti-epileptic drugs the user depends on. This information was brought to the neurologist and they confirmed the interaction. The neurologist independently arrived at the same treatment direction the AI had suggested.",
+        'Eine App für einen einzigen Nutzer mit Epilepsie. Wird täglich genutzt, um Ereignisse direkt nach dem Erleben zu protokollieren. Die in die App eingebauten KI-Insights haben aus den Daten eine schädliche Wechselwirkung erkannt. Ein vom Hausarzt verschriebenes Medikament hemmte die Aufnahme der Anti-Epileptika, auf die der Nutzer angewiesen ist. Diese Information wurde dem Neurologen vorgelegt, und er hat die Wechselwirkung bestätigt. Der Neurologe ist unabhängig zur selben Behandlungsrichtung gekommen, die die KI vorgeschlagen hatte.',
       ),
-      visualLabel: t('EPILOG · INSIGHTS SCREEN'),
+      visualLabel: t('EPILOG · INSIGHTS SCREEN', 'EPILOG · INSIGHTS-SCREEN'),
       visualImage: '/images/cases/epilog/epilog-events-framed.png',
       visualImageAlt: t(
         'Epilog app Events screen in an iPhone frame, listing tracked seizures and auras',
+        'Epilog App Events-Screen in einem iPhone-Rahmen, mit aufgelisteten Anfällen und Auren',
       ),
       visualLayout: 'split',
       metrics: [
-        { num: t('1', '1'), label: t('Active daily user with epilepsy') },
+        { num: t('1', '1'), label: t('Active daily user with epilepsy', 'Aktiver Nutzer mit Epilepsie, täglich') },
         {
-          num: t('Confirmed'),
-          label: t('Neurologist independently reached the same conclusion'),
+          num: t('Confirmed', 'Bestätigt'),
+          label: t(
+            'Neurologist independently reached the same conclusion',
+            'Neurologe ist unabhängig zur selben Schlussfolgerung gekommen',
+          ),
         },
         {
-          num: t('Live'),
-          label: t('PWA running at'),
+          num: t('Live', 'Live'),
+          label: t('PWA running at', 'PWA läuft unter'),
           linkText: 'epilog-demo.scottgerstl.com',
           linkHref: 'https://epilog-demo.scottgerstl.com',
         },
       ],
       claim: t(
         'I design AI features that produce clinical-grade outcomes. Surfacing patterns a clinician verifies and acts on.',
+        'Ich entwerfe KI-Features, die klinisch verwertbare Ergebnisse liefern. Muster zutage bringen, die ein Arzt bestätigen und auf die er reagieren kann.',
       ),
       ctaHref: '/work/epilog',
     },
     detail: {
       demoUrl: 'https://epilog-demo.scottgerstl.com',
-      chips: [t('Personal'), t('Health'), t('AI', 'AI'), t('PWA', 'PWA')],
+      chips: [t('Personal', 'Persönlich'), t('Health', 'Gesundheit'), t('AI', 'KI'), t('PWA', 'PWA')],
       hook: [
         t(
           'A seizure and aura tracker built for a family member. Log an event in seconds, find patterns across months, and surface insights that change a clinical conversation.',
@@ -244,34 +257,54 @@ export const CASES: CaseEntry[] = [
   {
     slug: 'cal',
     name: 'Cal',
-    tagline: t('AI as deliverable. AI as builder. AI inside the product.'),
+    tagline: t(
+      'AI as deliverable. AI as builder. AI inside the product.',
+      'KI als Ergebnis. KI als Erbauer. KI im Produkt selbst.',
+    ),
     line: 'ai',
     readingMinutes: 3,
     body: {
-      domains: [t('Cycling'), t('Personal AI'), t('Practice')],
+      domains: [
+        t('Cycling', 'Radsport'),
+        t('Personal AI', 'Persönliche KI'),
+        t('Practice', 'Praxis'),
+      ],
       outcome: t(
         'Workout planning app with AI at three layers: as design deliverable, as builder, and inside the product. Research to shipped in 5 days. Three real users. End-to-end ownership from prompt to PWA.',
+        'Workout-Planungs-App mit KI auf drei Ebenen: als Design-Ergebnis, als Erbauer und im Produkt selbst. Von der Recherche bis zur Auslieferung in 5 Tagen. Drei echte Nutzer. End-to-End-Verantwortung vom Prompt bis zur PWA.',
       ),
-      visualLabel: t('CAL · LIVE PLAN DEMO'),
+      visualLabel: t('CAL · LIVE PLAN DEMO', 'CAL · LIVE PLAN DEMO'),
       visualImage: '/images/cases/cal/cal-dashboard.jpeg',
-      visualImageAlt: t('Cal app dashboard screen'),
+      visualImageAlt: t('Cal app dashboard screen', 'Cal App Dashboard-Screen'),
       visualLayout: 'split',
       metrics: [
-        { num: t('3', '3'), label: t('Layers of AI: as deliverable, as builder, in product') },
-        { num: t('5 days', '5 Tage'), label: t('Research to shipped, end-to-end') },
         {
-          num: t('Live'),
-          label: t('Working app at'),
+          num: t('3', '3'),
+          label: t(
+            'Layers of AI: as deliverable, as builder, in product',
+            'Ebenen von KI: als Ergebnis, als Erbauer, im Produkt',
+          ),
+        },
+        {
+          num: t('5 days', '5 Tage'),
+          label: t('Research to shipped, end-to-end', 'Von der Recherche bis zur Auslieferung, End-to-End'),
+        },
+        {
+          num: t('Live', 'Live'),
+          label: t('Working app at', 'Funktionierende App unter'),
           linkText: 'cal-demo.scottgerstl.com',
           linkHref: 'https://cal-demo.scottgerstl.com',
         },
       ],
-      claim: t('I am AI-fluent at every layer of design. Research, analysis, building, shipping.'),
+      claim: t(
+        'I am AI-fluent at every layer of design. Research, analysis, building, shipping.',
+        'Ich bin KI-versiert auf jeder Design-Ebene. Recherche, Analyse, Bauen, Ausliefern.',
+      ),
       ctaHref: '/work/cal',
     },
     detail: {
       demoUrl: 'https://cal-demo.scottgerstl.com',
-      chips: [t('Personal'), t('AI', 'AI'), t('Fitness'), t('PWA', 'PWA')],
+      chips: [t('Personal', 'Persönlich'), t('AI', 'KI'), t('Fitness', 'Fitness'), t('PWA', 'PWA')],
       hook: [
         t(
           "The code didn't take long. What took time was everything the AI couldn't do: deciding what to build, evaluating whether the output was trustworthy, and catching the interaction patterns that were technically correct but experientially wrong.",
@@ -408,29 +441,59 @@ export const CASES: CaseEntry[] = [
   {
     slug: 'sim-racing',
     name: 'Sim Racing Coach',
-    tagline: t('Race-engineer practice, designed into an AI product.'),
+    tagline: t(
+      'Race-engineer practice, designed into an AI product.',
+      'Race-Engineer-Praxis, in ein KI-Produkt eingebaut.',
+    ),
     line: 'ai',
     readingMinutes: 6,
     body: {
-      domains: [t('Motorsports'), t('AI Products'), t('Domain Depth')],
+      domains: [
+        t('Motorsports', 'Motorsport'),
+        t('AI Products', 'KI-Produkte'),
+        t('Domain Depth', 'Domänenwissen'),
+      ],
       outcome: t(
         "Design consulting on an AI sim-racing telemetry tool. Reframed the analysis app as the AI agent's workspace, not a chat panel beside it. Designed a race engineer pattern that translates expert practice into UX for sim-racers who don't have an engineer. Four worked archetypes shipped against the product's telemetry schemas.",
+        'Designberatung für ein KI-Telemetrie-Tool im Sim-Racing. Die Analyse-App neu gerahmt als Arbeitsfläche des KI-Agenten, nicht als Chat-Panel daneben. Ein Race-Engineer-Pattern entworfen, das Expertenpraxis in UX für Sim-Racer übersetzt, die keinen Ingenieur haben. Vier ausgearbeitete Archetypen ausgeliefert, gegen die Telemetrie-Schemata des Produkts.',
       ),
-      visualLabel: t('SIM RACING COACH · TELEMETRY VIEW'),
+      visualLabel: t('SIM RACING COACH · TELEMETRY VIEW', 'SIM RACING COACH · TELEMETRIE-ANSICHT'),
       visualImage: '/images/cases/sim-racing/prototype-web-idle.png',
-      visualImageAlt: t('Sim Racing Coach web prototype, idle state with agent rail'),
+      visualImageAlt: t(
+        'Sim Racing Coach web prototype, idle state with agent rail',
+        'Sim Racing Coach Web-Prototyp, Idle-Zustand mit Agenten-Rail',
+      ),
       metrics: [
-        { num: t('Domain'), label: t('Race-engineer perspective brought to AI tooling for sim-racers') },
-        { num: t('Reframe'), label: t('Analysis surface as agent workspace, not chat panel') },
-        { num: t('4 archetypes'), label: t("Worked patterns shipped against the product's telemetry schemas") },
+        {
+          num: t('Domain', 'Domäne'),
+          label: t(
+            'Race-engineer perspective brought to AI tooling for sim-racers',
+            'Race-Engineer-Perspektive in KI-Tools für Sim-Racer eingebracht',
+          ),
+        },
+        {
+          num: t('Reframe', 'Umdeutung'),
+          label: t(
+            'Analysis surface as agent workspace, not chat panel',
+            'Analyse-Oberfläche als Agenten-Arbeitsfläche, nicht als Chat-Panel',
+          ),
+        },
+        {
+          num: t('4 archetypes', '4 Archetypen'),
+          label: t(
+            "Worked patterns shipped against the product's telemetry schemas",
+            'Ausgearbeitete Muster, ausgeliefert gegen die Telemetrie-Schemata des Produkts',
+          ),
+        },
       ],
       claim: t(
         'I bring motorsports domain knowledge to AI product design. I use AI to scale expert practice and analysis so drivers at every level can benefit.',
+        'Ich bringe Motorsport-Domänenwissen in KI-Produktdesign ein. Ich nutze KI, um Expertenpraxis und Analyse zu skalieren, damit Fahrer auf jedem Niveau profitieren können.',
       ),
       ctaHref: '/work/sim-racing',
     },
     detail: {
-      chips: [t('Consulting'), t('AI', 'AI'), t('Agent UX'), t('Sim-Racing')],
+      chips: [t('Consulting', 'Beratung'), t('AI', 'KI'), t('Agent UX', 'Agent-UX'), t('Sim-Racing', 'Sim-Racing')],
       hook: [
         t(
           'A founder shipping an AI sim-racing telemetry product asked for a design pass. The product had real telemetry data, a chat agent, and a polished analysis surface. Three working pieces, living in different containers.',
@@ -623,27 +686,54 @@ export const CASES: CaseEntry[] = [
   {
     slug: 'brightly',
     name: 'Brightly',
-    tagline: t('Design direction for a $1.575B acquisition.'),
+    tagline: t(
+      'Design direction for a $1.575B acquisition.',
+      'Designrichtung für eine 1,575 Mrd. $ Übernahme.',
+    ),
     line: 'ent',
     readingMinutes: 6,
     body: {
-      domains: [t('Manufacturing'), t('Healthcare'), t('Education'), t('Government')],
+      domains: [
+        t('Manufacturing', 'Fertigung'),
+        t('Healthcare', 'Gesundheitswesen'),
+        t('Education', 'Bildung'),
+        t('Government', 'Behörden'),
+      ],
       outcome: t(
         'Vision design across 12 siloed products at Brightly. A unified design language and integration model proposed across the portfolio. Designs were used in acquisition-stage presentations to Siemens to demonstrate the platform vision and integration roadmap. Brightly was acquired for $1.575B.',
+        'Vision-Design über 12 isolierte Produkte bei Brightly. Eine vereinheitlichte Designsprache und ein Integrationsmodell für das gesamte Portfolio vorgeschlagen. Die Designs wurden in den Akquisitionspräsentationen an Siemens verwendet, um die Plattform-Vision und Integrations-Roadmap zu demonstrieren. Brightly wurde für 1,575 Mrd. $ übernommen.',
       ),
-      visualLabel: t('BRIGHTLY · PLATFORM VISION HERO'),
+      visualLabel: t('BRIGHTLY · PLATFORM VISION HERO', 'BRIGHTLY · PLATFORM-VISION-HERO'),
       visualImage: '/images/cases/brightly/brightly-dashboard.jpeg',
-      visualImageAlt: t('Brightly platform dashboard with planned maintenance and at-risk assets'),
+      visualImageAlt: t(
+        'Brightly platform dashboard with planned maintenance and at-risk assets',
+        'Brightly Plattform-Dashboard mit geplanter Wartung und gefährdeten Anlagen',
+      ),
       metrics: [
-        { num: t('$1.575B', '1,575 Mrd. $'), label: t('Siemens acquisition') },
-        { num: t('74%', '74 %'), label: t('Customers excited by the future product direction') },
-        { num: t('5×', '5×'), label: t('Increase in time on dashboard pages in user testing') },
+        { num: t('$1.575B', '1,575 Mrd. $'), label: t('Siemens acquisition', 'Siemens-Übernahme') },
+        {
+          num: t('74%', '74 %'),
+          label: t(
+            'Customers excited by the future product direction',
+            'Kunden begeistert von der zukünftigen Produktrichtung',
+          ),
+        },
+        {
+          num: t('5×', '5×'),
+          label: t(
+            'Increase in time on dashboard pages in user testing',
+            'Mehr Zeit auf Dashboard-Seiten im User Testing',
+          ),
+        },
       ],
-      claim: t('I lead design vision that holds up under acquisition-grade scrutiny.'),
+      claim: t(
+        'I lead design vision that holds up under acquisition-grade scrutiny.',
+        'Ich führe Design-Visionen an, die einer Akquisitions-Prüfung standhalten.',
+      ),
       ctaHref: '/work/brightly',
     },
     detail: {
-      chips: [t('Enterprise'), t('Platform Vision'), t('Design System'), t('B2B SaaS', 'B2B-SaaS')],
+      chips: [t('Enterprise', 'Enterprise'), t('Platform Vision', 'Plattform-Vision'), t('Design System', 'Designsystem'), t('B2B SaaS', 'B2B-SaaS')],
       hook: [
         t(
           'Brightly was acquired by Siemens for $1.575B. Before the deal closed, the platform vision was previewed to existing customers: 74% of conference attendees expressed excitement about the future product direction, 36% said they were more likely to renew. User testing on the functional prototypes saw time on dashboard pages increase 5×. NPS verbatims, gathered independently, validated the survey findings.',
@@ -790,29 +880,56 @@ export const CASES: CaseEntry[] = [
   {
     slug: 'fleet',
     name: 'Fleet',
-    tagline: t('Three tools and two forms, consolidated into one.'),
+    tagline: t(
+      'Three tools and two forms, consolidated into one.',
+      'Drei Tools und zwei Formulare, zu einem zusammengeführt.',
+    ),
     line: 'ent',
     readingMinutes: 5,
     body: {
-      domains: [t('Logistics'), t('Industrial'), t('Cold Chain')],
+      domains: [
+        t('Logistics', 'Logistik'),
+        t('Industrial', 'Industrie'),
+        t('Cold Chain', 'Kühlkette'),
+      ],
       outcome: t(
         '0→1 industrial fleet operations product. Sole UX designer from initial research through shipped pilot. Consolidated three software tools and two paper forms into a single workflow. Gloves, dust, time pressure.',
+        '0→1 Industrie-Flottenmanagement-Produkt. Einziger UX-Designer von der ersten Recherche bis zum ausgelieferten Pilot. Drei Softwaretools und zwei Papierformulare zu einem einzigen Workflow zusammengeführt. Handschuhe, Staub, Zeitdruck.',
       ),
-      visualLabel: t('FLEET · WORKFLOW BEFORE & AFTER'),
+      visualLabel: t('FLEET · WORKFLOW BEFORE & AFTER', 'FLEET · WORKFLOW VORHER & NACHHER'),
       visualImage: '/images/cases/fleet/fleet-yard-map.jpeg',
-      visualImageAlt: t('Fleet yard management view with aerial map of dock and yard spots'),
+      visualImageAlt: t(
+        'Fleet yard management view with aerial map of dock and yard spots',
+        'Fleet Hof-Management-Ansicht mit Luftbild von Dock und Hof-Plätzen',
+      ),
       metrics: [
-        { num: t('3 + 2 → 1', '3 + 2 → 1'), label: t('Tools and forms consolidated to a single workflow') },
-        { num: t('Sole UX'), label: t('Research, design, and pilot delivery') },
-        { num: t('Shipped'), label: t('Live with industrial users in cold-storage logistics') },
+        {
+          num: t('3 + 2 → 1', '3 + 2 → 1'),
+          label: t(
+            'Tools and forms consolidated to a single workflow',
+            'Tools und Formulare zu einem Workflow zusammengeführt',
+          ),
+        },
+        {
+          num: t('Sole UX', 'Einziger UX'),
+          label: t('Research, design, and pilot delivery', 'Recherche, Design und Pilot-Auslieferung'),
+        },
+        {
+          num: t('Shipped', 'Ausgeliefert'),
+          label: t(
+            'Live with industrial users in cold-storage logistics',
+            'Live mit Industrienutzern in der Kühlhauslogistik',
+          ),
+        },
       ],
       claim: t(
         'I own design end-to-end on industrial products that have to work in physical-world conditions.',
+        'Ich verantworte Design End-to-End bei Industrieprodukten, die unter realen Bedingungen funktionieren müssen.',
       ),
       ctaHref: '/work/fleet',
     },
     detail: {
-      chips: [t('Industrial'), t('Logistics'), t('0→1', '0→1'), t('Sole UX')],
+      chips: [t('Industrial', 'Industrie'), t('Logistics', 'Logistik'), t('0→1', '0→1'), t('Sole UX', 'Einziger UX')],
       hook: [
         t(
           'Sole UX lead on a 0→1 yard-management product at Ndustrial. The shipped pilot consolidated three software tools and two paper forms into a single yard-management interface, deployed at a cold-storage third-party-logistics facility tracking hybrid electric trailers.',
@@ -949,29 +1066,53 @@ export const CASES: CaseEntry[] = [
   {
     slug: 'pqdr',
     name: 'Power Quality and Demand Response',
-    tagline: t('AI insight, operator decision. 200+ industrial locations.'),
+    tagline: t(
+      'AI insight, operator decision. 200+ industrial locations.',
+      'KI-Erkenntnis, Operator-Entscheidung. 200+ Industriestandorte.',
+    ),
     line: 'ent',
     readingMinutes: 5,
     body: {
-      domains: [t('Energy'), t('Industrial'), t('Operator UX')],
+      domains: [
+        t('Energy', 'Energie'),
+        t('Industrial', 'Industrie'),
+        t('Operator UX', 'Operator-UX'),
+      ],
       outcome: t(
         'Operator surfaces for AI-powered energy intelligence. Power Quality and Demand Response as two distinct operator views on one underlying AI system. Deployed across more than 200 industrial sites of a single customer. Penalty avoidance was the structural value, not a measured-savings claim.',
+        'Operator-Oberflächen für KI-gestützte Energie-Intelligenz. Power Quality und Demand Response als zwei eigenständige Operator-Ansichten auf einem gemeinsamen KI-System. Eingesetzt an mehr als 200 Industriestandorten eines einzigen Kunden. Strafvermeidung war der strukturelle Wert, kein gemessener Einsparungs-Anspruch.',
       ),
-      visualLabel: t('PQ + DR · OPERATOR DASHBOARD'),
+      visualLabel: t('PQ + DR · OPERATOR DASHBOARD', 'PQ + DR · OPERATOR-DASHBOARD'),
       visualImage: '/images/cases/pqdr/pq-one-line.png',
-      visualImageAlt: t('Power Quality at-a-glance dashboard surfacing high-impact assets and efficiency losses'),
+      visualImageAlt: t(
+        'Power Quality at-a-glance dashboard surfacing high-impact assets and efficiency losses',
+        'Power Quality Übersichts-Dashboard mit Anlagen mit hoher Auswirkung und Effizienzverlusten',
+      ),
       metrics: [
-        { num: t('200+', '200+'), label: t('Industrial locations of one customer') },
-        { num: t('2 surfaces'), label: t('Power Quality and Demand Response built on one AI system') },
-        { num: t('Operators'), label: t('AI surfaces, operators decide') },
+        {
+          num: t('200+', '200+'),
+          label: t('Industrial locations of one customer', 'Industriestandorte eines Kunden'),
+        },
+        {
+          num: t('2 surfaces', '2 Oberflächen'),
+          label: t(
+            'Power Quality and Demand Response built on one AI system',
+            'Power Quality und Demand Response auf einem KI-System gebaut',
+          ),
+        },
+        {
+          num: t('Operators', 'Operatoren'),
+          label: t('AI surfaces, operators decide', 'KI zeigt, Operatoren entscheiden'),
+        },
       ],
       claim: t(
         'I design operator-facing surfaces that turn AI insight into industrial-scale operational decisions.',
+        'Ich entwerfe Operator-Oberflächen, die KI-Erkenntnisse in betriebliche Entscheidungen auf Industrieskala übersetzen.',
       ),
       ctaHref: '/work/pqdr',
     },
     detail: {
-      chips: [t('Enterprise'), t('AI Insight'), t('Operator UX'), t('Industrial')],
+      chips: [t('Enterprise', 'Enterprise'), t('AI Insight', 'KI-Erkenntnis'), t('Operator UX', 'Operator-UX'), t('Industrial', 'Industrie')],
       hook: [
         t(
           'AI-powered energy intelligence at industrial facilities. Operator-facing surfaces deployed across 200+ industrial locations of a single large customer at Ndustrial.',
@@ -1189,20 +1330,29 @@ export const SECTIONS: { line: LineKey; code: string; title: L10n; subtitle: L10
   {
     line: 'ai',
     code: 'CS1',
-    title: t('AI Case Studies'),
-    subtitle: t('3 stops · AI features, AI products, AI as the design medium'),
+    title: t('AI Case Studies', 'KI-Fallstudien'),
+    subtitle: t(
+      '3 stops · AI features, AI products, AI as the design medium',
+      '3 Stationen · KI-Features, KI-Produkte, KI als Designmedium',
+    ),
   },
   {
     line: 'ent',
     code: 'CS2',
-    title: t('Enterprise Case Studies'),
-    subtitle: t('3 stops · vision, workflows, and operator surfaces'),
+    title: t('Enterprise Case Studies', 'Enterprise-Fallstudien'),
+    subtitle: t(
+      '3 stops · vision, workflows, and operator surfaces',
+      '3 Stationen · Vision, Workflows und Operator-Oberflächen',
+    ),
   },
   {
     line: 'pers',
     code: 'P',
-    title: t('Personal'),
-    subtitle: t('2 stops · who I am off the clock, and how to reach me'),
+    title: t('Personal', 'Persönlich'),
+    subtitle: t(
+      '2 stops · who I am off the clock, and how to reach me',
+      '2 Stationen · wer ich nach Feierabend bin, und wie ich zu erreichen bin',
+    ),
   },
 ];
 
