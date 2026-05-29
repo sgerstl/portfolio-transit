@@ -1,17 +1,46 @@
 ---
+import { asLocale, localizePath, ui } from '../lib/i18n';
+
+const locale = asLocale(Astro.currentLocale);
+
+const navLinks = [
+  { label: ui('nav.cases', locale), href: localizePath('/#section-ai', locale) },
+  { label: ui('nav.lab', locale), href: localizePath('/lab/', locale) },
+  { label: ui('nav.resume', locale), href: localizePath('/resume/', locale) },
+  { label: ui('nav.about', locale), href: localizePath('/#case-about', locale) },
+  { label: ui('nav.contact', locale), href: localizePath('/#case-contact', locale) },
+];
+
+const enLabel = ui('header.langEnglish', locale);
+const deLabel = ui('header.langGerman', locale);
+const taglineLabel = ui('header.tagline', locale);
 ---
 
 <header class="site-header">
-  <a class="brand-link" href="/" aria-label="Scott Gerstl | Home">
+  <a class="brand-link" href={localizePath('/', locale)} aria-label="Scott Gerstl | Home">
     <img class="brand-img" src="/wordmark.svg" alt="Scott Gerstl" />
   </a>
-  <span class="tagline">North Carolina → Berlin</span>
+  <span class="tagline">{taglineLabel}</span>
   <nav class="nav">
-    <a href="/#section-ai">Cases</a>
-    <a href="/lab">Lab</a>
-    <a href="/resume">Resume</a>
-    <a href="/#case-about">About</a>
-    <a href="/#case-contact">Contact</a>
+    {navLinks.map((link) => (
+      <a href={link.href}>{link.label}</a>
+    ))}
+    <span class="lang-divider" aria-hidden="true">|</span>
+    <span class="lang-toggle" role="group" aria-label="Language">
+      <a
+        class:list={['lang-link', locale === 'en' && 'lang-link--active']}
+        href="/"
+        data-lang-link="en"
+        aria-current={locale === 'en' ? 'true' : undefined}
+      >{enLabel}</a>
+      <span class="lang-sep" aria-hidden="true">·</span>
+      <a
+        class:list={['lang-link', locale === 'de' && 'lang-link--active']}
+        href="/de/"
+        data-lang-link="de"
+        aria-current={locale === 'de' ? 'true' : undefined}
+      >{deLabel}</a>
+    </span>
   </nav>
 </header>
 
@@ -36,15 +65,33 @@
     return true;
   }
 
+  // Switch the locale-prefixed equivalent of the current path. The toggle's
+  // own href is just / or /de/; this overrides it so the click lands on the
+  // same page in the other locale (preserving hash + query).
+  function buildSwitchPath(targetLocale: 'en' | 'de'): string {
+    const path = location.pathname.replace(/^\/de(\/|$)/, '/');
+    const base = targetLocale === 'en' ? path : (path === '/' ? '/de/' : `/de${path}`);
+    return base + location.search + location.hash;
+  }
+
+  function setLocaleCookie(loc: 'en' | 'de') {
+    // 1 year; SameSite=Lax so external referrals still surface the
+    // Accept-Language fallback for first-time visitors who came from outside.
+    document.cookie = `pref-locale=${loc}; Path=/; Max-Age=31536000; SameSite=Lax`;
+  }
+
   function init() {
     controller?.abort();
     controller = new AbortController();
     const { signal } = controller;
 
+    // Hash-link scroll (same-page anchor jumps)
     document.querySelectorAll<HTMLAnchorElement>('.site-header .nav a').forEach((a) => {
       a.addEventListener(
         'click',
         (e) => {
+          // Language toggles handled separately below
+          if (a.dataset.langLink) return;
           const url = new URL(a.href, location.href);
           if (url.origin !== location.origin) return;
           if (!url.hash) return;
@@ -52,6 +99,22 @@
           e.preventDefault();
           history.replaceState(null, '', url.pathname + url.hash);
           scrollToHash(url.hash);
+        },
+        { signal },
+      );
+    });
+
+    // Language toggle: set cookie, navigate to the same-page equivalent in the
+    // target locale.
+    document.querySelectorAll<HTMLAnchorElement>('.site-header [data-lang-link]').forEach((a) => {
+      a.addEventListener(
+        'click',
+        (e) => {
+          const target = a.dataset.langLink as 'en' | 'de' | undefined;
+          if (!target) return;
+          e.preventDefault();
+          setLocaleCookie(target);
+          location.assign(buildSwitchPath(target));
         },
         { signal },
       );
@@ -149,6 +212,45 @@
     opacity: 0.6;
   }
 
+  .lang-divider {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--color-text-soft);
+    opacity: 0.4;
+    user-select: none;
+  }
+
+  .lang-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .lang-link {
+    opacity: 0.5;
+  }
+
+  .lang-link--active {
+    opacity: 1;
+  }
+
+  .lang-link:hover {
+    opacity: 0.8;
+  }
+
+  .lang-link--active:hover {
+    opacity: 1;
+  }
+
+  .lang-sep {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--color-text-soft);
+    user-select: none;
+  }
+
   @media (max-width: 767px) {
     .site-header {
       padding: 0 16px;
@@ -168,6 +270,14 @@
     }
 
     .nav a {
+      font-size: 12px;
+    }
+
+    .lang-divider {
+      font-size: 12px;
+    }
+
+    .lang-sep {
       font-size: 12px;
     }
   }
