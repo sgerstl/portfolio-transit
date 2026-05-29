@@ -23,7 +23,7 @@ const menuCloseLabel = ui('header.menuClose', locale);
     <img class="brand-img" src="/wordmark.svg" alt="Scott Gerstl" />
   </a>
   <span class="tagline">{taglineLabel}</span>
-  <nav class="nav-primary" id="primary-nav" aria-label="Primary">
+  <nav class="nav-primary nav-primary--desktop" aria-label="Primary">
     {navLinks.map((link) => (
       <a href={link.href}>{link.label}</a>
     ))}
@@ -49,7 +49,7 @@ const menuCloseLabel = ui('header.menuClose', locale);
     type="button"
     aria-label={menuOpenLabel}
     aria-expanded="false"
-    aria-controls="primary-nav"
+    aria-controls="mobile-menu"
     data-menu-open-label={menuOpenLabel}
     data-menu-close-label={menuCloseLabel}
   >
@@ -60,6 +60,16 @@ const menuCloseLabel = ui('header.menuClose', locale);
     </span>
   </button>
 </header>
+
+<!-- Mobile menu lives OUTSIDE <header> in the DOM so its backdrop-filter
+     is not nested inside the header's backdrop-filter (which prevents
+     compositing in Safari and other engines). State is driven by the
+     header's data-menu-open attribute via the CSS sibling selector. -->
+<nav class="nav-primary nav-primary--mobile" id="mobile-menu" aria-label="Mobile">
+  {navLinks.map((link) => (
+    <a href={link.href}>{link.label}</a>
+  ))}
+</nav>
 
 <script>
   import { smoothScrollTo } from '../lib/scroll';
@@ -101,6 +111,7 @@ const menuCloseLabel = ui('header.menuClose', locale);
 
     // ---- Hamburger menu open/close ---------------------------------
     const hamburger = document.querySelector<HTMLButtonElement>('.site-header .hamburger');
+    const mobileMenu = document.querySelector<HTMLElement>('#mobile-menu');
 
     function isMenuOpen(): boolean {
       return header?.getAttribute('data-menu-open') === 'true';
@@ -143,20 +154,26 @@ const menuCloseLabel = ui('header.menuClose', locale);
       { signal },
     );
 
-    // Close on outside click
+    // Close on outside click (outside both header AND mobile menu)
     document.addEventListener(
       'click',
       (e) => {
         if (!isMenuOpen()) return;
         const target = e.target as Node | null;
-        if (target && header?.contains(target)) return;
+        if (!target) return;
+        if (header?.contains(target)) return;
+        if (mobileMenu?.contains(target)) return;
         closeMenu();
       },
       { signal },
     );
 
     // ---- Nav anchor scrolling + auto-close menu on nav click ------
-    document.querySelectorAll<HTMLAnchorElement>('.site-header .nav-primary a').forEach((a) => {
+    // Selector covers BOTH the desktop nav (inside header) and the
+    // mobile menu (sibling of header).
+    document.querySelectorAll<HTMLAnchorElement>(
+      '.nav-primary--desktop a, .nav-primary--mobile a',
+    ).forEach((a) => {
       a.addEventListener(
         'click',
         (e) => {
@@ -171,8 +188,7 @@ const menuCloseLabel = ui('header.menuClose', locale);
             history.replaceState(null, '', url.pathname + url.hash);
             scrollToHash(url.hash);
           }
-          // Either way, close the mobile menu so the user lands on the
-          // anchor instead of looking at the menu panel.
+          // Close the mobile menu either way (no-op on desktop where it's hidden).
           closeMenu();
         },
         { signal },
@@ -268,10 +284,17 @@ const menuCloseLabel = ui('header.menuClose', locale);
   }
 
   .nav-primary {
-    margin-left: auto;
     display: flex;
     align-items: center;
     gap: 22px;
+  }
+
+  .nav-primary--desktop {
+    margin-left: auto;
+  }
+
+  .nav-primary--mobile {
+    display: none;
   }
 
   .nav-primary a {
@@ -406,6 +429,10 @@ const menuCloseLabel = ui('header.menuClose', locale);
       display: none;
     }
 
+    .nav-primary--desktop {
+      display: none;
+    }
+
     .lang-divider {
       display: none;
     }
@@ -418,21 +445,11 @@ const menuCloseLabel = ui('header.menuClose', locale);
       display: inline-flex;
     }
 
-    /* The primary nav becomes a slide-down panel below the header.
-       Background matches the header's frosted-glass treatment so the
-       menu reads as an extension of the same material.
-
-       Implementation notes:
-         - position: fixed (not absolute) puts the menu in its own
-           stacking context relative to the viewport, which avoids the
-           nested-backdrop-filter rendering issue with the header's
-           own backdrop-filter (Safari especially).
-         - clip-path: inset(0 0 100% 0) clips the menu to zero height
-           at the top edge while keeping the element's layout footprint
-           and (crucially) its backdrop-filter compositing intact.
-           overflow: hidden would have created a clipping context that
-           breaks backdrop-filter rendering. */
-    .nav-primary {
+    /* The mobile menu is a SIBLING of the header in the DOM so its
+       backdrop-filter is not nested inside the header's. Matches the
+       header's frosted-glass treatment. */
+    .nav-primary--mobile {
+      display: flex;
       position: fixed;
       top: 60px;
       left: 0;
@@ -452,23 +469,25 @@ const menuCloseLabel = ui('header.menuClose', locale);
       z-index: 99;
     }
 
-    .nav-primary a {
+    .nav-primary--mobile a {
       padding: 16px 20px;
       font-size: 18px;
       border-bottom: 1px solid rgba(0, 0, 0, 0.06);
       letter-spacing: 0.06em;
     }
 
-    .nav-primary a:last-child {
+    .nav-primary--mobile a:last-child {
       border-bottom: 0;
     }
 
-    .nav-primary a:hover {
+    .nav-primary--mobile a:hover {
       opacity: 1;
       background: rgba(0, 0, 0, 0.04);
     }
 
-    .site-header[data-menu-open='true'] .nav-primary {
+    /* The header's data-menu-open attribute drives the sibling menu
+       via the general sibling combinator. */
+    .site-header[data-menu-open='true'] ~ .nav-primary--mobile {
       clip-path: inset(0 0 0 0);
       -webkit-clip-path: inset(0 0 0 0);
       pointer-events: auto;
@@ -476,7 +495,7 @@ const menuCloseLabel = ui('header.menuClose', locale);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .nav-primary,
+    .nav-primary--mobile,
     .hamburger-icon span {
       transition: none;
     }
