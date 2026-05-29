@@ -446,8 +446,11 @@ const menuCloseLabel = ui('header.menuClose', locale);
     }
 
     /* The mobile menu is a SIBLING of the header in the DOM so its
-       backdrop-filter is not nested inside the header's. Matches the
-       header's frosted-glass treatment. */
+       backdrop-filter is not nested inside the header's. Same
+       frosted-glass treatment as the header bar, except the white
+       layer is slightly more opaque (0.7 vs the header's 0.55) so
+       the menu masks the underlying transit-map colors at parity
+       with how the header masks its (less colorful) backdrop. */
     .nav-primary--mobile {
       display: flex;
       position: fixed;
@@ -458,7 +461,7 @@ const menuCloseLabel = ui('header.menuClose', locale);
       flex-direction: column;
       align-items: stretch;
       gap: 0;
-      background: rgba(246, 246, 246, 0.55);
+      background: rgba(246, 246, 246, 0.7);
       backdrop-filter: blur(18px) saturate(170%);
       -webkit-backdrop-filter: blur(18px) saturate(170%);
       border-bottom: 1px solid rgba(0, 0, 0, 0.08);
