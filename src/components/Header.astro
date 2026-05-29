@@ -420,9 +420,20 @@ const menuCloseLabel = ui('header.menuClose', locale);
 
     /* The primary nav becomes a slide-down panel below the header.
        Background matches the header's frosted-glass treatment so the
-       menu reads as an extension of the same material. */
+       menu reads as an extension of the same material.
+
+       Implementation notes:
+         - position: fixed (not absolute) puts the menu in its own
+           stacking context relative to the viewport, which avoids the
+           nested-backdrop-filter rendering issue with the header's
+           own backdrop-filter (Safari especially).
+         - clip-path: inset(0 0 100% 0) clips the menu to zero height
+           at the top edge while keeping the element's layout footprint
+           and (crucially) its backdrop-filter compositing intact.
+           overflow: hidden would have created a clipping context that
+           breaks backdrop-filter rendering. */
     .nav-primary {
-      position: absolute;
+      position: fixed;
       top: 60px;
       left: 0;
       right: 0;
@@ -434,9 +445,9 @@ const menuCloseLabel = ui('header.menuClose', locale);
       backdrop-filter: blur(18px) saturate(170%);
       -webkit-backdrop-filter: blur(18px) saturate(170%);
       border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-      overflow: hidden;
-      max-height: 0;
-      transition: max-height 0.26s ease-out, border-bottom-color 0.26s ease-out;
+      clip-path: inset(0 0 100% 0);
+      -webkit-clip-path: inset(0 0 100% 0);
+      transition: clip-path 0.26s ease-out, -webkit-clip-path 0.26s ease-out;
       pointer-events: none;
       z-index: 99;
     }
@@ -458,7 +469,8 @@ const menuCloseLabel = ui('header.menuClose', locale);
     }
 
     .site-header[data-menu-open='true'] .nav-primary {
-      max-height: 360px;
+      clip-path: inset(0 0 0 0);
+      -webkit-clip-path: inset(0 0 0 0);
       pointer-events: auto;
     }
   }
