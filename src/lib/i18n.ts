@@ -106,6 +106,8 @@ export type UIKey =
   | 'resume.openTab'
   | 'contactFab.label'
   | 'contactFab.aria'
+  | 'header.menuOpen'
+  | 'header.menuClose'
   | 'siteTitle'
   | 'siteTitleCase'
   | 'siteTitleLab'
@@ -160,6 +162,8 @@ export const UI: Record<UIKey, L10n> = {
   'resume.openTab': t('Open in new tab ↗', 'In neuem Tab öffnen ↗'),
   'contactFab.label': t('Contact Me', 'Kontakt'),
   'contactFab.aria': t('Jump to contact section', 'Zum Kontakt-Bereich springen'),
+  'header.menuOpen': t('Open menu', 'Menü öffnen'),
+  'header.menuClose': t('Close menu', 'Menü schließen'),
   'hero.prelude': t(
     'All aboard! Three stops to your destination.',
     'Einsteigen bitte! Drei Stationen bis zum Ziel.',

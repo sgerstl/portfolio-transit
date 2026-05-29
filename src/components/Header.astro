@@ -14,6 +14,8 @@ const navLinks = [
 const enLabel = ui('header.langEnglish', locale);
 const deLabel = ui('header.langGerman', locale);
 const taglineLabel = ui('header.tagline', locale);
+const menuOpenLabel = ui('header.menuOpen', locale);
+const menuCloseLabel = ui('header.menuClose', locale);
 ---
 
 <header class="site-header">
@@ -21,27 +23,42 @@ const taglineLabel = ui('header.tagline', locale);
     <img class="brand-img" src="/wordmark.svg" alt="Scott Gerstl" />
   </a>
   <span class="tagline">{taglineLabel}</span>
-  <nav class="nav">
+  <nav class="nav-primary" id="primary-nav" aria-label="Primary">
     {navLinks.map((link) => (
       <a href={link.href}>{link.label}</a>
     ))}
-    <span class="lang-divider" aria-hidden="true">|</span>
-    <span class="lang-toggle" role="group" aria-label="Language">
-      <a
-        class:list={['lang-link', locale === 'en' && 'lang-link--active']}
-        href="/"
-        data-lang-link="en"
-        aria-current={locale === 'en' ? 'true' : undefined}
-      >{enLabel}</a>
-      <span class="lang-sep" aria-hidden="true">·</span>
-      <a
-        class:list={['lang-link', locale === 'de' && 'lang-link--active']}
-        href="/de/"
-        data-lang-link="de"
-        aria-current={locale === 'de' ? 'true' : undefined}
-      >{deLabel}</a>
-    </span>
   </nav>
+  <span class="lang-divider" aria-hidden="true">|</span>
+  <span class="lang-toggle" role="group" aria-label="Language">
+    <a
+      class:list={['lang-link', locale === 'en' && 'lang-link--active']}
+      href="/"
+      data-lang-link="en"
+      aria-current={locale === 'en' ? 'true' : undefined}
+    >{enLabel}</a>
+    <span class="lang-sep" aria-hidden="true">·</span>
+    <a
+      class:list={['lang-link', locale === 'de' && 'lang-link--active']}
+      href="/de/"
+      data-lang-link="de"
+      aria-current={locale === 'de' ? 'true' : undefined}
+    >{deLabel}</a>
+  </span>
+  <button
+    class="hamburger"
+    type="button"
+    aria-label={menuOpenLabel}
+    aria-expanded="false"
+    aria-controls="primary-nav"
+    data-menu-open-label={menuOpenLabel}
+    data-menu-close-label={menuCloseLabel}
+  >
+    <span class="hamburger-icon" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+  </button>
 </header>
 
 <script>
@@ -65,9 +82,6 @@ const taglineLabel = ui('header.tagline', locale);
     return true;
   }
 
-  // Switch the locale-prefixed equivalent of the current path. The toggle's
-  // own href is just / or /de/; this overrides it so the click lands on the
-  // same page in the other locale (preserving hash + query).
   function buildSwitchPath(targetLocale: 'en' | 'de'): string {
     const path = location.pathname.replace(/^\/de(\/|$)/, '/');
     const base = targetLocale === 'en' ? path : (path === '/' ? '/de/' : `/de${path}`);
@@ -75,8 +89,6 @@ const taglineLabel = ui('header.tagline', locale);
   }
 
   function setLocaleCookie(loc: 'en' | 'de') {
-    // 1 year; SameSite=Lax so external referrals still surface the
-    // Accept-Language fallback for first-time visitors who came from outside.
     document.cookie = `pref-locale=${loc}; Path=/; Max-Age=31536000; SameSite=Lax`;
   }
 
@@ -85,27 +97,89 @@ const taglineLabel = ui('header.tagline', locale);
     controller = new AbortController();
     const { signal } = controller;
 
-    // Hash-link scroll (same-page anchor jumps)
-    document.querySelectorAll<HTMLAnchorElement>('.site-header .nav a').forEach((a) => {
+    const header = document.querySelector<HTMLElement>('.site-header');
+
+    // ---- Hamburger menu open/close ---------------------------------
+    const hamburger = document.querySelector<HTMLButtonElement>('.site-header .hamburger');
+
+    function isMenuOpen(): boolean {
+      return header?.getAttribute('data-menu-open') === 'true';
+    }
+
+    function openMenu() {
+      if (!header || !hamburger) return;
+      header.setAttribute('data-menu-open', 'true');
+      hamburger.setAttribute('aria-expanded', 'true');
+      const closeLabel = hamburger.dataset.menuCloseLabel ?? 'Close menu';
+      hamburger.setAttribute('aria-label', closeLabel);
+    }
+
+    function closeMenu() {
+      if (!header || !hamburger) return;
+      header.removeAttribute('data-menu-open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      const openLabel = hamburger.dataset.menuOpenLabel ?? 'Open menu';
+      hamburger.setAttribute('aria-label', openLabel);
+    }
+
+    if (hamburger) {
+      hamburger.addEventListener(
+        'click',
+        (e) => {
+          e.stopPropagation();
+          if (isMenuOpen()) closeMenu();
+          else openMenu();
+        },
+        { signal },
+      );
+    }
+
+    // Close on ESC
+    document.addEventListener(
+      'keydown',
+      (e) => {
+        if (e.key === 'Escape' && isMenuOpen()) closeMenu();
+      },
+      { signal },
+    );
+
+    // Close on outside click
+    document.addEventListener(
+      'click',
+      (e) => {
+        if (!isMenuOpen()) return;
+        const target = e.target as Node | null;
+        if (target && header?.contains(target)) return;
+        closeMenu();
+      },
+      { signal },
+    );
+
+    // ---- Nav anchor scrolling + auto-close menu on nav click ------
+    document.querySelectorAll<HTMLAnchorElement>('.site-header .nav-primary a').forEach((a) => {
       a.addEventListener(
         'click',
         (e) => {
-          // Language toggles handled separately below
-          if (a.dataset.langLink) return;
+          // Same-page hash links scroll without page reload
           const url = new URL(a.href, location.href);
-          if (url.origin !== location.origin) return;
-          if (!url.hash) return;
-          if (url.pathname !== location.pathname) return;
-          e.preventDefault();
-          history.replaceState(null, '', url.pathname + url.hash);
-          scrollToHash(url.hash);
+          if (
+            url.origin === location.origin &&
+            url.hash &&
+            url.pathname === location.pathname
+          ) {
+            e.preventDefault();
+            history.replaceState(null, '', url.pathname + url.hash);
+            scrollToHash(url.hash);
+          }
+          // Either way, close the mobile menu so the user lands on the
+          // anchor instead of looking at the menu panel.
+          closeMenu();
         },
         { signal },
       );
     });
 
-    // Language toggle: set cookie, navigate to the same-page equivalent in the
-    // target locale.
+    // ---- Language toggle ------------------------------------------
     document.querySelectorAll<HTMLAnchorElement>('.site-header [data-lang-link]').forEach((a) => {
       a.addEventListener(
         'click',
@@ -120,6 +194,7 @@ const taglineLabel = ui('header.tagline', locale);
       );
     });
 
+    // ---- Brand link: same-page scroll-to-top ----------------------
     const brand = document.querySelector<HTMLAnchorElement>('.site-header .brand-link');
     if (brand) {
       brand.addEventListener(
@@ -131,11 +206,13 @@ const taglineLabel = ui('header.tagline', locale);
           e.preventDefault();
           if (location.hash) history.replaceState(null, '', location.pathname);
           smoothScrollTo(0);
+          closeMenu();
         },
         { signal },
       );
     }
 
+    // ---- Initial hash scroll on page load -------------------------
     if (location.hash) {
       const hash = location.hash;
       window.scrollTo(0, 0);
@@ -190,14 +267,14 @@ const taglineLabel = ui('header.tagline', locale);
     margin-left: 8px;
   }
 
-  .nav {
+  .nav-primary {
     margin-left: auto;
     display: flex;
     align-items: center;
     gap: 22px;
   }
 
-  .nav a {
+  .nav-primary a {
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 600;
     font-size: 14px;
@@ -208,7 +285,7 @@ const taglineLabel = ui('header.tagline', locale);
     transition: opacity 0.15s ease;
   }
 
-  .nav a:hover {
+  .nav-primary a:hover {
     opacity: 0.6;
   }
 
@@ -228,7 +305,15 @@ const taglineLabel = ui('header.tagline', locale);
   }
 
   .lang-link {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--color-text);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     opacity: 0.5;
+    transition: opacity 0.15s ease;
   }
 
   .lang-link--active {
@@ -251,86 +336,135 @@ const taglineLabel = ui('header.tagline', locale);
     user-select: none;
   }
 
-  @media (max-width: 767px) {
+  /* ---- Hamburger button (hidden on desktop) ---- */
+  .hamburger {
+    display: none;
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    margin-left: 8px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background 0.15s ease;
+  }
+
+  .hamburger:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  .hamburger-icon {
+    position: relative;
+    width: 22px;
+    height: 16px;
+    display: inline-block;
+  }
+
+  .hamburger-icon span {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--color-text);
+    border-radius: 1px;
+    transition: transform 0.22s ease, opacity 0.18s ease, top 0.22s ease;
+  }
+
+  .hamburger-icon span:nth-child(1) { top: 0; }
+  .hamburger-icon span:nth-child(2) { top: 7px; }
+  .hamburger-icon span:nth-child(3) { top: 14px; }
+
+  .site-header[data-menu-open='true'] .hamburger-icon span:nth-child(1) {
+    top: 7px;
+    transform: rotate(45deg);
+  }
+
+  .site-header[data-menu-open='true'] .hamburger-icon span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .site-header[data-menu-open='true'] .hamburger-icon span:nth-child(3) {
+    top: 7px;
+    transform: rotate(-45deg);
+  }
+
+  /* ---- Mobile (<=768px): hamburger pattern ---- */
+  @media (max-width: 768px) {
     .site-header {
       padding: 0 16px;
-      gap: 12px;
+      gap: 0;
     }
 
     .brand-img {
-      height: 32px;
+      height: 40px;
     }
 
     .tagline {
       display: none;
     }
 
-    .nav {
-      gap: 14px;
-    }
-
-    .nav a {
-      font-size: 12px;
-    }
-
     .lang-divider {
-      font-size: 12px;
-    }
-
-    .lang-sep {
-      font-size: 12px;
-    }
-  }
-
-  /* iPhone-class portrait widths. Aggressive tightening so all five
-     nav items + the EN·DE toggle fit without overflow, especially in
-     DE where "LEBENSLAUF" is wider than "RESUME". */
-  @media (max-width: 480px) {
-    .site-header {
-      padding: 0 12px;
-      gap: 8px;
-    }
-
-    .brand-img {
-      height: 28px;
-    }
-
-    .nav {
-      gap: 9px;
-    }
-
-    .nav a,
-    .lang-divider,
-    .lang-sep {
-      font-size: 11px;
-      letter-spacing: 0.03em;
+      display: none;
     }
 
     .lang-toggle {
-      gap: 4px;
+      margin-left: auto;
+    }
+
+    .hamburger {
+      display: inline-flex;
+    }
+
+    /* The primary nav becomes a slide-down panel below the header. */
+    .nav-primary {
+      position: absolute;
+      top: 60px;
+      left: 0;
+      right: 0;
+      margin-left: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      background: rgba(246, 246, 246, 0.96);
+      backdrop-filter: blur(18px) saturate(170%);
+      -webkit-backdrop-filter: blur(18px) saturate(170%);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.26s ease-out, border-bottom-color 0.26s ease-out;
+      pointer-events: none;
+      z-index: 99;
+    }
+
+    .nav-primary a {
+      padding: 16px 20px;
+      font-size: 18px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      letter-spacing: 0.06em;
+    }
+
+    .nav-primary a:last-child {
+      border-bottom: 0;
+    }
+
+    .nav-primary a:hover {
+      opacity: 1;
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    .site-header[data-menu-open='true'] .nav-primary {
+      max-height: 360px;
+      pointer-events: auto;
     }
   }
 
-  /* Smallest common phone widths (iPhone SE, older Androids). */
-  @media (max-width: 380px) {
-    .site-header {
-      padding: 0 10px;
-      gap: 6px;
-    }
-
-    .brand-img {
-      height: 26px;
-    }
-
-    .nav {
-      gap: 7px;
-    }
-
-    .nav a,
-    .lang-divider,
-    .lang-sep {
-      font-size: 10.5px;
-      letter-spacing: 0.02em;
+  @media (prefers-reduced-motion: reduce) {
+    .nav-primary,
+    .hamburger-icon span {
+      transition: none;
     }
   }
 </style>
