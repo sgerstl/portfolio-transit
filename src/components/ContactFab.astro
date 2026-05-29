@@ -1,15 +1,19 @@
 ---
+import { asLocale, localizePath, ui } from '../lib/i18n';
+
+const locale = asLocale(Astro.currentLocale);
+const href = localizePath('/#case-contact', locale);
 ---
 
 <a
   class="contact-fab"
   id="contact-fab"
-  href="/#case-contact"
-  aria-label="Jump to contact section"
+  href={href}
+  aria-label={ui('contactFab.aria', locale)}
   data-visible="false"
 >
   <span class="contact-fab-chip" aria-hidden="true"></span>
-  <span class="contact-fab-label">Contact Me</span>
+  <span class="contact-fab-label">{ui('contactFab.label', locale)}</span>
   <svg
     class="contact-fab-chevron"
     viewBox="0 0 24 24"

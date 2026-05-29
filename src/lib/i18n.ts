@@ -104,6 +104,8 @@ export type UIKey =
   | 'resume.lede'
   | 'resume.download'
   | 'resume.openTab'
+  | 'contactFab.label'
+  | 'contactFab.aria'
   | 'siteTitle'
   | 'siteTitleCase'
   | 'siteTitleLab'
@@ -156,6 +158,8 @@ export const UI: Record<UIKey, L10n> = {
   ),
   'resume.download': t('Download PDF', 'PDF herunterladen'),
   'resume.openTab': t('Open in new tab ↗', 'In neuem Tab öffnen ↗'),
+  'contactFab.label': t('Contact Me', 'Kontakt'),
+  'contactFab.aria': t('Jump to contact section', 'Zum Kontakt-Bereich springen'),
   'hero.prelude': t(
     'All aboard! Three stops to your destination.',
     'Einsteigen bitte! Drei Stationen bis zum Ziel.',
