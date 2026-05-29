@@ -150,7 +150,10 @@ export const UI: Record<UIKey, L10n> = {
   'lab.forYourTeam': t('For your team', 'Für Ihr Team'),
   'lab.openDemo': t('Open demo ↗', 'Demo öffnen ↗'),
   'resume.title': t('Resume', 'Lebenslauf'),
-  'resume.lede': t('Senior product designer. Berlin. Enterprise platforms and AI products.'),
+  'resume.lede': t(
+    'Senior product designer. Berlin. Enterprise platforms and AI products.',
+    'Senior Product Designer. Berlin. Enterprise-Plattformen und KI-Produkte.',
+  ),
   'resume.download': t('Download PDF', 'PDF herunterladen'),
   'resume.openTab': t('Open in new tab ↗', 'In neuem Tab öffnen ↗'),
   'hero.prelude': t(
