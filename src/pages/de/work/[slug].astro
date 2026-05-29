@@ -1,0 +1,15 @@
+---
+import CaseDetailPage from '../../../components/pages/CaseDetailPage.astro';
+import { CASES } from '../../../data/cases';
+
+export function getStaticPaths() {
+  return CASES.filter((c) => c.body).map((c) => ({
+    params: { slug: c.slug },
+    props: { entry: c },
+  }));
+}
+
+const { entry } = Astro.props;
+---
+
+<CaseDetailPage entry={entry} />
