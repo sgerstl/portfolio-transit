@@ -281,4 +281,56 @@ const taglineLabel = ui('header.tagline', locale);
       font-size: 12px;
     }
   }
+
+  /* iPhone-class portrait widths. Aggressive tightening so all five
+     nav items + the EN·DE toggle fit without overflow, especially in
+     DE where "LEBENSLAUF" is wider than "RESUME". */
+  @media (max-width: 480px) {
+    .site-header {
+      padding: 0 12px;
+      gap: 8px;
+    }
+
+    .brand-img {
+      height: 28px;
+    }
+
+    .nav {
+      gap: 9px;
+    }
+
+    .nav a,
+    .lang-divider,
+    .lang-sep {
+      font-size: 11px;
+      letter-spacing: 0.03em;
+    }
+
+    .lang-toggle {
+      gap: 4px;
+    }
+  }
+
+  /* Smallest common phone widths (iPhone SE, older Androids). */
+  @media (max-width: 380px) {
+    .site-header {
+      padding: 0 10px;
+      gap: 6px;
+    }
+
+    .brand-img {
+      height: 26px;
+    }
+
+    .nav {
+      gap: 7px;
+    }
+
+    .nav a,
+    .lang-divider,
+    .lang-sep {
+      font-size: 10.5px;
+      letter-spacing: 0.02em;
+    }
+  }
 </style>
