@@ -1113,47 +1113,58 @@ export const CASES: CaseEntry[] = [
   {
     slug: 'about',
     name: 'About',
-    tagline: t('Wheels, speed, freedom.'),
+    // TODO: EN tagline pending rewrite (no longer matches paragraph 4 after the
+    // 2026-05-28 transit-metaphor addition). DE will need a re-translation
+    // pass once EN is updated.
+    tagline: t('Wheels, speed, freedom.', 'Räder, Tempo, Freiheit.'),
     line: 'pers',
     readingMinutes: 2,
     personal: {
       paragraphs: [
-        t('I love wheeled things. Bikes, cars, and even public transit.'),
+        t(
+          'I love wheeled things. Bikes, cars, and even public transit.',
+          'Ich liebe alles, was Räder hat. Fahrräder, Autos, und sogar den öffentlichen Nahverkehr.',
+        ),
         t(
           "I've built and prepped cars for high performance track driving, driven them at the limit, and coached others to find theirs. Helping someone get fast means understanding what needs to happen, and what can go wrong, before you suggest anything different.",
+          'Ich habe Autos für Trackdays gebaut und vorbereitet, sie an ihrer Grenze gefahren und anderen geholfen, ihre eigene zu finden. Jemandem zu helfen, schnell zu werden, heißt zu verstehen, was passieren muss und was schiefgehen kann, bevor man etwas anderes vorschlägt.',
         ),
         t(
           "I've been a cyclist since the 90s. I cut my teeth on mountain bikes, then fell headlong into road cycling, racing, endurance rides, cyclocross, and commuting. Now I'm combining it all, on and off road, in and around Berlin.",
+          'Ich bin seit den 90ern Radfahrer. Angefangen habe ich auf dem Mountainbike, dann bin ich Hals über Kopf in Rennrad, Rennen, Langstreckenfahrten, Cyclocross und Pendeln eingestiegen. Jetzt kombiniere ich alles, auf der Straße und abseits davon, in und um Berlin.',
         ),
         t(
           "Public transit is the third wheel, and the reason this site is built around a transit map. A subway has to work for a tourist who doesn't speak the language, a commuter who is late, a kid riding alone, an elderly rider with a cane, a wheelchair user, and somebody running on no sleep at the end of a long day. The route map, the signage, the ticket machine, the platform announcements, and more, all have to clear the same accessibility and clarity bar for every one of those people, in seconds, with no instructions. That is a serious bar.",
+          'Der öffentliche Nahverkehr ist das dritte Rad, und der Grund, warum diese Seite um einen Liniennetzplan herum gebaut ist. Eine U-Bahn muss funktionieren, und zwar für eine Touristin, die kein Deutsch spricht, für einen Pendler, der zu spät dran ist, für ein Kind, das alleine fährt, für eine ältere Frau mit Gehstock, für einen Rollstuhlfahrer und für jemanden, der am Ende eines langen Tages auf dem Zahnfleisch geht. Der Liniennetzplan, die Beschilderung, der Fahrkartenautomat, die Bahnsteigansagen und mehr, alles muss für jede dieser Personen dieselbe Latte an Zugänglichkeit und Klarheit nehmen, in Sekunden, ohne Anleitung. Das ist eine hohe Latte.',
         ),
         t(
           'It is also the bar I want to clear with my designs. The transit metaphor here is a statement about what design is for, and not simply a styling choice.',
+          'Das ist auch die Latte, die ich mit meinen Designs überspringen will. Die ÖPNV-Metapher hier ist eine Aussage darüber, wofür Design da ist. Und keine bloße Stilfrage.',
         ),
-        t('I also like to draw sometimes...'),
+        t('I also like to draw sometimes...', 'Ich zeichne auch manchmal...'),
       ],
       gallery: [
-        { src: '/images/gallery/bmw-m3-e30.jpg', title: 'BMW M3 E30', subtitle: t('Digital illustration') },
-        { src: '/images/gallery/porsche-911-turbo.jpg', title: 'Porsche 911 Turbo', subtitle: t('Digital illustration') },
-        { src: '/images/gallery/singer-930.jpg', title: 'Singer 930', subtitle: t('Digital illustration') },
-        { src: '/images/gallery/bmw-m2.jpg', title: 'BMW M2', subtitle: t('Digital illustration') },
-        { src: '/images/gallery/polestar-2.jpg', title: 'Polestar 2', subtitle: t('Digital illustration') },
-        { src: '/images/gallery/merc-sl.jpg', title: 'Mercedes SL', subtitle: t('After Shane Baxley') },
-        { src: '/images/gallery/911-night-race.jpg', title: '911 Night Race', subtitle: t('Digital illustration') },
+        { src: '/images/gallery/bmw-m3-e30.jpg', title: 'BMW M3 E30', subtitle: t('Digital illustration', 'Digitale Illustration') },
+        { src: '/images/gallery/porsche-911-turbo.jpg', title: 'Porsche 911 Turbo', subtitle: t('Digital illustration', 'Digitale Illustration') },
+        { src: '/images/gallery/singer-930.jpg', title: 'Singer 930', subtitle: t('Digital illustration', 'Digitale Illustration') },
+        { src: '/images/gallery/bmw-m2.jpg', title: 'BMW M2', subtitle: t('Digital illustration', 'Digitale Illustration') },
+        { src: '/images/gallery/polestar-2.jpg', title: 'Polestar 2', subtitle: t('Digital illustration', 'Digitale Illustration') },
+        { src: '/images/gallery/merc-sl.jpg', title: 'Mercedes SL', subtitle: t('After Shane Baxley', 'Nach Shane Baxley') },
+        { src: '/images/gallery/911-night-race.jpg', title: '911 Night Race', subtitle: t('Digital illustration', 'Digitale Illustration') },
       ],
     },
   },
   {
     slug: 'contact',
     name: 'Contact',
-    tagline: t('Email or LinkedIn. I read both.'),
+    tagline: t('Email or LinkedIn. I read both.', 'E-Mail oder LinkedIn. Ich lese beides.'),
     line: 'pers',
     readingMinutes: 1,
     personal: {
       paragraphs: [
         t(
           'Open to design leadership and senior product design roles, AI product work, and design consulting.',
+          'Offen für Design-Führungspositionen und Senior Product Design Rollen, KI-Produktarbeit und Designberatung.',
         ),
       ],
       links: [
