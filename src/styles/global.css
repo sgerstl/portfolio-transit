@@ -385,27 +385,26 @@ img:not([data-allow-save]) {
   .hero-cards {
     width: 100%;
     padding-top: 0;
-    gap: 12px;
+    gap: 8px;
   }
 
-  /* Stat cards: number INLINE above sentence, full width.
+  /* Stat cards: number INLINE LEFT of sentence (matches desktop, smaller).
      5px rail-blue top stripe stays. */
   .hero-card--stat {
-    grid-template-columns: 1fr;
+    grid-template-columns: 64px 1fr;
   }
 
   .hero-card--stat .stat-num {
     font-size: 36px;
     line-height: 1;
-    text-align: left;
-    padding: 18px 20px 2px;
-    border-right: none;
+    text-align: center;
+    padding: 14px 0 12px;
   }
 
   .hero-card--stat .stat-text {
     font-size: 17px;
     line-height: 1.4;
-    padding: 6px 20px 16px;
+    padding: 12px 16px 12px 14px;
   }
 
   .hero-card--proposition {
