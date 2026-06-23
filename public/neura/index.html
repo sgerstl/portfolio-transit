@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f6f6; --text:#4B4B4B; --soft:#6a6258; --ink:#3a3632;
+  --rail:#009DE0; --stroke:#b9b8b4; --track:#d8d7d4;
+  --ai:#43AF00; --ent:#DA5A00; --pers:#896CAE;
+  --card:#ffffff; --line:#e2e1de; --mono:'JetBrains Mono';
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#cfcfcf;font-family:'Inter',sans-serif;color:var(--text)}
+.slide{width:1280px;height:720px;background:var(--bg);position:relative;overflow:hidden;
+  padding:72px 86px 64px 156px;display:flex;flex-direction:column;margin:0 auto}
+.slide + .slide{margin-top:24px}
+.slide.wide{padding-left:86px}
+.p-ai{--accent:var(--ai)} .p-ent{--accent:var(--ent)} .p-pers{--accent:var(--pers)}
+
+.kicker{font-family:'Barlow Condensed';text-transform:uppercase;letter-spacing:.16em;font-weight:600;font-size:21px;color:var(--accent,var(--rail))}
+.title{font-family:'Barlow Condensed';font-weight:700;color:var(--ink);line-height:.96}
+.sub{font-family:'Barlow Condensed';font-weight:500;font-size:23px;color:var(--soft);letter-spacing:.01em}
+.tag{font-family:'Barlow Condensed';text-transform:uppercase;letter-spacing:.18em;font-weight:600;font-size:19px;color:var(--accent)}
+.body{font-family:'Inter';font-size:21.5px;line-height:1.5;color:var(--text);font-weight:400}
+.num{font-family:'Barlow Condensed';font-weight:700;color:var(--accent);line-height:.82}
+.cap{font-family:var(--mono);font-weight:500;font-size:14px;color:var(--soft);letter-spacing:.01em}
+
+/* vertical positional rail (all non-cover slides share this geometry) */
+.vrail{position:absolute;left:0;top:0;width:156px;height:100%}
+.vline{position:absolute;left:67px;top:236px;height:300px;width:3px;background:var(--track);border-radius:2px}
+.vst{position:absolute;left:68.5px;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;border:2.5px solid var(--stroke);background:var(--bg)}
+.vst.on{width:23px;height:23px;border:none;background:var(--accent)}
+/* overview station labels (pages 2 & 9), sit just right of the rail */
+.ovlabel{position:absolute;left:114px;transform:translateY(-50%)}
+.ov2{transform:none}
+.ovlabel .lname{font-family:'Barlow Condensed';font-weight:700;font-size:34px;color:var(--ink);line-height:1}
+.ovlabel .ldesc{font-family:'Inter';font-size:17px;color:var(--soft);margin-top:5px;max-width:470px;line-height:1.4}
+
+/* layout */
+.head{margin-bottom:4px}
+.cols{display:flex;flex:1;gap:54px;align-items:flex-start;margin-top:8px}
+.col-l{flex:1.05;display:flex;flex-direction:column}
+.col-r{flex:.95;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;height:100%}
+.block{margin-top:24px}
+.block .tag{margin-bottom:11px;display:block}
+
+.statline{display:flex;flex-direction:column;gap:32px;width:100%}
+.stat .num{font-size:108px}
+.stat .cap{display:block;margin-top:6px;font-size:15px}
+
+/* flow cards */
+.flow{display:flex;flex-direction:column;gap:18px;width:100%}
+.fcard{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:17px 22px;
+  box-shadow:0 6px 18px rgba(0,0,0,.05);text-align:center}
+.fcard.lit{border:2px solid var(--accent)}
+.fcard .ft{font-family:'Barlow Condensed';font-weight:600;font-size:23px;color:var(--ink);letter-spacing:.01em}
+.fcard.lit .ft{color:var(--accent)}
+.fcard .fc{font-family:var(--mono);font-size:12.5px;color:var(--soft);margin-top:4px}
+.fconn{width:2px;height:15px;background:#cfceca;margin:-9px auto}
+
+/* brightly: scattered silos (p5) + connected triangle (p6) */
+.scatter{position:relative;width:460px;height:380px}
+.scatter i{position:absolute;width:18px;height:18px;border-radius:50%;background:var(--ent);transform:translate(-50%,-50%)}
+.tri{position:relative;width:460px;height:380px}
+.tri svg{position:absolute;inset:0;width:100%;height:100%}
+.tbox{position:absolute;width:110px;height:92px;background:#fff;border:1.5px solid var(--ent);border-radius:14px;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 7px 18px rgba(0,0,0,.08)}
+.tbox .g{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+.tbox .g i{width:13px;height:13px;border-radius:50%;background:var(--ent);display:block}
+
+.pull{font-family:'Barlow Condensed';font-weight:600;font-size:40px;color:var(--ink);line-height:1.2;max-width:1000px}
+.close-line{font-family:'Inter';font-size:21px;color:var(--soft);line-height:1.5}
+
+/* cover + contact vertical accent */
+.spineaccent{position:absolute;left:86px;top:150px;bottom:150px;width:4px;background:var(--rail);border-radius:3px}
+.spineaccent::before{content:'';position:absolute;left:-8px;top:-2px;width:20px;height:20px;border-radius:50%;background:var(--rail)}
+.spineaccent.end::before{top:auto;bottom:-2px}
+.cover{justify-content:center;padding-left:140px}
+.cover .title{font-size:104px;margin:14px 0 18px}
+.cover .sub{font-size:25px;max-width:760px}
+.contact{justify-content:center;padding-left:140px}
+.contact .title{font-size:88px}
+.cmono{font-family:var(--mono);font-size:18px;color:var(--text);font-weight:500}
+.clink{font-family:var(--mono);font-size:18px;color:var(--rail);font-weight:600}
+.csmall{font-family:var(--mono);font-size:13px;color:var(--soft)}
+
+.logstack{display:flex;flex-direction:column;gap:11px;width:100%;max-width:380px}
+.logrow{background:#fff;border:1px solid var(--line);border-radius:11px;padding:13px 18px;display:flex;align-items:center;gap:16px;box-shadow:0 4px 12px rgba(0,0,0,.04)}
+.logrow .dt{font-family:var(--mono);font-size:13px;color:var(--soft);min-width:66px}
+.logrow .ev{font-family:'Inter';font-size:16px;color:var(--text)}
+.conv{display:flex;flex-direction:column;align-items:center;width:100%}
+.inpset{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;max-width:430px}
+.chip{background:#fff;border:1px solid var(--line);border-radius:20px;padding:7px 15px;font-family:var(--mono);font-size:13px;color:var(--soft);box-shadow:0 3px 8px rgba(0,0,0,.04)}
+.convline{width:2px;height:24px;background:#cfceca;margin:11px 0}
+.ainode{background:var(--pers);color:#fff;border-radius:24px;padding:11px 30px;font-family:'Barlow Condensed';font-weight:600;font-size:22px;letter-spacing:.02em}
+.insight{background:#fff;border:2px solid var(--pers);border-radius:13px;padding:15px 24px;text-align:center;box-shadow:0 7px 18px rgba(0,0,0,.07);max-width:430px}
+.insight .it{font-family:'Barlow Condensed';font-weight:600;font-size:21px;color:var(--pers)}
+.insight .ic{font-family:var(--mono);font-size:13px;color:var(--soft);margin-top:4px}
+.closeblock{position:absolute;left:410px;right:190px;top:50%;transform:translateY(-50%)}
+.sideblock{position:absolute;left:660px;right:50px;top:50%;transform:translateY(-50%);text-align:center}
+
+.rec{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;width:100%;max-width:432px;box-shadow:0 12px 32px rgba(0,0,0,.08)}
+.rec-kicker{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--ai);text-transform:uppercase}
+.rec-title{font-family:'Barlow Condensed';font-weight:700;font-size:29px;color:var(--ink);margin-top:7px;line-height:1.03}
+.rec-chart{width:100%;height:62px;margin-top:16px;display:block}
+.rec-cap{font-family:var(--mono);font-size:10.5px;color:#a8a7a3;margin-top:5px}
+.rec-rows{margin-top:16px;display:flex;flex-direction:column;gap:11px}
+.rec-row{display:flex;justify-content:space-between;align-items:center;font-family:'Inter';font-size:14.5px;color:var(--text)}
+.rec-row .k{color:var(--soft)}
+.rec-row .v{font-weight:600;color:var(--ink)}
+.rec-prob{display:flex;align-items:center;gap:9px}
+.rec-bar{width:96px;height:6px;border-radius:3px;background:#eceae6;overflow:hidden}
+.rec-bar i{display:block;height:100%;background:var(--ai);border-radius:3px}
+.rec-why{margin-top:15px;font-family:var(--mono);font-size:11.5px;color:var(--soft);background:#f1f5ef;border-radius:9px;padding:10px 13px}
+.rec-divider{height:1px;background:var(--line);margin:16px 0 15px}
+.rec-actions{display:flex;gap:11px}
+.rec-btn{flex:1;text-align:center;font-family:'Barlow Condensed';font-weight:600;font-size:16px;padding:11px;border-radius:10px;text-transform:uppercase;letter-spacing:.05em}
+.rec-approve{background:var(--ai);color:#fff}
+.rec-override{background:#fff;border:1.5px solid var(--stroke);color:var(--text)}
+.rec-foot{font-family:var(--mono);font-size:11px;color:var(--soft);text-align:center;margin-top:13px}
+.rec-link{display:inline-flex;align-items:center;gap:7px;margin-top:11px;font-family:'Barlow Condensed';font-weight:600;font-size:14px;color:var(--ai);text-transform:uppercase;letter-spacing:.05em}
+.rec-link span{font-size:16px}
+
+.cl-row{position:absolute;left:114px;right:90px;transform:translateY(-50%);display:flex;align-items:center;gap:50px}
+.cl-name{font-family:'Barlow Condensed';font-weight:700;font-size:32px;color:var(--ink);width:160px;flex:none}
+.cl-desc{font-family:'Inter';font-size:18px;color:var(--soft);line-height:1.45;flex:1}
+
+html,body{height:100%}
+body{overflow:hidden;background:#ececec}
+.deck{height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory;scroll-behavior:smooth}
+.stage{height:100vh;display:flex;align-items:center;justify-content:center;scroll-snap-align:center;position:relative}
+.stage .slide{transform:scale(var(--s,1));border-radius:8px;box-shadow:0 26px 70px rgba(0,0,0,.12);margin:0}
+.rv{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.2,1)}
+.stage.in .rv{opacity:1;transform:none}
+.rvo{opacity:0;transition:opacity .6s ease}.stage.in .rvo{opacity:1}
+.stage:not(.in) .rv,.stage:not(.in) .rvo{transition-delay:0s!important}
+.stage .vline{transform:scaleY(0);transform-origin:top;transition:transform .75s cubic-bezier(.2,.7,.2,1) .1s}
+.stage.in .vline{transform:scaleY(1)}
+.stage .vst.on{opacity:0;transform:translate(-50%,-50%) scale(.1);transition:transform .55s cubic-bezier(.34,1.56,.5,1) .4s,opacity .3s ease .4s}
+.stage.in .vst.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.stage .spineaccent{transform:scaleY(0);transform-origin:top;transition:transform .85s cubic-bezier(.2,.7,.2,1)}
+.stage.in .spineaccent{transform:scaleY(1)}
+.stage .spineaccent::before{opacity:0;transition:opacity .4s ease .72s}.stage.in .spineaccent::before{opacity:1}
+.rec{transition:transform .25s ease,box-shadow .25s ease}.rec:hover{transform:translateY(-4px);box-shadow:0 22px 50px rgba(0,0,0,.14)}
+.chip{transition:transform .2s ease,border-color .2s ease,color .2s ease}.chip:hover{transform:translateY(-2px);border-color:var(--pers);color:var(--pers)}
+.insight,.fcard{transition:transform .25s ease,box-shadow .25s ease}.insight:hover,.fcard:hover{transform:translateY(-3px)}
+.morph{position:relative;width:460px;height:380px}
+.morph .mlines{position:absolute;inset:0;width:100%;height:100%}
+.morph .mlines line{stroke-dasharray:320;stroke-dashoffset:320;transition:stroke-dashoffset .8s ease .9s}
+.stage.in .morph .mlines line{stroke-dashoffset:0}
+.morph .mbox{position:absolute;width:110px;height:92px;background:#fff;border:1.5px solid var(--ent);border-radius:14px;box-shadow:0 7px 18px rgba(0,0,0,.08);opacity:0;transform:scale(.85);transition:opacity .5s ease .55s,transform .55s cubic-bezier(.2,.8,.3,1) .55s}
+.stage.in .morph .mbox{opacity:1;transform:scale(1)}
+.morph .md{position:absolute;left:0;top:0;width:18px;height:18px;border-radius:50%;background:var(--ent);transform:translate(var(--sx),var(--sy));transition:transform 1.05s cubic-bezier(.45,.05,.2,1)}
+.stage.in .morph .md{transform:translate(var(--ex),var(--ey))}
+.scrollhint{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:12px;color:#a4a39f;letter-spacing:.05em;z-index:5}
+.dots{position:fixed;right:26px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:11px;z-index:5}
+.dots b{width:9px;height:9px;border-radius:50%;background:#c9c8c4;cursor:pointer;transition:background .2s,transform .2s}
+.dots b.act{background:#5b5b58;transform:scale(1.25)}
+@media (prefers-reduced-motion: reduce){
+ .rv,.rvo,.stage .vline,.stage .vst.on,.stage .spineaccent,.stage .spineaccent::before,.morph .md,.morph .mbox,.morph .mlines line{opacity:1!important;transition:none!important}
+ .rv{transform:none!important}.stage .vst.on{transform:translate(-50%,-50%)!important}.stage .vline,.stage .spineaccent{transform:none!important}
+ .morph .md{transform:translate(var(--ex),var(--ey))!important}.morph .mbox{transform:none!important}.morph .mlines line{stroke-dashoffset:0!important}
+ .deck{scroll-behavior:auto}
+}
+
+.home{position:fixed;top:22px;left:24px;z-index:7;display:inline-flex;align-items:center;gap:8px;font-family:'Barlow Condensed';font-weight:600;font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:#6a6258;text-decoration:none;background:rgba(255,255,255,.72);backdrop-filter:blur(10px) saturate(160%);-webkit-backdrop-filter:blur(10px) saturate(160%);padding:9px 16px 9px 14px;border-radius:22px;border:1px solid rgba(0,0,0,.09);box-shadow:0 4px 14px rgba(0,0,0,.06);transition:color .2s,background .2s,transform .2s}
+.home:hover{color:var(--ink);background:#fff;transform:translateX(-2px)}
+.home span{font-size:17px;line-height:1}
+</style>
+</head>
+<body>
+<div class="deck">
+
+
+<!-- 1 COVER -->
+<section class="stage"><section class="slide cover">
+  <div class="spineaccent"></div>
+  <div class="kicker" style="--accent:var(--rail)">Selected Work</div>
+  <h1 class="title">Scott Gerstl</h1>
+  <div class="sub">Fifteen years leading design in enterprise and industrial products. An empathetic design leader with technical knowledge who stays close to the craft.</div>
+</section></section>
+
+<!-- 2 OPEN -->
+<section class="stage"><section class="slide">
+  <div class="vrail"><div class="vline"></div>
+    <span class="vst on" style="top:236px;background:var(--ai)"></span>
+    <span class="vst on" style="top:386px;background:var(--ent)"></span>
+    <span class="vst on" style="top:536px;background:var(--pers)"></span>
+  </div>
+  <div class="revhead" style="position:absolute;left:114px;top:74px;max-width:780px">
+    <span class="kicker" style="--accent:var(--rail)">Three projects</span>
+    <div class="title" style="font-size:40px;margin-top:9px;line-height:1.08">Leadership, problem-solving, and hands-on building.</div>
+  </div>
+  <div class="cl-row" style="top:236px"><div class="cl-name">Ndustrial</div><div class="cl-desc">Operator screens for an industrial AI system</div></div>
+  <div class="cl-row" style="top:386px"><div class="cl-name">Brightly</div><div class="cl-desc">A unified design strategy across a dozen products</div></div>
+  <div class="cl-row" style="top:536px"><div class="cl-name">Epilog</div><div class="cl-desc">An app built for a loved one with epilepsy</div></div>
+</section></section>
+
+<!-- 3 NDUSTRIAL role+challenge -->
+<section class="stage"><section class="slide p-ai">
+  <div class="vrail"><div class="vline"></div><span class="vst on" style="top:236px"></span><span class="vst" style="top:386px"></span><span class="vst" style="top:536px"></span></div>
+  <div class="head"><h2 class="title" style="font-size:62px">Ndustrial</h2><div class="sub" style="margin-top:6px">AI energy intelligence for industrial clients</div></div>
+  <div class="cols">
+    <div class="col-l" style="max-width:505px">
+      <div class="block"><span class="tag">Role</span><div class="body">Sole designer. Set up the design and product process from scratch. Owned research through delivery, plus design ops and strategy.</div></div>
+      <div class="block"><span class="tag">Challenge</span><div class="body">An AI recommending energy curtailments, used by plant operators, not data scientists. The hard part was trust, not visualization. If it reads as a black box, they stop using it.</div></div>
+    </div>
+  </div>
+  <div class="sideblock"><div class="statline">
+    <div class="stat"><div class="num">$100k</div><span class="cap">a wrong call, one facility, one month</span></div>
+    <div class="stat"><div class="num" style="color:var(--ink)">200+</div><span class="cap">industrial sites running it</span></div>
+  </div></div>
+</section></section>
+
+<!-- 4 NDUSTRIAL approach+outcome -->
+<section class="stage"><section class="slide p-ai">
+  <div class="vrail"><div class="vline"></div><span class="vst on" style="top:236px"></span><span class="vst" style="top:386px"></span><span class="vst" style="top:536px"></span></div>
+  <div class="head"><h2 class="title" style="font-size:46px">The AI surfaces, the operator decides</h2></div>
+  <div class="cols">
+    <div class="col-l">
+      <div class="block"><span class="tag">Approach</span><div class="body">Show what it found, how confident it is, and the evidence. Then get out of the way. Every recommendation has a visible "why" and an override. Fleet: field research that folded five tools into one one-handed workflow.</div></div>
+      <div class="block"><span class="tag">Outcome</span><div class="body">Operator surfaces live across 200+ sites. Fleet shipped as a pilot. A reusable model for the human and AI division of labor.</div></div>
+    </div>
+    <div class="col-r"><div class="rec">
+      <div class="rec-kicker">AI recommendation</div>
+      <div class="rec-title">Curtail at today's 5 PM peak</div>
+      <svg class="rec-chart" viewBox="0 0 380 64" preserveAspectRatio="none">
+        <line x1="0" y1="13" x2="380" y2="13" stroke="#cf5b4e" stroke-width="1.5" stroke-dasharray="5 5"/>
+        <path d="M0,57 C55,53 105,46 155,39 C205,32 255,22 300,17 L380,15" fill="none" stroke="#43AF00" stroke-width="2.5"/>
+      </svg>
+      <div class="rec-cap">forecast load approaching peak threshold</div>
+      <div class="rec-rows">
+        <div class="rec-row"><span class="k">Grid peak</span><span class="v">76.4 GW</span></div>
+        <div class="rec-row"><span class="k">Peak probability</span><span class="rec-prob"><span class="rec-bar"><i style="width:96%"></i></span><span class="v">96%</span></span></div>
+      </div>
+      <div class="rec-why">load is tracking 4% above forecast since noon</div>
+      <div class="rec-link">See the reasoning <span>&rarr;</span></div>
+      <div class="rec-divider"></div>
+      <div class="rec-actions"><span class="rec-btn rec-approve">Approve</span><span class="rec-btn rec-override">Override</span></div>
+      <div class="rec-foot">the operator makes the call</div>
+    </div></div>
+  </div>
+</section></section>
+
+<!-- 5 BRIGHTLY role+challenge -->
+<section class="stage"><section class="slide p-ent">
+  <div class="vrail"><div class="vline"></div><span class="vst" style="top:236px"></span><span class="vst on" style="top:386px"></span><span class="vst" style="top:536px"></span></div>
+  <div class="head"><h2 class="title" style="font-size:60px">Brightly / Siemens</h2></div>
+  <div class="cols">
+    <div class="col-l">
+      <div class="block"><span class="tag">Role</span><div class="body">Built the design function from a small group into a team of seven, including a Principal running three of her own designers. About 7.5 years.</div></div>
+      <div class="block"><span class="tag">Challenge</span><div class="body">12 products from acquisitions, 4 markets, each on its own siloed dataset. None talking to each other. For a multi-product customer it felt like software from separate companies. All during a rebrand, a $1.575B acquisition, and Covid.</div></div>
+    </div>
+    <div class="col-r" style="justify-content:center;align-items:center">
+      <div class="scatter">
+        <i style="left:13%;top:12%"></i><i style="left:48%;top:7%"></i><i style="left:83%;top:16%"></i>
+        <i style="left:28%;top:33%"></i><i style="left:64%;top:28%"></i><i style="left:92%;top:43%"></i>
+        <i style="left:7%;top:55%"></i><i style="left:41%;top:52%"></i><i style="left:73%;top:62%"></i>
+        <i style="left:19%;top:80%"></i><i style="left:55%;top:85%"></i><i style="left:87%;top:77%"></i>
+      </div>
+    </div>
+  </div>
+</section></section>
+
+<!-- 6 BRIGHTLY approach+outcome -->
+<section class="stage"><section class="slide p-ent">
+  <div class="vrail"><div class="vline"></div><span class="vst" style="top:236px"></span><span class="vst on" style="top:386px"></span><span class="vst" style="top:536px"></span></div>
+  <div class="head"><h2 class="title" style="font-size:60px">Brightly / Siemens</h2></div>
+  <div class="cols">
+    <div class="col-l">
+      <div class="block"><span class="tag">Approach</span><div class="body">Two layers. People: career ladders, mentorship, a high craft bar, and shielding from the noise all matter, but underneath was respecting each person's autonomy. Understand what someone wants from the work and help them get it, and you earn both their best work and their loyalty. Platform: a north-star vision for running all 12 products on one connected, microserviced data layer, so a customer gets a whole job done in one place.</div></div>
+      <div class="block"><span class="tag">Outcome</span><div class="body">Lowest attrition in the company through it all. The vision was compelling enough to go into the acquisition pitch to Siemens.</div></div>
+    </div>
+    <div class="col-r" style="justify-content:center;align-items:center">
+      <div class="morph">
+        <svg class="mlines" viewBox="0 0 460 380" preserveAspectRatio="none">
+          <line x1="220" y1="66" x2="93" y2="286" stroke="#DA5A00" stroke-width="2.5"/>
+          <line x1="220" y1="66" x2="347" y2="286" stroke="#DA5A00" stroke-width="2.5"/>
+          <line x1="93" y1="286" x2="347" y2="286" stroke="#DA5A00" stroke-width="2.5"/>
+        </svg>
+        <div class="mbox" style="left:165px;top:20px"></div>
+        <div class="mbox" style="left:38px;top:240px"></div>
+        <div class="mbox" style="left:292px;top:240px"></div>
+        <i class="md" style="--sx:51px;--sy:37px;--ex:199px;--ey:45px"></i>
+        <i class="md" style="--sx:212px;--sy:18px;--ex:223px;--ey:45px"></i>
+        <i class="md" style="--sx:373px;--sy:52px;--ex:199px;--ey:69px"></i>
+        <i class="md" style="--sx:120px;--sy:116px;--ex:223px;--ey:69px"></i>
+        <i class="md" style="--sx:285px;--sy:97px;--ex:72px;--ey:265px"></i>
+        <i class="md" style="--sx:414px;--sy:154px;--ex:96px;--ey:265px"></i>
+        <i class="md" style="--sx:23px;--sy:200px;--ex:72px;--ey:289px"></i>
+        <i class="md" style="--sx:180px;--sy:189px;--ex:96px;--ey:289px"></i>
+        <i class="md" style="--sx:327px;--sy:227px;--ex:326px;--ey:265px"></i>
+        <i class="md" style="--sx:78px;--sy:295px;--ex:350px;--ey:265px"></i>
+        <i class="md" style="--sx:244px;--sy:314px;--ex:326px;--ey:289px"></i>
+        <i class="md" style="--sx:391px;--sy:284px;--ex:350px;--ey:289px"></i>
+      </div>
+    </div>
+  </div>
+</section></section>
+
+<!-- 7 EPILOG role+challenge -->
+<section class="stage"><section class="slide p-pers">
+  <div class="vrail"><div class="vline"></div><span class="vst" style="top:236px"></span><span class="vst" style="top:386px"></span><span class="vst on" style="top:536px"></span></div>
+  <div class="head"><h2 class="title" style="font-size:62px">Epilog</h2><div class="sub" style="margin-top:6px">An app for a loved one with epilepsy</div></div>
+  <div class="cols">
+    <div class="col-l">
+      <div class="block"><span class="tag">Role</span><div class="body">Designer and builder, solo, end to end.</div></div>
+      <div class="block"><span class="tag">Challenge</span><div class="body">A log on its own tells you nothing. Existing trackers record events but never reveal the pattern. The real problem was surfacing the correlations hidden across dozens of life factors, the ones no person could spot, and making the data count in the neurologist's office.</div></div>
+    </div>
+    <div class="col-r" style="align-items:center"><div style="display:flex;flex-direction:column;align-items:center;width:100%">
+      <div class="logstack">
+        <div class="logrow"><span class="dt">JUN 03</span><span class="ev">seizure</span></div>
+        <div class="logrow"><span class="dt">JUN 07</span><span class="ev">aura, no seizure</span></div>
+        <div class="logrow"><span class="dt">JUN 11</span><span class="ev">seizure</span></div>
+        <div class="logrow"><span class="dt">JUN 16</span><span class="ev">aura</span></div>
+      </div>
+      <div class="cap" style="margin-top:16px">a log of events. but what's causing them?</div>
+    </div></div>
+  </div>
+</section></section>
+
+<!-- 8 EPILOG approach+outcome -->
+<section class="stage"><section class="slide p-pers">
+  <div class="vrail"><div class="vline"></div><span class="vst" style="top:236px"></span><span class="vst" style="top:386px"></span><span class="vst on" style="top:536px"></span></div>
+  <div class="head"><h2 class="title" style="font-size:42px">Logging tool, to calendar, to AI pattern-finder</h2></div>
+  <div class="cols">
+    <div class="col-l">
+      <div class="block"><span class="tag">Approach</span><div class="body">The app grew from a logging tool, to a calendar, to an AI pattern-finder. I fed it sleep, heart rate, and activity from a smartwatch plus logged meds, diet, and notes, then let it find the correlations a person scanning a calendar would miss, and cross-reference medical research for other factors worth tracking.</div></div>
+      <div class="block"><span class="tag">Outcome</span><div class="body">The AI surfaced a likely supplement and medication interaction nobody had connected. The neurologist confirmed it, the seizures eased, and a human made the call.</div></div>
+    </div>
+    <div class="col-r"><div class="conv">
+      <div class="inpset">
+        <span class="chip">sleep</span><span class="chip">heart rate</span><span class="chip">activity</span>
+        <span class="chip">workouts</span><span class="chip">meds</span><span class="chip">diet</span><span class="chip">notes</span>
+      </div>
+      <div class="convline"></div>
+      <div class="ainode">AI finds the correlation</div>
+      <div class="convline"></div>
+      <div class="insight"><div class="it">One surfaced question</div><div class="ic">a hidden supplement + medication link</div></div>
+    </div></div>
+  </div>
+</section></section>
+
+<!-- 9 CLOSE -->
+<section class="stage"><section class="slide">
+  <div class="vrail"><div class="vline"></div>
+    <span class="vst on" style="top:236px;background:var(--ai)"></span>
+    <span class="vst on" style="top:386px;background:var(--ent)"></span>
+    <span class="vst on" style="top:536px;background:var(--pers)"></span>
+  </div>
+  <div style="position:absolute;left:114px;top:92px"><span class="kicker" style="--accent:var(--rail)">What each one showed</span></div>
+  <div class="cl-row" style="top:236px"><div class="cl-name">Ndustrial</div><div class="cl-desc">An operator trusting AI when real money is on the line</div></div>
+  <div class="cl-row" style="top:386px"><div class="cl-name">Brightly</div><div class="cl-desc">Collaboration across disciplines to consolidate a portfolio and lift outcomes</div></div>
+  <div class="cl-row" style="top:536px"><div class="cl-name">Epilog</div><div class="cl-desc">A solo designer and builder, using new tools to improve a loved one's care</div></div>
+</section></section>
+
+<!-- 10 CONTACT -->
+<section class="stage"><section class="slide contact">
+  <div class="spineaccent end"></div>
+  <h2 class="title">Thank you.</h2>
+  <div style="margin-top:28px"><span style="font-family:'Barlow Condensed';font-weight:600;font-size:30px;color:var(--ink)">Scott Gerstl</span></div>
+  <div style="margin-top:10px"><span class="cmono">scottgerstl@gmail.com</span></div>
+  <div style="margin-top:14px"><span class="clink">ux.scottgerstl.com</span></div>
+  <div style="margin-top:22px"><span class="csmall">Epilog case study + live demo · ux.scottgerstl.com/work/epilog</span></div>
+</section></section>
+
+</div>
+<a href="/" class="home"><span>&larr;</span> Portfolio</a>
+<div class="scrollhint">scroll &middot; arrow keys &middot; space</div>
+<script>
+const RM=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function scaleSlides(){const s=Math.min(window.innerWidth/1280,window.innerHeight/720);document.documentElement.style.setProperty('--s',s);}
+window.addEventListener('resize',scaleSlides);scaleSlides();
+const RVO='.cl-row,.ovlabel,.closeblock';
+const ALL='.head,.block,.stat,.rec,.scatter,.logstack,.conv .chip,.conv .convline,.conv .ainode,.conv .insight,.cover>.kicker,.cover>.title,.cover>.sub,.revhead,'+RVO;
+const stages=[...document.querySelectorAll('.stage')];
+stages.forEach((st,idx)=>{st.dataset.i=idx;[...st.querySelectorAll(ALL)].forEach((el,i)=>{el.classList.add(el.matches(RVO)?'rvo':'rv');el.style.transitionDelay=(0.05+i*0.07)+'s';});});
+function countUp(el){const txt=el.dataset.full,m=txt.match(/^(\D*)([\d,]+)(\D*)$/);if(!m)return;const pre=m[1],num=+m[2].replace(/,/g,''),suf=m[3],dur=1000,start=performance.now();(function step(now){const p=Math.min((now-start)/dur,1),e=1-Math.pow(1-p,3);el.textContent=pre+Math.round(e*num).toLocaleString()+suf;if(p<1)requestAnimationFrame(step);})(performance.now());}
+let cur=0;
+const io=new IntersectionObserver(es=>{es.forEach(e=>{
+  if(e.isIntersecting){cur=+e.target.dataset.i;e.target.classList.add('in');updateDots();if(!RM)e.target.querySelectorAll('.stat .num').forEach(n=>{if(!n.dataset.full)n.dataset.full=n.textContent.trim();countUp(n);});}
+  else e.target.classList.remove('in');
+});},{threshold:.5});
+stages.forEach(s=>io.observe(s));
+function go(i){cur=Math.max(0,Math.min(stages.length-1,i));stages[cur].scrollIntoView({behavior:RM?'auto':'smooth'});}
+window.addEventListener('keydown',e=>{
+  if(e.key==='ArrowDown'||e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();go(cur+1);}
+  else if(e.key==='ArrowUp'||e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(cur-1);}
+  else if(e.key==='Home'){e.preventDefault();go(0);}
+  else if(e.key==='End'){e.preventDefault();go(stages.length-1);}
+});
+const dotsWrap=document.createElement('div');dotsWrap.className='dots';
+stages.forEach((s,i)=>{const d=document.createElement('b');d.onclick=()=>go(i);dotsWrap.appendChild(d);});
+document.body.appendChild(dotsWrap);
+function updateDots(){[...dotsWrap.children].forEach((d,i)=>d.classList.toggle('act',i===cur));}
+updateDots();
+</script>
+</body></html>
