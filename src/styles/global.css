@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* Tailwind v4 auto-scans project files to decide which @theme variables to
+   emit. Root markdown (AGENTS.md, README.md) names tokens in documentation
+   tables, which made the scanner treat them as used and changed the built
+   CSS. Docs must not affect the bundle. */
+@source not "../../*.md";
+
 @theme {
   --color-bg: #f6f6f6;
   --color-text: #4B4B4B;
