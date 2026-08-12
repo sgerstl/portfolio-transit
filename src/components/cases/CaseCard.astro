@@ -146,6 +146,7 @@ const isPersonal = !!personal;
               href={link.href}
               target={link.href.startsWith('http') ? '_blank' : undefined}
               rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+              data-umami-event={`contact-${link.icon}`}
             >
               <span class="contact-icon">
                 {link.icon === 'email' && (

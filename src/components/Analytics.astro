@@ -1,0 +1,75 @@
+---
+// Self-hosted Umami analytics, reverse-proxied through the site at /stats.
+// Renders nothing in dev or when PUBLIC_UMAMI_WEBSITE_ID is unset, so preview
+// builds without the env var stay untracked. data-domains additionally guards
+// Vercel preview URLs and localhost from polluting production data.
+//
+// Both scripts are is:inline on purpose: Astro-processed scripts inside a
+// conditional are still bundled and shipped, and the ClientRouter must not
+// re-execute either script on client-side navigation. Inline head scripts
+// persist across ClientRouter swaps, so the event script runs exactly once
+// and resets its per-page state on astro:page-load (which also fires once
+// on the initial load).
+const websiteId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
+const enabled = import.meta.env.PROD && Boolean(websiteId);
+---
+
+{
+  enabled && (
+    <Fragment>
+      <script
+        is:inline
+        defer
+        src="/stats/script.js"
+        data-website-id={websiteId}
+        data-host-url="/stats"
+        data-domains="ux.scottgerstl.com"
+      />
+      <script is:inline>
+        (() => {
+          // Every track call is guarded with window.umami?. — the tracker is
+          // deferred and may not have loaded yet; dropping early events is fine.
+
+          // Scroll milestones: fire once per page for 25/50/75/100% depth.
+          const MILESTONES = [25, 50, 75, 100];
+          let fired = new Set();
+          let enteredAt = Date.now();
+
+          const checkDepth = () => {
+            const height = document.documentElement.scrollHeight;
+            if (!height) return;
+            const depth = ((window.scrollY + window.innerHeight) / height) * 100;
+            for (const milestone of MILESTONES) {
+              if (depth >= milestone && !fired.has(milestone)) {
+                fired.add(milestone);
+                window.umami?.track('scroll', {
+                  depth: milestone,
+                  path: location.pathname,
+                  seconds: Math.floor((Date.now() - enteredAt) / 1000),
+                });
+              }
+            }
+          };
+
+          // Fires on initial load and on every ClientRouter navigation:
+          // reset per-page state, then check once (short pages can start at 100%).
+          document.addEventListener('astro:page-load', () => {
+            fired = new Set();
+            enteredAt = Date.now();
+            checkDepth();
+          });
+
+          window.addEventListener('scroll', checkDepth, { passive: true });
+
+          // Resume downloads: delegated so it survives ClientRouter DOM swaps.
+          document.addEventListener('click', (e) => {
+            const target = e.target instanceof Element ? e.target : null;
+            if (target?.closest('a[href$="resume.pdf"]')) {
+              window.umami?.track('resume-download', { path: location.pathname });
+            }
+          });
+        })();
+      </script>
+    </Fragment>
+  )
+}
