@@ -1390,35 +1390,30 @@ export const CASES: CaseEntry[] = [
   {
     slug: 'about',
     name: 'About',
-    // TODO: EN tagline pending rewrite (no longer matches paragraph 4 after the
-    // 2026-05-28 transit-metaphor addition). DE will need a re-translation
-    // pass once EN is updated.
-    tagline: t('Wheels, speed, freedom.', 'Räder, Tempo, Freiheit.'),
+    tagline: t(
+      'What I do, and why this site is a transit map.',
+      'Was ich mache, und warum diese Seite ein Liniennetzplan ist.',
+    ),
     line: 'pers',
     readingMinutes: 2,
     personal: {
       paragraphs: [
         t(
-          'I love wheeled things. Bikes, cars, and even public transit.',
-          'Ich liebe alles, was Räder hat. Fahrräder, Autos, und sogar den öffentlichen Nahverkehr.',
+          "I'm a senior product designer and design leader. That's fifteen years of designing complex software, mostly enterprise, having led both onsite and full remote global teams. At Brightly I ran the accessibility program across four markets, and led an effort to unify a portfolio of 12 siloed products into a singular experience. Now I'm in Berlin doing the independent version of the same work, building and shipping AI products on my own. I hold US and German citizenship, with full EU work authorization.",
+          'Ich bin Senior Product Designer und Design Lead. Das sind fünfzehn Jahre, in denen ich komplexe Software entworfen habe, überwiegend im Enterprise-Bereich, und dabei globale Teams geführt habe, sowohl vor Ort als auch vollständig remote. Bei Brightly habe ich das Accessibility-Programm über vier Märkte hinweg geleitet und die Initiative vorangetrieben, ein Portfolio aus 12 isolierten Produkten zu einem einheitlichen Erlebnis zusammenzuführen. Jetzt bin ich in Berlin und mache dieselbe Arbeit auf eigene Rechnung, baue und veröffentliche KI-Produkte allein. Ich habe die US-amerikanische und die deutsche Staatsbürgerschaft und damit die volle Arbeitserlaubnis in der EU.',
         ),
         t(
-          "I've built and prepped cars for high performance track driving, driven them at the limit, and coached others to find theirs. Helping someone get fast means understanding what needs to happen, and what can go wrong, before you suggest anything different.",
-          'Ich habe Autos für Trackdays gebaut und vorbereitet, sie an ihrer Grenze gefahren und anderen geholfen, ihre eigene zu finden. Jemandem zu helfen, schnell zu werden, heißt zu verstehen, was passieren muss und was schiefgehen kann, bevor man etwas anderes vorschlägt.',
+          "This site is built around a transit map, for my love of transit and simple clear design. A subway has to work for a tourist who doesn't speak the language, a commuter running late, a child riding alone, an elderly rider with a cane, and somebody running on no sleep at the end of a long day. The route map, the signage, the ticket machine, even the industrial design of the train, the platform, and more, all have to offer the same accessibility and clarity for every one of those people, in seconds, with no instructions. I strive for my design work to do the same.",
+          'Diese Seite ist um einen Liniennetzplan herum gebaut, aus Liebe zum Nahverkehr und zu einfachem, klarem Design. Eine U-Bahn muss funktionieren, und zwar für eine Touristin, die kein Deutsch spricht, für einen Pendler, der zu spät dran ist, für ein Kind, das alleine fährt, für eine ältere Frau mit Gehstock und für jemanden, der am Ende eines langen Tages auf dem Zahnfleisch geht. Der Liniennetzplan, die Beschilderung, der Fahrkartenautomat, sogar das Industriedesign des Zuges, der Bahnsteig und mehr, alles muss für jede dieser Personen dieselbe Zugänglichkeit und Klarheit bieten, in Sekunden, ohne Anleitung. Genau das strebe ich für meine eigene Designarbeit an.',
         ),
         t(
-          "I've been a cyclist since the 90s. I cut my teeth on mountain bikes, then fell headlong into road cycling, racing, endurance rides, cyclocross, and commuting. Now I'm combining it all, on and off road, in and around Berlin.",
-          'Ich bin seit den 90ern Radfahrer. Angefangen habe ich auf dem Mountainbike, dann bin ich Hals über Kopf in Rennrad, Rennen, Langstreckenfahrten, Cyclocross und Pendeln eingestiegen. Jetzt kombiniere ich alles, auf der Straße und abseits davon, in und um Berlin.',
+          "Away from the screen it's mostly wheeled things. I've been a cyclist since the 90s and I still ride on and off road around Berlin. I also build and prep cars for track driving, and I coach other people who are learning to drive at the limit. Getting someone faster means understanding what has to happen and what can go wrong before it happens, communicate, and execute. That transfers directly to running a design team.",
+          'Abseits vom Bildschirm dreht sich bei mir das meiste um Räder. Ich fahre seit den 90ern Rad und bin nach wie vor auf und abseits der Straße rund um Berlin unterwegs. Außerdem baue und bereite ich Autos für Trackdays vor, und ich coache andere, die lernen, am Limit zu fahren. Jemanden schneller zu machen heißt zu verstehen, was passieren muss und was schiefgehen kann, bevor es passiert, es zu kommunizieren und es umzusetzen. Das lässt sich direkt auf das Führen eines Designteams übertragen.',
         ),
         t(
-          "Public transit is the third wheel, and the reason this site is built around a transit map. A subway has to work for a tourist who doesn't speak the language, a commuter who is late, a kid riding alone, an elderly rider with a cane, a wheelchair user, and somebody running on no sleep at the end of a long day. The route map, the signage, the ticket machine, the platform announcements, and more, all have to clear the same accessibility and clarity bar for every one of those people, in seconds, with no instructions. That is a serious bar.",
-          'Der öffentliche Nahverkehr ist das dritte Rad, und der Grund, warum diese Seite um einen Liniennetzplan herum gebaut ist. Eine U-Bahn muss funktionieren, und zwar für eine Touristin, die kein Deutsch spricht, für einen Pendler, der zu spät dran ist, für ein Kind, das alleine fährt, für eine ältere Frau mit Gehstock, für einen Rollstuhlfahrer und für jemanden, der am Ende eines langen Tages auf dem Zahnfleisch geht. Der Liniennetzplan, die Beschilderung, der Fahrkartenautomat, die Bahnsteigansagen und mehr, alles muss für jede dieser Personen dieselbe hohe Latte bei Zugänglichkeit und Klarheit nehmen, in Sekunden, ohne Anleitung. Das ist eine hohe Latte.',
+          "The illustrations below are mine. I like drawing cars to keep my eyes and hands in sync.",
+          'Die Illustrationen unten sind von mir. Ich zeichne gern Autos, um Auge und Hand im Zusammenspiel zu halten.',
         ),
-        t(
-          'It is also the bar I want to clear with my designs. The transit metaphor here is a statement about what design is for, and not simply a styling choice.',
-          'Das ist auch die Latte, die ich mit meinen Designs überspringen will. Die ÖPNV-Metapher ist eine inhaltliche Aussage über den Zweck von Design. Und keine bloße Stilfrage.',
-        ),
-        t('I also like to draw sometimes...', 'Ich zeichne auch manchmal...'),
       ],
       gallery: [
         { src: '/images/gallery/bmw-m3-e30.jpg', title: 'BMW M3 E30', subtitle: t('Digital illustration', 'Digitale Illustration') },
@@ -1486,8 +1481,8 @@ export const SECTIONS: { line: LineKey; code: string; title: L10n; subtitle: L10
     code: 'P',
     title: t('Personal', 'Persönlich'),
     subtitle: t(
-      '2 stops · who I am off the clock, and how to reach me',
-      '2 Stationen · wer ich nach Feierabend bin, und wie ich zu erreichen bin',
+      '2 stops · who I am and how to reach me',
+      '2 Stationen · wer ich bin und wie ich zu erreichen bin',
     ),
   },
 ];
