@@ -5,6 +5,14 @@ import { asLocale, localizePath, ui } from '../../lib/i18n';
 
 const locale = asLocale(Astro.currentLocale);
 const RESUME_PAGES = ['/images/resume/page-1.png', '/images/resume/page-2.png'];
+
+// A4 at 200dpi, the size `pdftoppm -png -r 200` produces from the vault's
+// resume hub. Declared on the img so the browser reserves the correct box
+// before the PNGs decode. Without it the page is barely taller than the
+// viewport on load, which shifts the layout under the reader and made the
+// analytics scroll-depth fire 100% before anything had actually rendered.
+const RESUME_PAGE_W = 1653;
+const RESUME_PAGE_H = 2339;
 ---
 
 <Layout title={ui('siteTitleResume', locale)} canonicalPath="/resume/">
@@ -35,7 +43,14 @@ const RESUME_PAGES = ['/images/resume/page-1.png', '/images/resume/page-2.png'];
     <div class="pdf-pages">
       {RESUME_PAGES.map((src, i) => (
         <div class="pdf-page">
-          <img src={src} alt={`Scott Gerstl Resume | Page ${i + 1}`} loading={i === 0 ? 'eager' : 'lazy'} data-allow-save />
+          <img
+            src={src}
+            alt={`Scott Gerstl Resume | Page ${i + 1}`}
+            width={RESUME_PAGE_W}
+            height={RESUME_PAGE_H}
+            loading={i === 0 ? 'eager' : 'lazy'}
+            data-allow-save
+          />
         </div>
       ))}
     </div>

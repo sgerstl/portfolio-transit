@@ -17,6 +17,14 @@ const enabled = import.meta.env.PROD && Boolean(websiteId);
 {
   enabled && (
     <Fragment>
+      {/*
+        exclude-hash collapses the homepage's anchor navigations back into "/".
+        Astro's ClientRouter routes #case-* and #section-* through pushState, so
+        without this the tracker files each anchor as its own page: the first
+        week split 22 homepage views across five paths. The tracker only sends a
+        pageview when the normalised URL actually changes, so stripping the hash
+        also stops anchor clicks double-counting "/".
+      */}
       <script
         is:inline
         defer
@@ -24,20 +32,48 @@ const enabled = import.meta.env.PROD && Boolean(websiteId);
         data-website-id={websiteId}
         data-host-url="/stats"
         data-domains="ux.scottgerstl.com"
+        data-exclude-hash="true"
       />
       <script is:inline>
         (() => {
           // Every track call is guarded with window.umami?. — the tracker is
           // deferred and may not have loaded yet; dropping early events is fine.
 
+          // Opt-out. The tracker re-reads umami.disabled on every send, so
+          // writing it here takes effect immediately even though the tracker
+          // itself loads later. ?notrack=1 sets it, ?notrack=0 clears it —
+          // a URL rather than a console line because the devices that most
+          // need it are phones.
+          try {
+            const flag = new URLSearchParams(location.search).get('notrack');
+            if (flag === '1') localStorage.setItem('umami.disabled', '1');
+            else if (flag === '0') localStorage.removeItem('umami.disabled');
+
+            // Headless automation accounted for a quarter of the first week's
+            // sessions. This only catches drivers that admit to being drivers,
+            // but at this sample size that is still worth having.
+            if (navigator.webdriver) localStorage.setItem('umami.disabled', '1');
+          } catch {
+            // Safari private mode throws on localStorage. Nothing to do.
+          }
+
           // Scroll milestones: fire once per page for 25/50/75/100% depth.
           const MILESTONES = [25, 50, 75, 100];
+
+          // A page only counts as scrollable when there is more than a rounding
+          // error below the fold. Without this guard, any page whose height
+          // depends on images reports 100% before those images decode — the
+          // resume page fired all four milestones at seconds=0 in every single
+          // session of the first week, which is a pageview wearing a costume.
+          const SCROLL_SLACK = 8;
+
           let fired = new Set();
           let enteredAt = Date.now();
+          let hiddenAt = null;
 
           const checkDepth = () => {
             const height = document.documentElement.scrollHeight;
-            if (!height) return;
+            if (height - window.innerHeight <= SCROLL_SLACK) return;
             const depth = ((window.scrollY + window.innerHeight) / height) * 100;
             for (const milestone of MILESTONES) {
               if (depth >= milestone && !fired.has(milestone)) {
@@ -51,15 +87,56 @@ const enabled = import.meta.env.PROD && Boolean(websiteId);
             }
           };
 
+          // Images that load late grow the document after astro:page-load has
+          // already run. Re-measure when that happens, otherwise a page that
+          // started shorter than the viewport is never measured at all.
+          //
+          // Observe body, not documentElement: html carries overflow-x: clip on
+          // this site, which makes it the scroll container, so its own box stays
+          // viewport-height however far the content overflows, and it would
+          // never report a resize. Re-observed per navigation because
+          // ClientRouter can swap the body element, which would leave the
+          // observer watching a detached node.
+          let growthObserver = null;
+          let observedBody = null;
+          const observeGrowth = () => {
+            if (!('ResizeObserver' in window)) return;
+            if (!document.body || observedBody === document.body) return;
+            growthObserver?.disconnect();
+            growthObserver = new ResizeObserver(() => checkDepth());
+            growthObserver.observe(document.body);
+            observedBody = document.body;
+          };
+
           // Fires on initial load and on every ClientRouter navigation:
-          // reset per-page state, then check once (short pages can start at 100%).
+          // reset per-page state, then check once. A page that is not scrollable
+          // yet reports nothing and gets re-checked as the document grows.
           document.addEventListener('astro:page-load', () => {
             fired = new Set();
             enteredAt = Date.now();
+            hiddenAt = document.hidden ? Date.now() : null;
+            observeGrowth();
             checkDepth();
           });
 
           window.addEventListener('scroll', checkDepth, { passive: true });
+
+          // Backstop for the same problem: no image on this site declares
+          // intrinsic dimensions apart from the resume pages, so on an
+          // image-led page the final height is only known at load.
+          window.addEventListener('load', checkDepth);
+
+          // Discount time spent in a background tab, so `seconds` means seconds
+          // actually looking at the page. A tab left open on /work/epilog once
+          // reported a 274,559-second read.
+          document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+              hiddenAt = Date.now();
+            } else if (hiddenAt !== null) {
+              enteredAt += Date.now() - hiddenAt;
+              hiddenAt = null;
+            }
+          });
 
           // Resume downloads: delegated so it survives ClientRouter DOM swaps.
           document.addEventListener('click', (e) => {
