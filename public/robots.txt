@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /joy-experiment/
+Allow: /
+
+Sitemap: https://ux.scottgerstl.com/sitemap-index.xml

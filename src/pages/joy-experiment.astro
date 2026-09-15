@@ -1,0 +1,310 @@
+---
+// Unlisted case study, shared by link only: noindex + a robots.txt disallow.
+// Screenshots only. No Malt fonts, code, or brand assets are served from this site.
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+
+const shots = [
+  {
+    src: '/images/joy-experiment/mcp-only.png',
+    full: '/images/joy-experiment/mcp-only-full.png',
+    label: 'Built from the MCP server alone',
+    caption:
+      'Every token and component is correct. The layout, the type scale, and the highlight colour are all guesses, because the server has nothing to say about them.',
+    alt: 'A portfolio homepage built with Malt\'s Joy design system: black headings, a coral highlight on the hero, bordered white case-study cards on a grey band.',
+  },
+  {
+    src: '/images/joy-experiment/after-reference.png',
+    full: '/images/joy-experiment/after-reference-full.png',
+    label: 'After measuring the live site',
+    caption:
+      'Same design system, same content. The difference is a set of measurements taken from Malt\'s own pages: container width, display sizes, card treatment, tint, and the colour their highlight actually uses.',
+    alt: 'The same page rebuilt: a larger display heading with a pink highlight pill, a portrait with a floating profile card, flat coral and pink shapes, cards on shadow, and a tinted panel section.',
+  },
+];
+---
+
+<Layout title="Joy experiment — Scott Gerstl" noindex={true} canonicalPath="/joy-experiment/">
+  <Header />
+
+  <main class="page joy-page">
+    <a class="back" href="/">← Back to portfolio</a>
+
+    <article class="joy-article">
+      <header class="joy-head">
+        <h1>An experiment with Malt&apos;s design system</h1>
+        <p class="lede">
+          How far an AI agent gets with a published design system, and where it still needs a
+          designer.
+        </p>
+      </header>
+
+      <section class="joy-body">
+        <p>
+          Malt publishes its design system, Joy, as open-source packages. One of them is an MCP
+          server, which lets an AI assistant look up Joy&apos;s components and design tokens while it
+          works.
+        </p>
+        <p>
+          I gave an agent a single job: rebuild the homepage of this site using Joy, with that server
+          as its only source of design-system knowledge and no access to the web. It made 41 queries
+          and produced the first page below.
+        </p>
+        <p>
+          Then I measured Malt&apos;s live site and handed back what the server hadn&apos;t told it.
+          That produced the second.
+        </p>
+      </section>
+
+      <section class="joy-shots">
+        {
+          shots.map((shot) => (
+            <figure class="joy-shot">
+              <a href={shot.full} target="_blank" rel="noopener">
+                <img src={shot.src} alt={shot.alt} width="1200" loading="lazy" decoding="async" />
+              </a>
+              <figcaption>
+                <span class="joy-shot__label">{shot.label}</span>
+                <span class="joy-shot__caption">{shot.caption} <span class="joy-shot__more">Open the full page →</span></span>
+              </figcaption>
+            </figure>
+          ))
+        }
+      </section>
+
+      <section class="joy-body">
+        <h2>Three things the two pictures show</h2>
+        <ul class="joy-findings">
+          <li>
+            <strong>The server is good at correctness.</strong> Every colour role arrived with
+            guidance on what to use it for and what to avoid, so the agent never guessed at a token.
+          </li>
+          <li>
+            <strong>It cannot describe a page.</strong> Joy is a product-UI system. It has no hero,
+            no card grid, and no footer, so a marketing layout has to be composed on top of it.
+          </li>
+          <li>
+            <strong>Nothing in the token data says what the brand looks like.</strong> Both pages
+            follow the same system. Only one of them looks like Malt.
+          </li>
+        </ul>
+      </section>
+
+      <footer class="joy-foot">
+        <p>
+          September 2026. An independent experiment, not affiliated with or endorsed by Malt. Joy is
+          MIT-licensed. The rebuilt page was never published; these are screenshots.
+        </p>
+      </footer>
+    </article>
+  </main>
+</Layout>
+
+<style>
+  .joy-page {
+    /* Clears the fixed back link (top 80px) so it never sits over the heading. */
+    padding: 148px 32px 120px;
+  }
+
+  .joy-article {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* Matches the case pages: fixed, uppercase, quiet until hover. */
+  .back {
+    position: fixed;
+    top: 80px;
+    left: 32px;
+    z-index: 50;
+    display: inline-block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text-soft);
+    text-decoration: none;
+    padding: 6px 12px;
+    background: rgba(246, 246, 246, 0.78);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 4px;
+  }
+
+  /* The site's case pages tint this link with the accent on hover. #896CAE on #f6f6f6 is 4.03:1,
+     under 4.5:1 for 14px text, so this page underlines instead and keeps the text colour. */
+  .back:hover,
+  .back:focus-visible {
+    color: var(--color-text);
+    text-decoration: underline;
+  }
+
+  .joy-head {
+    margin-bottom: 40px;
+  }
+
+  .joy-head h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--color-text);
+    margin: 0 0 12px;
+    border-left: 6px solid var(--color-line-pers);
+    padding-left: 18px;
+  }
+
+  .lede {
+    font-size: 20px;
+    line-height: 1.45;
+    color: var(--color-text);
+    padding-left: 24px;
+    margin: 0;
+  }
+
+  .joy-body {
+    padding-left: 24px;
+    max-width: 68ch;
+  }
+
+  .joy-body p {
+    font-size: 17px;
+    line-height: 1.6;
+    margin: 0 0 16px;
+  }
+
+  .joy-body h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: var(--color-text);
+    margin: 48px 0 16px;
+  }
+
+  .joy-findings {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .joy-findings li {
+    font-size: 17px;
+    line-height: 1.6;
+    padding: 0 0 0 18px;
+    margin-bottom: 16px;
+    border-left: 3px solid var(--color-line-pers);
+  }
+
+  .joy-findings strong {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+
+  .joy-shots {
+    display: grid;
+    gap: 40px;
+    margin: 48px 0;
+  }
+
+  @media (min-width: 900px) {
+    .joy-shots {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+  }
+
+  .joy-shot {
+    margin: 0;
+  }
+
+  .joy-shot a {
+    display: block;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: #fff;
+  }
+
+  .joy-shot a:focus-visible {
+    outline: 3px solid var(--color-line-pers);
+    outline-offset: 3px;
+  }
+
+  .joy-shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .joy-shot figcaption {
+    display: block;
+    padding-top: 12px;
+  }
+
+  .joy-shot__label {
+    display: block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text);
+    margin-bottom: 4px;
+  }
+
+  .joy-shot__more {
+    display: block;
+    margin-top: 6px;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .joy-shot__caption {
+    display: block;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--color-text-soft);
+  }
+
+  .joy-foot {
+    margin-top: 56px;
+    padding: 16px 0 0 24px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .joy-foot p {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--color-text-soft);
+    margin: 0;
+  }
+
+  @media (max-width: 720px) {
+    .joy-page {
+      padding: 124px 20px 80px;
+    }
+
+    .back {
+      top: 72px;
+      left: 20px;
+    }
+
+    .joy-head h1 {
+      font-size: 42px;
+      padding-left: 14px;
+      border-left-width: 5px;
+    }
+
+    .lede {
+      font-size: 16px;
+      padding-left: 19px;
+    }
+
+    .joy-body {
+      padding-left: 19px;
+    }
+  }
+</style>

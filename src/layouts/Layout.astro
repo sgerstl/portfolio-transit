@@ -7,13 +7,16 @@ import { asLocale, localizePath, ui, type Locale } from '../lib/i18n';
 
 interface Props {
   title?: string;
+  // Keeps a page out of search results. Used by unlisted pages that are shared
+  // by link only (e.g. /joy-experiment).
+  noindex?: boolean;
   // Optional canonical-path override for hreflang generation. If not provided,
   // we use the current pathname (stripped of /de prefix).
   canonicalPath?: string;
 }
 
 const locale: Locale = asLocale(Astro.currentLocale);
-const { title = ui('siteTitle', locale), canonicalPath } = Astro.props;
+const { title = ui('siteTitle', locale), canonicalPath, noindex = false } = Astro.props;
 
 const site = 'https://ux.scottgerstl.com';
 const ogTitle = ui('og.title', locale);
@@ -40,11 +43,19 @@ const canonicalUrl = `${site}${localizePath(currentPath, locale)}`;
       rel="stylesheet"
     />
     <meta name="generator" content={Astro.generator} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <title>{title}</title>
     <link rel="canonical" href={canonicalUrl} />
-    <link rel="alternate" hreflang="en" href={enUrl} />
-    <link rel="alternate" hreflang="de" href={deUrl} />
-    <link rel="alternate" hreflang="x-default" href={enUrl} />
+    {
+      /* Unlisted pages are English-only, so they advertise no German alternate. */
+      !noindex && (
+        <>
+          <link rel="alternate" hreflang="en" href={enUrl} />
+          <link rel="alternate" hreflang="de" href={deUrl} />
+          <link rel="alternate" hreflang="x-default" href={enUrl} />
+        </>
+      )
+    }
     <meta property="og:title" content={ogTitle} />
     <meta property="og:description" content={ogDesc} />
     <meta property="og:image" content={`${site}/og-image.png`} />
