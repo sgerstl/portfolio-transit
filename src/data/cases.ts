@@ -107,7 +107,7 @@ export const CASES: CaseEntry[] = [
         "An app built for one user with epilepsy. It's used daily to log events as the user experiences them. The AI Insights built into the app used the tracked data to surface an adverse drug interaction. A drug prescribed by the user's primary care physician was inhibiting the absorption of the anti-epileptic drugs the user depends on. This information was brought to the neurologist and they confirmed the interaction. The neurologist independently arrived at the same treatment direction the AI had suggested.",
         'Eine App für einen einzigen Nutzer mit Epilepsie. Wird täglich genutzt, um Ereignisse direkt nach dem Erleben zu protokollieren. Die in die App eingebauten KI-Insights haben aus den Daten eine schädliche Wechselwirkung erkannt. Ein vom Hausarzt verschriebenes Medikament hemmte die Aufnahme der Anti-Epileptika, auf die der Nutzer angewiesen ist. Diese Information wurde dem Neurologen vorgelegt, und er hat die Wechselwirkung bestätigt. Der Neurologe ist unabhängig zur selben Behandlungsrichtung gekommen, die die KI vorgeschlagen hatte.',
       ),
-      visualLabel: t('EPILOG · INSIGHTS SCREEN', 'EPILOG · INSIGHTS-SCREEN'),
+      visualLabel: t('EPILOG · EVENTS SCREEN', 'EPILOG · EVENTS-SCREEN'),
       visualImage: '/images/cases/epilog/epilog-events-framed.png',
       visualImageAlt: t(
         'Epilog app Events screen in an iPhone frame, listing tracked seizures and auras',
@@ -225,8 +225,8 @@ export const CASES: CaseEntry[] = [
           ),
           tryIts: [
             t(
-              'Tap the + button and look at the event types. "Missed Medication" is a first-class event, not a setting buried in a menu. That\'s the entire medication tracking system.',
-              'Tippe auf den +-Button und schau dir die Ereignistypen an. "Medikation verpasst" ist ein Ereignis erster Klasse, keine Einstellung, die in einem Menü vergraben ist. Das ist das gesamte Medikamenten-Tracking-System.',
+              'Tap the + button and look at the event types. "Missed Dose" sits among them as an event of its own, where most apps would bury a setting in a menu. That\'s the entire medication tracking system.',
+              'Tippe auf den +-Button und schau dir die Ereignistypen an. "Verpasste Dosis" steht dort als eigenes Ereignis, wo die meisten Apps eine Einstellung in einem Menü vergraben würden. Das ist das gesamte Medikamenten-Tracking-System.',
             ),
           ],
         },
@@ -257,12 +257,12 @@ export const CASES: CaseEntry[] = [
           ),
           tryIts: [
             t(
-              'Open the Insights tab and switch to "AI Analysis." Tap "Analyze my data" to see the kind of output the tool produces. The demo uses a curated dataset, but the structure mirrors real results.',
-              'Öffne den Insights-Tab und wechsle zu "KI-Analyse". Tippe auf "Meine Daten analysieren", um die Art von Ausgabe zu sehen, die das Tool erzeugt. Die Demo verwendet einen kuratierten Datensatz, aber die Struktur spiegelt echte Ergebnisse wider.',
+              'On the Insights screen, switch to the "AI" tab and tap "Analyze my data" to see the kind of output the tool produces. The demo uses a curated dataset, but the structure mirrors real results.',
+              'Wechsle auf dem Insights-Screen zum Tab "AI" und tippe auf "Meine Daten analysieren", um die Art von Ausgabe zu sehen, die das Tool erzeugt. Die Demo verwendet einen kuratierten Datensatz, aber die Struktur spiegelt echte Ergebnisse wider.',
             ),
             t(
-              'Head to the Export tab and tap "Export PDF." The generated report is structured for a neurologist visit: findings, medication history, and event timeline in a format that respects their time.',
-              'Gehe zum Export-Tab und tippe auf "PDF exportieren". Der erzeugte Bericht ist für einen Neurologen-Besuch strukturiert: Befunde, Medikationsverlauf und Ereigniszeitlinie in einem Format, das ihre Zeit respektiert.',
+              'On the Insights screen, tap Export. "Doctor report (PDF)" is already checked, so tap "Share export." The report is laid out for a neurologist visit, with findings, medication history, and the event timeline in a format that respects their time.',
+              'Tippe auf dem Insights-Screen auf "Export". "Doctor report (PDF)" ist bereits ausgewählt, also tippe auf "Share export". Der Bericht ist für einen Neurologen-Besuch aufgebaut, mit Befunden, Medikationsverlauf und Ereigniszeitlinie in einem Format, das ihre Zeit respektiert.',
             ),
           ],
           screenshots: {
