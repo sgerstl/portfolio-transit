@@ -46,6 +46,90 @@ export const LAB_CATEGORIES: LabCategory[] = [
     entries: [
       {
         title: t(
+          "Restyling Epilog: 600 Literals to Tokens Before Any Glass",
+          "Epilog neu gestaltet: 600 Literale zu Tokens, bevor das erste Glas kam",
+        ),
+        type: 'Product',
+        status: 'Live',
+        summary: t(
+          "Epilog got a full visual restyle in September. Before changing how anything looked, I moved about 600 hardcoded values to tokens and proved with screenshots that nothing had moved.",
+          "Epilog hat im September ein komplettes visuelles Restyling bekommen. Bevor sich am Aussehen etwas geändert hat, habe ich rund 600 fest codierte Werte in Tokens überführt und mit Screenshots belegt, dass sich nichts verschoben hatte.",
+        ),
+        tried: t(
+          "Epilog is the seizure-tracking app I built for a family member, and someone depends on it. The restyle replaced its Material Design 3 surfaces with three layers. The page is a soft gradient, content sits on solid white cards, and glass appears only on the header and the floating tab bar. Step one changed no pixels on purpose. About 600 literal colors and sizes across 48 files became theme tokens, and a Playwright script compared 69 demo states before and after. No color channel moved by more than 1 in 255. The glass, the new event discs and the severity meter went in afterwards, each as its own step with its own screenshots.",
+          "Epilog ist die App zum Erfassen von Anfällen, die ich für ein Familienmitglied gebaut habe, und jemand verlässt sich darauf. Das Restyling hat die Material-Design-3-Flächen durch drei Ebenen ersetzt. Die Seite ist ein weicher Verlauf, Inhalte liegen auf deckend weißen Karten, und Glas gibt es nur im Header und in der schwebenden Tab-Leiste. Schritt eins hat absichtlich keinen Pixel verändert. Rund 600 literale Farben und Größen in 48 Dateien wurden zu Theme-Tokens, und ein Playwright-Skript hat 69 Demo-Zustände vorher und nachher verglichen. Kein Farbkanal hat sich um mehr als 1 von 255 bewegt. Das Glas, die neuen Ereignis-Discs und die Schweregrad-Anzeige kamen danach, jeweils als eigener Schritt mit eigenen Screenshots.",
+        ),
+        learned: t(
+          "Contrast under glass has to be computed for the worst case, because content scrolls beneath the label. The active tab label in the brand purple fell to 3.9:1 when dark text passed under it, so it uses a darker purple that holds 5.4:1. Severity used to be a white label on a colored pill. It is now a five-segment meter with a text label beside it, so color never carries the meaning alone. The restyle also turned up older faults, including orange metric text at 2.9:1 and icon-only buttons with no accessible names.",
+          "Kontrast unter Glas muss für den ungünstigsten Fall berechnet werden, weil Inhalte unter der Beschriftung durchscrollen. Die aktive Tab-Beschriftung im Marken-Violett ist auf 3,9:1 gefallen, sobald dunkler Text darunter durchlief. Sie nutzt deshalb ein dunkleres Violett, das 5,4:1 hält. Der Schweregrad war früher eine weiße Beschriftung auf einer farbigen Pille. Jetzt ist er eine Anzeige mit fünf Segmenten und einer Textbeschriftung daneben, sodass Farbe die Bedeutung nie allein trägt. Das Restyling hat auch ältere Mängel aufgedeckt, darunter orangefarbenen Kennzahlentext mit 2,9:1 und reine Icon-Buttons ohne zugänglichen Namen.",
+        ),
+        didntWork: t(
+          "Menus and sheets at the cards' 94% opacity let the tab bar ghost through, so every floating surface went fully opaque. My first \"identical\" check was also too generous. With its threshold at zero, pixelmatch still skips anti-aliased pixels, so I switched to a per-pixel delta.",
+          "Menüs und Sheets mit den 94 % Deckkraft der Karten haben die Tab-Leiste durchscheinen lassen, also wurde jede schwebende Fläche vollständig deckend. Meine erste Prüfung auf „identisch“ war außerdem zu großzügig. Auch mit Schwellenwert null überspringt pixelmatch geglättete Pixel, deshalb bin ich auf ein Delta pro Pixel umgestiegen.",
+        ),
+        forYourTeam: t(
+          "Ship the token migration separately from the redesign, with a pixel diff that shows no change. Every visual change after that is deliberate and can be reviewed on its own.",
+          "Liefert die Token-Migration getrennt vom Redesign aus, mit einem Pixel-Diff, der keine Änderung zeigt. Jede visuelle Änderung danach ist beabsichtigt und lässt sich für sich prüfen.",
+        ),
+      },
+      {
+        title: t(
+          "Frühform: Forking Cal Into the Tool I Train With",
+          "Frühform: Cal geforkt zu dem Tool, mit dem ich trainiere",
+        ),
+        type: 'Product',
+        status: 'Live',
+        summary: t(
+          "Cal is the AI training app in my portfolio. When I needed a real plan for the winter, I forked it, took the AI out and hard-coded the program.",
+          "Cal ist die KI-Trainings-App in meinem Portfolio. Als ich einen echten Plan für den Winter gebraucht habe, habe ich sie geforkt, die KI herausgenommen und das Programm fest codiert.",
+        ),
+        tried: t(
+          "I needed a gym program for a 19-week winter block ahead of the 2027 gravel season. Cal generates its plans with Claude at runtime, and changing it would have bent a portfolio piece into a personal tool. I forked it as Frühform, which is German cycling slang for early-season form. The program was written once, in conversation with Claude, and lives in the app as data. Progression, recovery weeks and exercise swaps are rules in code. Finished sessions go to intervals.icu, so rides and lifting sit in one calendar. The visual structure comes from Epilog, with its layered surfaces, glass chrome and floating tab bar, in a warmer palette with light and dark modes. The build took two days, and a second person now trains with it on her own program.",
+          "Ich habe ein Kraftprogramm für einen 19-wöchigen Winterblock vor der Gravel-Saison 2027 gebraucht. Cal erzeugt seine Pläne zur Laufzeit mit Claude, und ein Umbau hätte aus einem Portfolio-Stück ein persönliches Werkzeug gemacht. Ich habe es als Frühform geforkt, so heißt im Radsport die Form früh in der Saison. Das Programm wurde einmal geschrieben, im Gespräch mit Claude, und liegt als Daten in der App. Steigerung, Erholungswochen und Übungswechsel sind Regeln im Code. Abgeschlossene Einheiten gehen an intervals.icu, sodass Ausfahrten und Krafttraining in einem Kalender stehen. Die visuelle Struktur kommt von Epilog, mit den geschichteten Flächen, dem Glas und der schwebenden Tab-Leiste, in einer wärmeren Palette mit hellem und dunklem Modus. Der Bau hat zwei Tage gedauert, und eine zweite Person trainiert inzwischen mit ihrem eigenen Programm damit.",
+        ),
+        learned: t(
+          "I took the AI out because I wanted a very simple, dedicated app. Frühform is highly specific, personalized software. Once a program is loaded, it runs independently of everything else, with no model to call and nothing to pay for. I also left out the streak counter. My plan tells me to drop a missed hard ride and take Christmas easy, and a streak punishes both. The app shows consistency per phase and sessions done this week.",
+          "Ich habe die KI herausgenommen, weil ich eine sehr einfache, dedizierte App wollte. Frühform ist hochspezifische, personalisierte Software. Sobald ein Programm geladen ist, läuft sie unabhängig von allem anderen, ohne Modellaufruf und ohne laufende Kosten. Den Streak-Zähler habe ich ebenfalls weggelassen. Mein Plan sagt mir, eine verpasste harte Ausfahrt zu streichen und es über Weihnachten ruhig anzugehen, und ein Streak bestraft beides. Die App zeigt die Beständigkeit pro Phase und die Einheiten dieser Woche.",
+        ),
+        didntWork: t(
+          "The first light mode looked rusty. I had burnt-orange fills with white text on beige. Bright orange with dark text on white fixed it.",
+          "Der erste helle Modus sah rostig aus. Ich hatte Flächen in gebranntem Orange mit weißem Text auf Beige. Helles Orange mit dunklem Text auf Weiß hat das behoben.",
+        ),
+        forYourTeam: t(
+          "AI makes it practical to build software for one or two people. The finished app doesn't have to call a model. Decide what the running product needs separately from how you build it.",
+          "KI macht es praktikabel, Software für ein oder zwei Menschen zu bauen. Die fertige App muss kein Modell aufrufen. Entscheidet getrennt davon, wie ihr baut, was das laufende Produkt braucht.",
+        ),
+      },
+      {
+        title: t(
+          "Three Cycling Tools I Prototyped and Archived",
+          "Drei Radsport-Tools, die ich als Prototyp gebaut und archiviert habe",
+        ),
+        type: 'Experiment',
+        status: 'Archived',
+        summary: t(
+          "Switchback, Parcours and Soigneur were three explorations of cycling ideas, and none of them worked out. Finding that out quickly is one of the things I like most about prototyping with AI.",
+          "Switchback, Parcours und Soigneur waren drei Erkundungen von Radsport-Ideen, und keine davon hat funktioniert. Das schnell herauszufinden gehört zu dem, was ich am Prototyping mit KI am meisten mag.",
+        ),
+        tried: t(
+          "Switchback came first, in April 2026. It pulls my rides from Strava, sorts each one into endurance, tempo or hard effort, and matches the GPS track against OpenStreetMap to show what surface I rode on. I built the whole app from Stitch mockups before asking whether it answered a question I had. Three months later I wrote the retrospective, and the verdict was that it gave me nothing I couldn't already get in Strava. Parcours came next. It was a route planner that treats a ride as a search query, something like sixty kilometers, mostly gravel, on roads I haven't ridden. Before any code I wrote down what would count as success and what would make me stop. Soigneur was the third. It runs the Martin et al. (1998) cycling power model backwards to estimate power without a power meter, and its first job was to check whether repeated passes of the same road gave consistent numbers.",
+          "Switchback kam zuerst, im April 2026. Es holt meine Fahrten aus Strava, ordnet jede als Ausdauer, Tempo oder harte Belastung ein und gleicht die GPS-Spur mit OpenStreetMap ab, um zu zeigen, auf welchem Untergrund ich gefahren bin. Ich habe die ganze App nach Stitch-Mockups gebaut, bevor ich gefragt habe, ob sie eine Frage beantwortet, die ich hatte. Drei Monate später habe ich die Retrospektive geschrieben, und das Urteil war, dass sie mir nichts gegeben hat, was ich nicht schon in Strava bekomme. Als Nächstes kam Parcours. Das war ein Routenplaner, der eine Fahrt als Suchanfrage behandelt, etwa sechzig Kilometer, überwiegend Schotter, auf Straßen, die ich noch nicht gefahren bin. Vor dem ersten Code habe ich aufgeschrieben, was als Erfolg zählen würde und was mich zum Aufhören bringen würde. Soigneur war das dritte. Es rechnet das Leistungsmodell von Martin et al. (1998) rückwärts, um die Leistung ohne Powermeter zu schätzen, und seine erste Aufgabe war zu prüfen, ob wiederholte Fahrten über dieselbe Straße übereinstimmende Werte liefern.",
+        ),
+        learned: t(
+          "All three were explorations of an idea, and none of them worked out, so I archived them in September. One of the joys of prototyping with AI is learning which ideas work and finding out quickly when they don't. Switchback was the slow version of that lesson. It was a complete app with no checkpoint, and it took me three months to admit it added nothing to Strava. For Parcours and Soigneur I wrote down beforehand what result would make me stop. Parcours stopped at its scoping note and cost me one document.",
+          "Alle drei waren Erkundungen einer Idee, und keine hat funktioniert, also habe ich sie im September archiviert. Eine der Freuden am Prototyping mit KI ist zu lernen, welche Ideen funktionieren, und schnell herauszufinden, wenn sie es nicht tun. Switchback war die langsame Version dieser Lektion. Es war eine komplette App ohne Prüfpunkt, und ich habe drei Monate gebraucht, um zuzugeben, dass sie Strava nichts hinzufügt. Für Parcours und Soigneur habe ich vorher aufgeschrieben, welches Ergebnis mich zum Aufhören bringen würde. Parcours ist bei der Scoping-Notiz stehen geblieben und hat mich ein Dokument gekostet.",
+        ),
+        didntWork: t(
+          "Matching a finished ride back onto OpenStreetMap roads was the hard part of Switchback, and it never fully landed. Noisy GPS has to be map-matched before a surface tag means anything. Strava shows the surface mix in its route planner and drops it on the completed ride. I now read that as a cost decision on their side.",
+          "Eine abgeschlossene Fahrt wieder auf OpenStreetMap-Straßen abzubilden war der schwierige Teil von Switchback, und er ist nie ganz gelungen. Verrauschtes GPS muss erst auf Straßen abgeglichen werden, bevor ein Untergrund-Tag etwas bedeutet. Strava zeigt den Untergrund-Mix im Routenplaner und lässt ihn bei der abgeschlossenen Fahrt weg. Ich lese das inzwischen als Kostenentscheidung auf ihrer Seite.",
+        ),
+        forYourTeam: t(
+          "AI makes a working app cheap enough that you can build one before you know whether it should exist. Before the first commit, write down the result that would make you stop and what you will do when you see it.",
+          "KI macht eine funktionierende App so billig, dass man sie bauen kann, bevor man weiß, ob es sie geben sollte. Schreibt vor dem ersten Commit auf, welches Ergebnis euch zum Aufhören bringen würde und was ihr tut, wenn ihr es seht.",
+        ),
+      },
+      {
+        title: t(
           'Metro Metaphor: A Visual Identity That Reached the Data Structures',
           'Metro-Metapher: Eine visuelle Identität, die bis in die Datenstrukturen reichte',
         ),
