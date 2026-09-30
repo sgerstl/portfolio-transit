@@ -69,7 +69,9 @@ const enabled = import.meta.env.PROD && Boolean(websiteId);
 
           let fired = new Set();
           let enteredAt = Date.now();
-          let hiddenAt = null;
+          let hiddenAt = document.hidden ? Date.now() : null;
+          let initialLoad = true;
+          let traversed = false;
 
           const checkDepth = () => {
             const height = document.documentElement.scrollHeight;
@@ -108,13 +110,35 @@ const enabled = import.meta.env.PROD && Boolean(websiteId);
             observedBody = document.body;
           };
 
+          // The tracker learns about navigation by hooking pushState and
+          // replaceState. Back and forward arrive as popstate, which it does
+          // not hook, so after a traversal it still believed it was on the
+          // previous page: no pageview for the page returned to, and every
+          // scroll event there was filed under the previous page's url_path.
+          document.addEventListener('astro:before-preparation', (e) => {
+            traversed = e.navigationType === 'traverse';
+          });
+
           // Fires on initial load and on every ClientRouter navigation:
           // reset per-page state, then check once. A page that is not scrollable
           // yet reports nothing and gets re-checked as the document grows.
           document.addEventListener('astro:page-load', () => {
-            fired = new Set();
-            enteredAt = Date.now();
-            hiddenAt = document.hidden ? Date.now() : null;
+            // The first firing is the initial load, where the state set at
+            // script start is already right. Resetting here re-fired every
+            // milestone the load backstop had just reported.
+            if (initialLoad) {
+              initialLoad = false;
+            } else {
+              fired = new Set();
+              enteredAt = Date.now();
+              hiddenAt = document.hidden ? Date.now() : null;
+            }
+            if (traversed) {
+              traversed = false;
+              // A same-URL replaceState runs the tracker's own hook, which
+              // updates its current URL and sends the missing pageview.
+              history.replaceState(history.state, '', location.href);
+            }
             observeGrowth();
             checkDepth();
           });
