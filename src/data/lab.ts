@@ -1,467 +1,204 @@
-import { t, type L10n } from '../lib/i18n';
-
 export type LabType = 'Product' | 'Workflow' | 'Experiment' | 'Evaluation';
 export type LabStatus = 'Live' | 'In Progress' | 'Learning' | 'Archived';
 
-export const LAB_TYPE_LABEL: Record<LabType, L10n> = {
-  Product: t('Product', 'Produkt'),
-  Workflow: t('Workflow', 'Workflow'),
-  Experiment: t('Experiment', 'Experiment'),
-  Evaluation: t('Evaluation', 'Bewertung'),
+export const LAB_TYPE_LABEL: Record<LabType, string> = {
+  Product: 'Product',
+  Workflow: 'Workflow',
+  Experiment: 'Experiment',
+  Evaluation: 'Evaluation',
 };
 
-export const LAB_STATUS_LABEL: Record<LabStatus, L10n> = {
-  Live: t('Live', 'Live'),
-  'In Progress': t('In Progress', 'In Arbeit'),
-  Learning: t('Learning', 'Lernen'),
-  Archived: t('Archived', 'Archiviert'),
+export const LAB_STATUS_LABEL: Record<LabStatus, string> = {
+  Live: 'Live',
+  'In Progress': 'In Progress',
+  Learning: 'Learning',
+  Archived: 'Archived',
 };
 
 export type LabLink = {
-  label: L10n;
+  label: string;
   url: string;
 };
 
 export type LabEntry = {
-  title: L10n;
+  title: string;
   type: LabType;
   status: LabStatus;
-  summary: L10n;
-  tried: L10n;
-  learned: L10n;
-  didntWork?: L10n;
-  forYourTeam?: L10n;
+  summary: string;
+  tried: string;
+  learned: string;
+  didntWork?: string;
+  forYourTeam?: string;
   links?: LabLink[];
   demoUrl?: string;
 };
 
 export type LabCategory = {
-  name: L10n;
+  name: string;
   entries: LabEntry[];
 };
 
 export const LAB_CATEGORIES: LabCategory[] = [
   {
-    name: t('Products & Tools', 'Produkte & Tools'),
+    name: 'Products & Tools',
     entries: [
       {
-        title: t(
-          "Restyling Epilog: 600 Literals to Tokens Before Any Glass",
-          "Epilog neu gestaltet: 600 Literale zu Tokens, bevor das erste Glas kam",
-        ),
+        title: "Restyling Epilog: 600 Literals to Tokens Before Any Glass",
         type: 'Product',
         status: 'Live',
-        summary: t(
-          "Epilog got a full visual restyle in September. Before changing how anything looked, I moved about 600 hardcoded values to tokens and proved with screenshots that nothing had moved.",
-          "Epilog hat im September ein komplettes visuelles Restyling bekommen. Bevor sich am Aussehen etwas geändert hat, habe ich rund 600 fest codierte Werte in Tokens überführt und mit Screenshots belegt, dass sich nichts verschoben hatte.",
-        ),
-        tried: t(
-          "Epilog is the seizure-tracking app I built for a family member, and someone depends on it. The restyle replaced its Material Design 3 surfaces with three layers. The page is a soft gradient, content sits on solid white cards, and glass appears only on the header and the floating tab bar. Step one changed no pixels on purpose. About 600 literal colors and sizes across 48 files became theme tokens, and a Playwright script compared 69 demo states before and after. No color channel moved by more than 1 in 255. The glass, the new event discs and the severity meter went in afterwards, each as its own step with its own screenshots.",
-          "Epilog ist die App zum Erfassen von Anfällen, die ich für ein Familienmitglied gebaut habe, und jemand verlässt sich darauf. Das Restyling hat die Material-Design-3-Flächen durch drei Ebenen ersetzt. Die Seite ist ein weicher Verlauf, Inhalte liegen auf deckend weißen Karten, und Glas gibt es nur im Header und in der schwebenden Tab-Leiste. Schritt eins hat absichtlich keinen Pixel verändert. Rund 600 literale Farben und Größen in 48 Dateien wurden zu Theme-Tokens, und ein Playwright-Skript hat 69 Demo-Zustände vorher und nachher verglichen. Kein Farbkanal hat sich um mehr als 1 von 255 bewegt. Das Glas, die neuen Ereignis-Discs und die Schweregrad-Anzeige kamen danach, jeweils als eigener Schritt mit eigenen Screenshots.",
-        ),
-        learned: t(
-          "Contrast under glass has to be computed for the worst case, because content scrolls beneath the label. The active tab label in the brand purple fell to 3.9:1 when dark text passed under it, so it uses a darker purple that holds 5.4:1. Severity used to be a white label on a colored pill. It is now a five-segment meter with a text label beside it, so color never carries the meaning alone. The restyle also turned up older faults, including orange metric text at 2.9:1 and icon-only buttons with no accessible names.",
-          "Kontrast unter Glas muss für den ungünstigsten Fall berechnet werden, weil Inhalte unter der Beschriftung durchscrollen. Die aktive Tab-Beschriftung im Marken-Violett ist auf 3,9:1 gefallen, sobald dunkler Text darunter durchlief. Sie nutzt deshalb ein dunkleres Violett, das 5,4:1 hält. Der Schweregrad war früher eine weiße Beschriftung auf einer farbigen Pille. Jetzt ist er eine Anzeige mit fünf Segmenten und einer Textbeschriftung daneben, sodass Farbe die Bedeutung nie allein trägt. Das Restyling hat auch ältere Mängel aufgedeckt, darunter orangefarbenen Kennzahlentext mit 2,9:1 und reine Icon-Buttons ohne zugänglichen Namen.",
-        ),
-        didntWork: t(
-          "Menus and sheets at the cards' 94% opacity let the tab bar ghost through, so every floating surface went fully opaque. My first \"identical\" check was also too generous. With its threshold at zero, pixelmatch still skips anti-aliased pixels, so I switched to a per-pixel delta.",
-          "Menüs und Sheets mit den 94 % Deckkraft der Karten haben die Tab-Leiste durchscheinen lassen, also wurde jede schwebende Fläche vollständig deckend. Meine erste Prüfung auf „identisch“ war außerdem zu großzügig. Auch mit Schwellenwert null überspringt pixelmatch geglättete Pixel, deshalb bin ich auf ein Delta pro Pixel umgestiegen.",
-        ),
-        forYourTeam: t(
-          "Ship the token migration separately from the redesign, with a pixel diff that shows no change. Every visual change after that is deliberate and can be reviewed on its own.",
-          "Liefert die Token-Migration getrennt vom Redesign aus, mit einem Pixel-Diff, der keine Änderung zeigt. Jede visuelle Änderung danach ist beabsichtigt und lässt sich für sich prüfen.",
-        ),
+        summary: "Epilog got a full visual restyle in September. Before changing how anything looked, I moved about 600 hardcoded values to tokens and proved with screenshots that nothing had moved.",
+        tried: "Epilog is the seizure-tracking app I built for a family member, and someone depends on it. The restyle replaced its Material Design 3 surfaces with three layers. The page is a soft gradient, content sits on solid white cards, and glass appears only on the header and the floating tab bar. Step one changed no pixels on purpose. About 600 literal colors and sizes across 48 files became theme tokens, and a Playwright script compared 69 demo states before and after. No color channel moved by more than 1 in 255. The glass, the new event discs and the severity meter went in afterwards, each as its own step with its own screenshots.",
+        learned: "Contrast under glass has to be computed for the worst case, because content scrolls beneath the label. The active tab label in the brand purple fell to 3.9:1 when dark text passed under it, so it uses a darker purple that holds 5.4:1. Severity used to be a white label on a colored pill. It is now a five-segment meter with a text label beside it, so color never carries the meaning alone. The restyle also turned up older faults, including orange metric text at 2.9:1 and icon-only buttons with no accessible names.",
+        didntWork: "Menus and sheets at the cards' 94% opacity let the tab bar ghost through, so every floating surface went fully opaque. My first \"identical\" check was also too generous. With its threshold at zero, pixelmatch still skips anti-aliased pixels, so I switched to a per-pixel delta.",
+        forYourTeam: "Ship the token migration separately from the redesign, with a pixel diff that shows no change. Every visual change after that is deliberate and can be reviewed on its own.",
       },
       {
-        title: t(
-          "Frühform: Forking Cal Into the Tool I Train With",
-          "Frühform: Cal geforkt zu dem Tool, mit dem ich trainiere",
-        ),
+        title: "Frühform: Forking Cal Into the Tool I Train With",
         type: 'Product',
         status: 'Live',
-        summary: t(
-          "Cal is the AI training app in my portfolio. When I needed a real plan for the winter, I forked it, took the AI out and hard-coded the program.",
-          "Cal ist die KI-Trainings-App in meinem Portfolio. Als ich einen echten Plan für den Winter gebraucht habe, habe ich sie geforkt, die KI herausgenommen und das Programm fest codiert.",
-        ),
-        tried: t(
-          "I needed a gym program for a 19-week winter block ahead of the 2027 gravel season. Cal generates its plans with Claude at runtime, and changing it would have bent a portfolio piece into a personal tool. I forked it as Frühform, which is German cycling slang for early-season form. The program was written once, in conversation with Claude, and lives in the app as data. Progression, recovery weeks and exercise swaps are rules in code. Finished sessions go to intervals.icu, so rides and lifting sit in one calendar. The visual structure comes from Epilog, with its layered surfaces, glass chrome and floating tab bar, in a warmer palette with light and dark modes. The build took two days, and a second person now trains with it on her own program.",
-          "Ich habe ein Kraftprogramm für einen 19-wöchigen Winterblock vor der Gravel-Saison 2027 gebraucht. Cal erzeugt seine Pläne zur Laufzeit mit Claude, und ein Umbau hätte aus einem Portfolio-Stück ein persönliches Werkzeug gemacht. Ich habe es als Frühform geforkt, so heißt im Radsport die Form früh in der Saison. Das Programm wurde einmal geschrieben, im Gespräch mit Claude, und liegt als Daten in der App. Steigerung, Erholungswochen und Übungswechsel sind Regeln im Code. Abgeschlossene Einheiten gehen an intervals.icu, sodass Ausfahrten und Krafttraining in einem Kalender stehen. Die visuelle Struktur kommt von Epilog, mit den geschichteten Flächen, dem Glas und der schwebenden Tab-Leiste, in einer wärmeren Palette mit hellem und dunklem Modus. Der Bau hat zwei Tage gedauert, und eine zweite Person trainiert inzwischen mit ihrem eigenen Programm damit.",
-        ),
-        learned: t(
-          "I took the AI out because I wanted a very simple, dedicated app. Frühform is highly specific, personalized software. Once a program is loaded, it runs independently of everything else, with no model to call and nothing to pay for. I also left out the streak counter. My plan tells me to drop a missed hard ride and take Christmas easy, and a streak punishes both. The app shows consistency per phase and sessions done this week.",
-          "Ich habe die KI herausgenommen, weil ich eine sehr einfache, dedizierte App wollte. Frühform ist hochspezifische, personalisierte Software. Sobald ein Programm geladen ist, läuft sie unabhängig von allem anderen, ohne Modellaufruf und ohne laufende Kosten. Den Streak-Zähler habe ich ebenfalls weggelassen. Mein Plan sagt mir, eine verpasste harte Ausfahrt zu streichen und es über Weihnachten ruhig anzugehen, und ein Streak bestraft beides. Die App zeigt die Beständigkeit pro Phase und die Einheiten dieser Woche.",
-        ),
-        didntWork: t(
-          "The first light mode looked rusty. I had burnt-orange fills with white text on beige. Bright orange with dark text on white fixed it.",
-          "Der erste helle Modus sah rostig aus. Ich hatte Flächen in gebranntem Orange mit weißem Text auf Beige. Helles Orange mit dunklem Text auf Weiß hat das behoben.",
-        ),
-        forYourTeam: t(
-          "AI makes it practical to build software for one or two people. The finished app doesn't have to call a model. Decide what the running product needs separately from how you build it.",
-          "KI macht es praktikabel, Software für ein oder zwei Menschen zu bauen. Die fertige App muss kein Modell aufrufen. Entscheidet getrennt davon, wie ihr baut, was das laufende Produkt braucht.",
-        ),
+        summary: "Cal is the AI training app in my portfolio. When I needed a real plan for the winter, I forked it, took the AI out and hard-coded the program.",
+        tried: "I needed a gym program for a 19-week winter block ahead of the 2027 gravel season. Cal generates its plans with Claude at runtime, and changing it would have bent a portfolio piece into a personal tool. I forked it as Frühform, which is German cycling slang for early-season form. The program was written once, in conversation with Claude, and lives in the app as data. Progression, recovery weeks and exercise swaps are rules in code. Finished sessions go to intervals.icu, so rides and lifting sit in one calendar. The visual structure comes from Epilog, with its layered surfaces, glass chrome and floating tab bar, in a warmer palette with light and dark modes. The build took two days, and a second person now trains with it on her own program.",
+        learned: "I took the AI out because I wanted a very simple, dedicated app. Frühform is highly specific, personalized software. Once a program is loaded, it runs independently of everything else, with no model to call and nothing to pay for. I also left out the streak counter. My plan tells me to drop a missed hard ride and take Christmas easy, and a streak punishes both. The app shows consistency per phase and sessions done this week.",
+        didntWork: "The first light mode looked rusty. I had burnt-orange fills with white text on beige. Bright orange with dark text on white fixed it.",
+        forYourTeam: "AI makes it practical to build software for one or two people. The finished app doesn't have to call a model. Decide what the running product needs separately from how you build it.",
       },
       {
-        title: t(
-          "Three Cycling Tools I Prototyped and Archived",
-          "Drei Radsport-Tools, die ich als Prototyp gebaut und archiviert habe",
-        ),
+        title: "Three Cycling Tools I Prototyped and Archived",
         type: 'Experiment',
         status: 'Archived',
-        summary: t(
-          "Switchback, Parcours and Soigneur were three explorations of cycling ideas, and none of them worked out. Finding that out quickly is one of the things I like most about prototyping with AI.",
-          "Switchback, Parcours und Soigneur waren drei Erkundungen von Radsport-Ideen, und keine davon hat funktioniert. Das schnell herauszufinden gehört zu dem, was ich am Prototyping mit KI am meisten mag.",
-        ),
-        tried: t(
-          "Switchback came first, in April 2026. It pulls my rides from Strava, sorts each one into endurance, tempo or hard effort, and matches the GPS track against OpenStreetMap to show what surface I rode on. I built the whole app from Stitch mockups before asking whether it answered a question I had. Three months later I wrote the retrospective, and the verdict was that it gave me nothing I couldn't already get in Strava. Parcours came next. It was a route planner that treats a ride as a search query, something like sixty kilometers, mostly gravel, on roads I haven't ridden. Before any code I wrote down what would count as success and what would make me stop. Soigneur was the third. It runs the Martin et al. (1998) cycling power model backwards to estimate power without a power meter, and its first job was to check whether repeated passes of the same road gave consistent numbers.",
-          "Switchback kam zuerst, im April 2026. Es holt meine Fahrten aus Strava, ordnet jede als Ausdauer, Tempo oder harte Belastung ein und gleicht die GPS-Spur mit OpenStreetMap ab, um zu zeigen, auf welchem Untergrund ich gefahren bin. Ich habe die ganze App nach Stitch-Mockups gebaut, bevor ich gefragt habe, ob sie eine Frage beantwortet, die ich hatte. Drei Monate später habe ich die Retrospektive geschrieben, und das Urteil war, dass sie mir nichts gegeben hat, was ich nicht schon in Strava bekomme. Als Nächstes kam Parcours. Das war ein Routenplaner, der eine Fahrt als Suchanfrage behandelt, etwa sechzig Kilometer, überwiegend Schotter, auf Straßen, die ich noch nicht gefahren bin. Vor dem ersten Code habe ich aufgeschrieben, was als Erfolg zählen würde und was mich zum Aufhören bringen würde. Soigneur war das dritte. Es rechnet das Leistungsmodell von Martin et al. (1998) rückwärts, um die Leistung ohne Powermeter zu schätzen, und seine erste Aufgabe war zu prüfen, ob wiederholte Fahrten über dieselbe Straße übereinstimmende Werte liefern.",
-        ),
-        learned: t(
-          "All three were explorations of an idea, and none of them worked out, so I archived them in September. One of the joys of prototyping with AI is learning which ideas work and finding out quickly when they don't. Switchback was the slow version of that lesson. It was a complete app with no checkpoint, and it took me three months to admit it added nothing to Strava. For Parcours and Soigneur I wrote down beforehand what result would make me stop. Parcours stopped at its scoping note and cost me one document.",
-          "Alle drei waren Erkundungen einer Idee, und keine hat funktioniert, also habe ich sie im September archiviert. Eine der Freuden am Prototyping mit KI ist zu lernen, welche Ideen funktionieren, und schnell herauszufinden, wenn sie es nicht tun. Switchback war die langsame Version dieser Lektion. Es war eine komplette App ohne Prüfpunkt, und ich habe drei Monate gebraucht, um zuzugeben, dass sie Strava nichts hinzufügt. Für Parcours und Soigneur habe ich vorher aufgeschrieben, welches Ergebnis mich zum Aufhören bringen würde. Parcours ist bei der Scoping-Notiz stehen geblieben und hat mich ein Dokument gekostet.",
-        ),
-        didntWork: t(
-          "Matching a finished ride back onto OpenStreetMap roads was the hard part of Switchback, and it never fully landed. Noisy GPS has to be map-matched before a surface tag means anything. Strava shows the surface mix in its route planner and drops it on the completed ride. I now read that as a cost decision on their side.",
-          "Eine abgeschlossene Fahrt wieder auf OpenStreetMap-Straßen abzubilden war der schwierige Teil von Switchback, und er ist nie ganz gelungen. Verrauschtes GPS muss erst auf Straßen abgeglichen werden, bevor ein Untergrund-Tag etwas bedeutet. Strava zeigt den Untergrund-Mix im Routenplaner und lässt ihn bei der abgeschlossenen Fahrt weg. Ich lese das inzwischen als Kostenentscheidung auf ihrer Seite.",
-        ),
-        forYourTeam: t(
-          "AI makes a working app cheap enough that you can build one before you know whether it should exist. Before the first commit, write down the result that would make you stop and what you will do when you see it.",
-          "KI macht eine funktionierende App so billig, dass man sie bauen kann, bevor man weiß, ob es sie geben sollte. Schreibt vor dem ersten Commit auf, welches Ergebnis euch zum Aufhören bringen würde und was ihr tut, wenn ihr es seht.",
-        ),
+        summary: "Switchback, Parcours and Soigneur were three explorations of cycling ideas, and none of them worked out. Finding that out quickly is one of the things I like most about prototyping with AI.",
+        tried: "Switchback came first, in April 2026. It pulls my rides from Strava, sorts each one into endurance, tempo or hard effort, and matches the GPS track against OpenStreetMap to show what surface I rode on. I built the whole app from Stitch mockups before asking whether it answered a question I had. Three months later I wrote the retrospective, and the verdict was that it gave me nothing I couldn't already get in Strava. Parcours came next. It was a route planner that treats a ride as a search query, something like sixty kilometers, mostly gravel, on roads I haven't ridden. Before any code I wrote down what would count as success and what would make me stop. Soigneur was the third. It runs the Martin et al. (1998) cycling power model backwards to estimate power without a power meter, and its first job was to check whether repeated passes of the same road gave consistent numbers.",
+        learned: "All three were explorations of an idea, and none of them worked out, so I archived them in September. One of the joys of prototyping with AI is learning which ideas work and finding out quickly when they don't. Switchback was the slow version of that lesson. It was a complete app with no checkpoint, and it took me three months to admit it added nothing to Strava. For Parcours and Soigneur I wrote down beforehand what result would make me stop. Parcours stopped at its scoping note and cost me one document.",
+        didntWork: "Matching a finished ride back onto OpenStreetMap roads was the hard part of Switchback, and it never fully landed. Noisy GPS has to be map-matched before a surface tag means anything. Strava shows the surface mix in its route planner and drops it on the completed ride. I now read that as a cost decision on their side.",
+        forYourTeam: "AI makes a working app cheap enough that you can build one before you know whether it should exist. Before the first commit, write down the result that would make you stop and what you will do when you see it.",
       },
       {
-        title: t(
-          'Metro Metaphor: A Visual Identity That Reached the Data Structures',
-          'Metro-Metapher: Eine visuelle Identität, die bis in die Datenstrukturen reichte',
-        ),
+        title: 'Metro Metaphor: A Visual Identity That Reached the Data Structures',
         type: 'Experiment',
         status: 'Live',
-        summary: t(
-          'How a Berlin departure board became the structural identity of the entire site, after five other metaphors fell apart in execution.',
-          'Wie eine Berliner Abfahrtstafel zur strukturellen Identität der gesamten Seite wurde, nachdem fünf andere Metaphern in der Umsetzung auseinandergefallen sind.',
-        ),
-        tried: t(
-          'Tried five visual metaphors for the portfolio redesign: vintage transit poster, mission control panel, library, departure board / metro map, and minimalist Swiss design. Each had a hook. Four fell apart in execution. The departure board / metro stuck because the metaphor reached past the brand mark and into the data structures: lines became case categories (CS1 = AI, CS2 = Enterprise, P = Personal), stops became individual cases, ziel became the case name, Lesezeit became the reading time, and the current scroll position became the current stop.',
-          'Fünf visuelle Metaphern für das Portfolio-Redesign ausprobiert: Vintage-Transit-Poster, Mission-Control-Panel, Bibliothek, Abfahrtstafel / U-Bahn-Plan und minimalistisches Swiss Design. Jede hatte einen Aufhänger. Vier sind in der Umsetzung auseinandergefallen. Die Abfahrtstafel / U-Bahn ist geblieben, weil die Metapher über die Bildmarke hinaus bis in die Datenstrukturen gereicht hat: Linien wurden Fall-Kategorien (CS1 = KI, CS2 = Enterprise, P = Persönlich), Stationen wurden einzelne Fälle, Ziel wurde der Fall-Name, Lesezeit wurde die Lesedauer, und die aktuelle Scroll-Position wurde der aktuelle Halt.',
-        ),
-        learned: t(
-          "A sustained metaphor is harder than picking a strong one. The first three I tried were visually distinctive but stopped at the brand mark. The departure board worked because every level of the design system had a place in the metaphor's vocabulary. When the metaphor reaches into the data, it stops being decoration and becomes navigation.",
-          'Eine durchgehaltene Metapher ist schwerer als eine starke auszuwählen. Die ersten drei, die ich ausprobiert habe, waren visuell markant, aber sind an der Bildmarke stehen geblieben. Die Abfahrtstafel hat funktioniert, weil jede Ebene des Designsystems einen Platz im Vokabular der Metapher hatte. Wenn die Metapher in die Daten reicht, hört sie auf, Dekoration zu sein, und wird zur Navigation.',
-        ),
-        didntWork: t(
-          'Vintage transit poster was beautiful but read as nostalgic, not professional. Mission control was on-brand for AI but felt cliché. Library felt warm but disconnected from technical work. Swiss minimalist disappeared into the page background. The test for whether a metaphor sticks: can you describe a case study\'s information architecture using the metaphor\'s vocabulary without straining? Departure board passed. The others all failed at this exact step.',
-          'Vintage-Transit-Poster war schön, las sich aber nostalgisch, nicht professionell. Mission Control war markenkonform für KI, fühlte sich aber wie ein Klischee an. Bibliothek war warm, aber von technischer Arbeit abgekoppelt. Swiss Minimalist ist im Seitenhintergrund verschwunden. Der Test, ob eine Metapher hält: Kann man die Informationsarchitektur einer Fallstudie mit dem Vokabular der Metapher beschreiben, ohne sich zu verbiegen? Abfahrtstafel hat bestanden. Die anderen sind alle an genau diesem Schritt gescheitert.',
-        ),
-        forYourTeam: t(
-          "Visual identity for portfolios benefits from a metaphor that reaches the data structures, not just the surface styling. If you can't name your case studies' major fields in the metaphor's language, you'll fall back on conventional UI patterns and lose the brand.",
-          'Visuelle Identität für Portfolios profitiert von einer Metapher, die bis in die Datenstrukturen reicht, nicht nur in das Oberflächen-Styling. Wenn man die wichtigsten Felder seiner Fallstudien nicht in der Sprache der Metapher benennen kann, fällt man auf konventionelle UI-Muster zurück und verliert die Marke.',
-        ),
+        summary: 'How a Berlin departure board became the structural identity of the entire site, after five other metaphors fell apart in execution.',
+        tried: 'Tried five visual metaphors for the portfolio redesign: vintage transit poster, mission control panel, library, departure board / metro map, and minimalist Swiss design. Each had a hook. Four fell apart in execution. The departure board / metro stuck because the metaphor reached past the brand mark and into the data structures: lines became case categories (CS1 = AI, CS2 = Enterprise, P = Personal), stops became individual cases, ziel became the case name, Lesezeit became the reading time, and the current scroll position became the current stop.',
+        learned: "A sustained metaphor is harder than picking a strong one. The first three I tried were visually distinctive but stopped at the brand mark. The departure board worked because every level of the design system had a place in the metaphor's vocabulary. When the metaphor reaches into the data, it stops being decoration and becomes navigation.",
+        didntWork: 'Vintage transit poster was beautiful but read as nostalgic, not professional. Mission control was on-brand for AI but felt cliché. Library felt warm but disconnected from technical work. Swiss minimalist disappeared into the page background. The test for whether a metaphor sticks: can you describe a case study\'s information architecture using the metaphor\'s vocabulary without straining? Departure board passed. The others all failed at this exact step.',
+        forYourTeam: "Visual identity for portfolios benefits from a metaphor that reaches the data structures, not just the surface styling. If you can't name your case studies' major fields in the metaphor's language, you'll fall back on conventional UI patterns and lose the brand.",
       },
       {
-        title: t(
-          'Departure Board UX: BVG-Styled Scroll-Linked Navigation',
-          'Abfahrtstafel-UX: BVG-Style Scroll-gekoppelte Navigation',
-        ),
+        title: 'Departure Board UX: BVG-Styled Scroll-Linked Navigation',
         type: 'Product',
         status: 'Live',
-        summary: t(
-          'A persistent navigation element styled as a Berlin train station departure display, updating in real time as visitors scroll through case studies.',
-          'Ein dauerhaft sichtbares Navigationselement im Stil einer Berliner Bahnhofs-Abfahrtsanzeige, das sich in Echtzeit aktualisiert, während Besucher durch die Fallstudien scrollen.',
-        ),
-        tried: t(
-          "Built a fixed-position departure board in the top-right corner of every page. Mimics the BVG (Berlin transit authority) departure display: yellow LED-style monospaced text on black, German header labels (Linie, Ziel, Lesezeit). Each case is a stop with a line code, case name, and reading time. A 'Current Stop' indicator updates dynamically as the visitor scrolls, using IntersectionObserver against the case cards on the homepage.",
-          'Eine Abfahrtstafel mit fester Position in der oberen rechten Ecke jeder Seite gebaut. Imitiert die BVG-Abfahrtsanzeige: gelbe Monospace-Schrift im LED-Stil auf Schwarz, deutsche Header-Labels (Linie, Ziel, Lesezeit). Jeder Fall ist ein Halt mit einem Linien-Code, Fall-Namen und Lesezeit. Ein „Aktueller Halt"-Indikator aktualisiert sich dynamisch, während der Besucher scrollt, mittels IntersectionObserver gegen die Fall-Karten auf der Startseite.',
-        ),
-        learned: t(
-          "A piece of UI that looks decorative can do real navigation work if it's syntactically familiar. Anyone who has ridden the U-Bahn recognizes the departure-board format instantly. They read it correctly without instructions: Line, Destination, Time. The German labels convert the metaphor from 'transit-themed' to 'located in Berlin.' The board tells the visitor where I am without putting 'Based in Berlin' into copy.",
-          'Ein Stück UI, das dekorativ aussieht, kann echte Navigationsarbeit leisten, wenn es syntaktisch vertraut ist. Jeder, der mit der U-Bahn gefahren ist, erkennt das Abfahrtstafel-Format sofort. Sie lesen es ohne Anleitung korrekt: Linie, Ziel, Zeit. Die deutschen Labels verwandeln die Metapher von „transit-thematisch" zu „in Berlin verortet". Die Tafel sagt dem Besucher, wo ich bin, ohne „in Berlin ansässig" in den Text zu schreiben.',
-        ),
-        didntWork: t(
-          "First version updated on every scroll event, which was wasteful and visually flickery. Switched to IntersectionObserver against the case cards, which produces a clean 'you are now at X' signal only when a card crosses the viewport's midline. Also tried rendering the board with bitmap pixel-style text. Looked great in mockup but didn't scale across browsers. Reverted to a clean monospaced webfont with tight letter-spacing.",
-          'Die erste Version hat sich bei jedem Scroll-Event aktualisiert, was verschwenderisch und visuell flackerig war. Auf IntersectionObserver gegen die Fall-Karten umgestiegen, was ein sauberes „du bist jetzt bei X"-Signal nur dann erzeugt, wenn eine Karte die Mittellinie des Viewports überquert. Auch versucht, die Tafel mit Bitmap-Pixel-Schrift zu rendern. Sah im Mockup großartig aus, hat aber über Browser hinweg nicht skaliert. Zurück zu einer sauberen Monospace-Webfont mit engem Buchstabenabstand.',
-        ),
-        forYourTeam: t(
-          "Navigation elements that look decorative can still be load-bearing. If a UI element resembles familiar infrastructure (a thermometer, a clock, a departure board, a weather widget), users will read it correctly without instructions. That's a design budget that costs nothing once you commit to the metaphor.",
-          'Navigationselemente, die dekorativ aussehen, können trotzdem tragend sein. Wenn ein UI-Element vertrauter Infrastruktur ähnelt (ein Thermometer, eine Uhr, eine Abfahrtstafel, ein Wetter-Widget), lesen Nutzer es ohne Anleitung korrekt. Das ist ein Design-Budget, das nichts kostet, sobald man sich auf die Metapher festlegt.',
-        ),
+        summary: 'A persistent navigation element styled as a Berlin train station departure display, updating in real time as visitors scroll through case studies.',
+        tried: "Built a fixed-position departure board in the top-right corner of every page. Mimics the BVG (Berlin transit authority) departure display: yellow LED-style monospaced text on black, German header labels (Linie, Ziel, Lesezeit). Each case is a stop with a line code, case name, and reading time. A 'Current Stop' indicator updates dynamically as the visitor scrolls, using IntersectionObserver against the case cards on the homepage.",
+        learned: "A piece of UI that looks decorative can do real navigation work if it's syntactically familiar. Anyone who has ridden the U-Bahn recognizes the departure-board format instantly. They read it correctly without instructions: Line, Destination, Time. The German labels convert the metaphor from 'transit-themed' to 'located in Berlin.' The board tells the visitor where I am without putting 'Based in Berlin' into copy.",
+        didntWork: "First version updated on every scroll event, which was wasteful and visually flickery. Switched to IntersectionObserver against the case cards, which produces a clean 'you are now at X' signal only when a card crosses the viewport's midline. Also tried rendering the board with bitmap pixel-style text. Looked great in mockup but didn't scale across browsers. Reverted to a clean monospaced webfont with tight letter-spacing.",
+        forYourTeam: "Navigation elements that look decorative can still be load-bearing. If a UI element resembles familiar infrastructure (a thermometer, a clock, a departure board, a weather widget), users will read it correctly without instructions. That's a design budget that costs nothing once you commit to the metaphor.",
       },
       {
-        title: t(
-          'Three Portfolio Patterns I Prototyped and Dropped',
-          'Drei Portfolio-Muster, die ich prototypisiert und verworfen habe',
-        ),
+        title: 'Three Portfolio Patterns I Prototyped and Dropped',
         type: 'Experiment',
         status: 'Archived',
-        summary: t(
-          'What the redesign tried and rejected: a password wall on case studies, modal-revealed services, and a philosophical hero headline. Three honest did-not-works.',
-          'Was das Redesign versucht und verworfen hat: eine Passwort-Sperre für Fallstudien, modal-enthüllte Services und eine philosophische Hero-Überschrift. Drei ehrliche Was-nicht-funktioniert-hats.',
-        ),
-        tried: t(
-          "The old portfolio had three patterns I assumed I'd keep. A password wall on enterprise case studies (rationale: NDA content gating). Modal interactions for surfacing service categories on hover (rationale: keeping the homepage clean). A philosophical hero headline 'The hardest part of software has always been knowing what to build' (rationale: signaling depth). Each had a defensible case. Each tested poorly against the redesign rubric.",
-          'Das alte Portfolio hatte drei Muster, von denen ich annahm, dass ich sie behalten würde. Eine Passwort-Sperre auf Enterprise-Fallstudien (Begründung: NDA-Inhalts-Schutz). Modal-Interaktionen zum Hervorbringen von Service-Kategorien beim Hover (Begründung: die Startseite sauber halten). Eine philosophische Hero-Überschrift „Das Schwerste an Software war schon immer, zu wissen, was zu bauen ist" (Begründung: Tiefe signalisieren). Jedes hatte einen verteidigbaren Fall. Jedes hat schlecht gegen die Redesign-Rubrik abgeschnitten.',
-        ),
-        learned: t(
-          "All three failed the same way: they made the visitor do extra work to find out what I do. Hiring managers spend thirty seconds before deciding whether to scroll further. Anything that introduces friction in that window is paying for itself with their time. The redesign's organizing principle became: the page should give a recruiter the answer before they have to ask the question. Every removal followed from that.",
-          'Alle drei sind auf dieselbe Weise gescheitert: Sie haben den Besucher zusätzliche Arbeit machen lassen, um herauszufinden, was ich mache. Hiring Manager geben dreißig Sekunden, bevor sie entscheiden, ob sie weiterscrollen. Alles, was in diesem Fenster Reibung einbringt, bezahlt sich mit ihrer Zeit. Das ordnende Prinzip des Redesigns wurde: Die Seite sollte einem Recruiter die Antwort geben, bevor er die Frage stellen muss. Jede Entfernung folgte daraus.',
-        ),
-        didntWork: t(
-          "Password walls signal 'trust me' but read as 'won't show you.' Modals require commitment before reveal; visitors arrived skeptical, and commitment was the wrong direction. Philosophical headlines flatter the writer but force the reader to do interpretation in a five-second window where they should be receiving a claim. Three different rationales, one same failure mode.",
-          'Passwort-Sperren signalisieren „vertrau mir", lesen sich aber als „zeige ich dir nicht". Modals erfordern eine Verpflichtung vor der Enthüllung; Besucher kamen skeptisch an, und Verpflichtung war die falsche Richtung. Philosophische Überschriften schmeicheln dem Autor, zwingen aber den Leser in einem Fünf-Sekunden-Fenster zur Interpretation, in dem er einen Anspruch entgegennehmen sollte. Drei verschiedene Begründungen, derselbe Fehlermodus.',
-        ),
-        forYourTeam: t(
-          "The portfolio patterns that get cut are often the ones that felt smart. 'Smart' usually means requires interpretation, which usually means loses the casual reader. Portfolios are casual-reader artifacts. Save the interpretation density for the case study bodies, not the navigation.",
-          'Die Portfolio-Muster, die rausgekürzt werden, sind oft die, die sich klug angefühlt haben. „Klug" heißt meist, dass es Interpretation erfordert, was meist heißt, dass man den beiläufigen Leser verliert. Portfolios sind Artefakte für beiläufige Leser. Spar dir die Interpretationsdichte für die Fallstudien-Bodies, nicht für die Navigation.',
-        ),
+        summary: 'What the redesign tried and rejected: a password wall on case studies, modal-revealed services, and a philosophical hero headline. Three honest did-not-works.',
+        tried: "The old portfolio had three patterns I assumed I'd keep. A password wall on enterprise case studies (rationale: NDA content gating). Modal interactions for surfacing service categories on hover (rationale: keeping the homepage clean). A philosophical hero headline 'The hardest part of software has always been knowing what to build' (rationale: signaling depth). Each had a defensible case. Each tested poorly against the redesign rubric.",
+        learned: "All three failed the same way: they made the visitor do extra work to find out what I do. Hiring managers spend thirty seconds before deciding whether to scroll further. Anything that introduces friction in that window is paying for itself with their time. The redesign's organizing principle became: the page should give a recruiter the answer before they have to ask the question. Every removal followed from that.",
+        didntWork: "Password walls signal 'trust me' but read as 'won't show you.' Modals require commitment before reveal; visitors arrived skeptical, and commitment was the wrong direction. Philosophical headlines flatter the writer but force the reader to do interpretation in a five-second window where they should be receiving a claim. Three different rationales, one same failure mode.",
+        forYourTeam: "The portfolio patterns that get cut are often the ones that felt smart. 'Smart' usually means requires interpretation, which usually means loses the casual reader. Portfolios are casual-reader artifacts. Save the interpretation density for the case study bodies, not the navigation.",
       },
     ],
   },
   {
-    name: t('Systems & Workflows', 'Systeme & Workflows'),
+    name: 'Systems & Workflows',
     entries: [
       {
-        title: t(
-          'Employment Panopticon: AI-Powered Job Hunt Command Center',
-          'Employment Panopticon: KI-gestütztes Job-Such-Kommandozentrum',
-        ),
+        title: 'Employment Panopticon: AI-Powered Job Hunt Command Center',
         type: 'Product',
         status: 'In Progress',
-        summary: t(
-          'A full-stack job search pipeline that scans Gmail, scores leads with AI, manages companies through a web app, and nudges me via WhatsApp when something needs attention.',
-          'Eine Full-Stack-Pipeline für die Jobsuche, die Gmail scannt, Leads mit KI bewertet, Unternehmen über eine Web-App verwaltet und mich per WhatsApp anstößt, wenn etwas Aufmerksamkeit braucht.',
-        ),
-        tried: t(
-          'Outgrew an Obsidian vault and rebuilt the pipeline as a Next.js app on Neon Postgres. Scout scans Gmail every 15 minutes, classifies emails, and uses Claude Haiku to score job listings against my profile. Strong matches become leads automatically. The web app handles the visual pipeline with company details, contacts, history, and a built-in assistant called Jeremy. A reminder system sends WhatsApp nudges for overdue actions.',
-          'Bin einem Obsidian-Vault entwachsen und habe die Pipeline als Next.js-App auf Neon Postgres neu gebaut. Scout scannt Gmail alle 15 Minuten, klassifiziert E-Mails und nutzt Claude Haiku, um Stellenanzeigen gegen mein Profil zu bewerten. Starke Treffer werden automatisch zu Leads. Die Web-App handhabt die visuelle Pipeline mit Unternehmensdetails, Kontakten, Verlauf und einem eingebauten Assistenten namens Jeremy. Ein Erinnerungssystem schickt WhatsApp-Anstöße für überfällige Aktionen.',
-        ),
-        learned: t(
-          'Moving to a real database unlocked everything. Once data was structured, every automation (Scout, reminders, Jeremy, enrichment) could plug in independently. Claude appears in five places in this system, each with a different model and purpose. Treating each AI touchpoint as its own design problem, rather than a single "add AI" feature, is what made them reliable.',
-          'Der Wechsel zu einer echten Datenbank hat alles freigeschaltet. Sobald die Daten strukturiert waren, konnte jede Automatisierung (Scout, Erinnerungen, Jeremy, Anreicherung) unabhängig andocken. Claude taucht an fünf Stellen in diesem System auf, jede mit einem anderen Modell und einem anderen Zweck. Jeden KI-Touchpoint als eigenes Designproblem zu behandeln, statt als einzelnes „KI hinzufügen"-Feature, ist das, was sie verlässlich gemacht hat.',
-        ),
-        forYourTeam: t(
-          'Map every AI touchpoint as a separate design artifact with its own model selection, prompt, and evaluation criteria. Email classification, job scoring, and conversational Q&A are fundamentally different interaction patterns that happen to share a provider.',
-          'Bildet jeden KI-Touchpoint als separates Designartefakt ab, mit eigener Modellauswahl, eigenem Prompt und eigenen Bewertungskriterien. E-Mail-Klassifizierung, Job-Bewertung und konversationelle Q&A sind grundlegend unterschiedliche Interaktionsmuster, die zufällig denselben Anbieter teilen.',
-        ),
+        summary: 'A full-stack job search pipeline that scans Gmail, scores leads with AI, manages companies through a web app, and nudges me via WhatsApp when something needs attention.',
+        tried: 'Outgrew an Obsidian vault and rebuilt the pipeline as a Next.js app on Neon Postgres. Scout scans Gmail every 15 minutes, classifies emails, and uses Claude Haiku to score job listings against my profile. Strong matches become leads automatically. The web app handles the visual pipeline with company details, contacts, history, and a built-in assistant called Jeremy. A reminder system sends WhatsApp nudges for overdue actions.',
+        learned: 'Moving to a real database unlocked everything. Once data was structured, every automation (Scout, reminders, Jeremy, enrichment) could plug in independently. Claude appears in five places in this system, each with a different model and purpose. Treating each AI touchpoint as its own design problem, rather than a single "add AI" feature, is what made them reliable.',
+        forYourTeam: 'Map every AI touchpoint as a separate design artifact with its own model selection, prompt, and evaluation criteria. Email classification, job scoring, and conversational Q&A are fundamentally different interaction patterns that happen to share a provider.',
       },
       {
-        title: t(
-          'Panopticon: Persistent AI Context System',
-          'Panopticon: Persistentes KI-Kontextsystem',
-        ),
+        title: 'Panopticon: Persistent AI Context System',
         type: 'Workflow',
         status: 'Live',
-        summary: t(
-          'The structured Obsidian vault and session logging system underneath the Employment Panopticon, designed to give Claude persistent memory across projects and conversations.',
-          'Der strukturierte Obsidian-Vault und das Session-Logging-System unter dem Employment Panopticon, entworfen, um Claude ein persistentes Gedächtnis über Projekte und Gespräche hinweg zu geben.',
-        ),
-        tried: t(
-          'Built a knowledge vault in Obsidian designed specifically for AI collaboration. Core mechanic: a /wrap slash command that runs a structured debrief at the end of every working session, asking for intention, decisions, and open questions, then writes the entry to a session log and commits it to git automatically. The logs are structured to be synthesized by AI in future sessions, not just read by humans. The vault has since become the knowledge layer for a larger system: company and contact notes feed into the web app, session logs preserve design reasoning across tools, and a WhatsApp assistant can read and write vault files through Google Drive.',
-          'Einen Wissens-Vault in Obsidian gebaut, speziell für die KI-Zusammenarbeit entworfen. Kernmechanik: ein /wrap-Slash-Command, der am Ende jeder Arbeits-Session ein strukturiertes Debrief fährt, nach Absicht, Entscheidungen und offenen Fragen fragt, dann den Eintrag in ein Session-Log schreibt und automatisch in Git committet. Die Logs sind so strukturiert, dass sie in zukünftigen Sessions von KI synthetisiert werden, nicht nur von Menschen gelesen. Der Vault ist seitdem zur Wissensebene für ein größeres System geworden: Unternehmens- und Kontaktnotizen fließen in die Web-App, Session-Logs erhalten Design-Begründungen über Tools hinweg, und ein WhatsApp-Assistent kann Vault-Dateien über Google Drive lesen und schreiben.',
-        ),
-        learned: t(
-          'The most valuable thing to capture is not what you built; it is why you built it and what you were uncertain about. Git tracks the what. The session log tracks the why. Keeping both in the same system, versioned together, means you can reconstruct the reasoning behind any decision weeks later. Structure reduces friction: making the debrief a slash command means it actually happens. The vault also proved its value as a foundation layer. When the pipeline moved to a database, the vault did not become obsolete. It became the unstructured complement to structured data, holding the context that does not fit in rows and columns.',
-          'Das Wertvollste zum Festhalten ist nicht, was du gebaut hast; es ist, warum du es gebaut hast und worüber du dir unsicher warst. Git verfolgt das Was. Das Session-Log verfolgt das Warum. Beides im selben System zu halten, gemeinsam versioniert, heißt, dass man die Begründung hinter jeder Entscheidung Wochen später rekonstruieren kann. Struktur reduziert Reibung: Das Debrief zu einem Slash-Command zu machen heißt, dass es tatsächlich passiert. Der Vault hat sich auch als Fundament-Ebene bewährt. Als die Pipeline in eine Datenbank umgezogen ist, ist der Vault nicht obsolet geworden. Er wurde zum unstrukturierten Komplement zu strukturierten Daten, das den Kontext hält, der nicht in Zeilen und Spalten passt.',
-        ),
-        didntWork: t(
-          'The system is only as good as the habit. Early entries required prompting to be specific enough to be useful. The question format in /wrap has been refined twice already to pull out design decisions rather than just activity summaries.',
-          'Das System ist nur so gut wie die Gewohnheit. Frühe Einträge brauchten Anstöße, um spezifisch genug zu sein, um nützlich zu sein. Das Frageformat in /wrap wurde bereits zweimal verfeinert, um Designentscheidungen herauszuholen statt nur Aktivitätszusammenfassungen.',
-        ),
-        forYourTeam: t(
-          'The same pattern (structured context, committed to version control, queryable by AI) applies at team scale. Product teams that design their AI context deliberately (what goes in, in what format, with what structure) will get dramatically more consistent output than teams treating AI as a stateless Q&A tool. This is an infrastructure problem disguised as a workflow problem.',
-          'Dasselbe Muster (strukturierter Kontext, in der Versionskontrolle committet, von KI abfragbar) gilt auf Team-Ebene. Produktteams, die ihren KI-Kontext bewusst entwerfen (was reingeht, in welchem Format, mit welcher Struktur), werden dramatisch konsistentere Ergebnisse bekommen als Teams, die KI als zustandsloses Q&A-Tool behandeln. Das ist ein Infrastruktur-Problem, das als Workflow-Problem getarnt ist.',
-        ),
+        summary: 'The structured Obsidian vault and session logging system underneath the Employment Panopticon, designed to give Claude persistent memory across projects and conversations.',
+        tried: 'Built a knowledge vault in Obsidian designed specifically for AI collaboration. Core mechanic: a /wrap slash command that runs a structured debrief at the end of every working session, asking for intention, decisions, and open questions, then writes the entry to a session log and commits it to git automatically. The logs are structured to be synthesized by AI in future sessions, not just read by humans. The vault has since become the knowledge layer for a larger system: company and contact notes feed into the web app, session logs preserve design reasoning across tools, and a WhatsApp assistant can read and write vault files through Google Drive.',
+        learned: 'The most valuable thing to capture is not what you built; it is why you built it and what you were uncertain about. Git tracks the what. The session log tracks the why. Keeping both in the same system, versioned together, means you can reconstruct the reasoning behind any decision weeks later. Structure reduces friction: making the debrief a slash command means it actually happens. The vault also proved its value as a foundation layer. When the pipeline moved to a database, the vault did not become obsolete. It became the unstructured complement to structured data, holding the context that does not fit in rows and columns.',
+        didntWork: 'The system is only as good as the habit. Early entries required prompting to be specific enough to be useful. The question format in /wrap has been refined twice already to pull out design decisions rather than just activity summaries.',
+        forYourTeam: 'The same pattern (structured context, committed to version control, queryable by AI) applies at team scale. Product teams that design their AI context deliberately (what goes in, in what format, with what structure) will get dramatically more consistent output than teams treating AI as a stateless Q&A tool. This is an infrastructure problem disguised as a workflow problem.',
       },
       {
-        title: t(
-          'Panopticon Assistant: WhatsApp AI Agent',
-          'Panopticon Assistant: WhatsApp-KI-Agent',
-        ),
+        title: 'Panopticon Assistant: WhatsApp AI Agent',
         type: 'Product',
         status: 'Live',
-        summary: t(
-          'A two-way WhatsApp assistant that reads and writes to an Obsidian vault through Google Drive, giving conversational access to a personal knowledge base from a phone.',
-          'Ein bidirektionaler WhatsApp-Assistent, der über Google Drive einen Obsidian-Vault liest und beschreibt, was vom Telefon aus konversationellen Zugriff auf eine persönliche Wissensbasis gibt.',
-        ),
-        tried: t(
-          'Built a serverless agent on Vercel that receives WhatsApp messages via Twilio webhook, runs an agentic tool-use loop with Claude Sonnet, and reads/writes vault files through the Google Drive API. The agent has three tools: list folders, read files, and write files. It can look up company pipeline status, update contact notes, capture ideas, and check what is due this week, all from a text message. Conversation history is persisted to Drive so the assistant retains context across messages within a 24-hour window, with a rolling buffer of the last 10 exchanges.',
-          'Einen serverless Agenten auf Vercel gebaut, der WhatsApp-Nachrichten über einen Twilio-Webhook empfängt, eine agentische Tool-Use-Schleife mit Claude Sonnet fährt und Vault-Dateien über die Google-Drive-API liest und schreibt. Der Agent hat drei Tools: Ordner auflisten, Dateien lesen und Dateien schreiben. Er kann Unternehmens-Pipeline-Status nachschlagen, Kontaktnotizen aktualisieren, Ideen festhalten und prüfen, was diese Woche ansteht, alles aus einer Textnachricht heraus. Der Gesprächsverlauf wird in Drive persistiert, damit der Assistent den Kontext über Nachrichten hinweg in einem 24-Stunden-Fenster behält, mit einem rollenden Puffer der letzten 10 Austausche.',
-        ),
-        learned: t(
-          "The hardest part of building a WhatsApp agent is not the AI. It is the plumbing. Twilio webhooks timeout after 15 seconds, so the handler must return immediately and process in the background using Vercel's waitUntil. The Google Drive service account needs explicit folder sharing to read the vault, and a separate storage strategy for files the agent creates itself. Conversation persistence sounds simple until the write fails silently and the agent loses all context. Each of these is a 30-minute fix once diagnosed, but the diagnostic loop is slow when your only debugging interface is a text message on your phone.",
-          'Das Schwerste am Bauen eines WhatsApp-Agenten ist nicht die KI. Es sind die Rohre. Twilio-Webhooks laufen nach 15 Sekunden aus, also muss der Handler sofort zurückkehren und im Hintergrund über Vercels waitUntil weiterverarbeiten. Das Google-Drive-Service-Account braucht explizites Ordner-Sharing, um den Vault zu lesen, und eine separate Speicher-Strategie für Dateien, die der Agent selbst erzeugt. Gesprächspersistenz klingt einfach, bis der Schreibvorgang still scheitert und der Agent allen Kontext verliert. Jedes davon ist ein 30-Minuten-Fix, sobald diagnostiziert, aber die Diagnoseschleife ist langsam, wenn dein einziges Debugging-Interface eine Textnachricht auf dem Telefon ist.',
-        ),
-        didntWork: t(
-          'The conversation history initially stored in the shared vault folder, which the service account could not write to. Every message appeared to work (the agent responded correctly) but history was silently lost, making the assistant seem amnesiac. The fix was to store history in the service account\'s own Drive root where write access is guaranteed. The error was invisible in the response and only surfaced as a second "something went wrong" message after the actual reply had already been sent.',
-          'Der Gesprächsverlauf wurde anfangs im geteilten Vault-Ordner gespeichert, in den das Service-Account nicht schreiben konnte. Jede Nachricht schien zu funktionieren (der Agent hat korrekt geantwortet), aber der Verlauf ging still verloren, sodass der Assistent amnesisch wirkte. Der Fix war, den Verlauf im eigenen Drive-Root des Service-Accounts zu speichern, wo Schreibzugriff garantiert ist. Der Fehler war in der Antwort unsichtbar und tauchte nur als zweite „etwas ist schiefgelaufen"-Nachricht auf, nachdem die eigentliche Antwort bereits gesendet war.',
-        ),
-        forYourTeam: t(
-          'Messaging-based AI agents have a fundamentally different failure surface than web apps. There is no network tab, no console, no visual state to inspect. Every failure mode must be surfaced through the same text channel the user is communicating on, which means error handling is not just engineering hygiene but part of the UX. If your team is building conversational agents, invest in observability from day one. The feedback loop between "something is broken" and "I can see what broke" should be measured in seconds, not sessions.',
-          'Messaging-basierte KI-Agenten haben eine grundlegend andere Fehleroberfläche als Web-Apps. Es gibt keinen Network-Tab, keine Konsole, keinen visuellen Zustand zum Inspizieren. Jeder Fehlermodus muss über denselben Textkanal sichtbar gemacht werden, über den der Nutzer kommuniziert, was heißt, dass Fehlerbehandlung nicht nur Engineering-Hygiene ist, sondern Teil der UX. Wenn dein Team konversationelle Agenten baut, investiert vom ersten Tag an in Observability. Die Feedback-Schleife zwischen „etwas ist kaputt" und „ich kann sehen, was kaputt ist" sollte in Sekunden gemessen werden, nicht in Sessions.',
-        ),
+        summary: 'A two-way WhatsApp assistant that reads and writes to an Obsidian vault through Google Drive, giving conversational access to a personal knowledge base from a phone.',
+        tried: 'Built a serverless agent on Vercel that receives WhatsApp messages via Twilio webhook, runs an agentic tool-use loop with Claude Sonnet, and reads/writes vault files through the Google Drive API. The agent has three tools: list folders, read files, and write files. It can look up company pipeline status, update contact notes, capture ideas, and check what is due this week, all from a text message. Conversation history is persisted to Drive so the assistant retains context across messages within a 24-hour window, with a rolling buffer of the last 10 exchanges.',
+        learned: "The hardest part of building a WhatsApp agent is not the AI. It is the plumbing. Twilio webhooks timeout after 15 seconds, so the handler must return immediately and process in the background using Vercel's waitUntil. The Google Drive service account needs explicit folder sharing to read the vault, and a separate storage strategy for files the agent creates itself. Conversation persistence sounds simple until the write fails silently and the agent loses all context. Each of these is a 30-minute fix once diagnosed, but the diagnostic loop is slow when your only debugging interface is a text message on your phone.",
+        didntWork: 'The conversation history initially stored in the shared vault folder, which the service account could not write to. Every message appeared to work (the agent responded correctly) but history was silently lost, making the assistant seem amnesiac. The fix was to store history in the service account\'s own Drive root where write access is guaranteed. The error was invisible in the response and only surfaced as a second "something went wrong" message after the actual reply had already been sent.',
+        forYourTeam: 'Messaging-based AI agents have a fundamentally different failure surface than web apps. There is no network tab, no console, no visual state to inspect. Every failure mode must be surfaced through the same text channel the user is communicating on, which means error handling is not just engineering hygiene but part of the UX. If your team is building conversational agents, invest in observability from day one. The feedback loop between "something is broken" and "I can see what broke" should be measured in seconds, not sessions.',
       },
       {
-        title: t(
-          'Cowork as Design Collaborator: A Two-Claude Workflow',
-          'Cowork als Design-Mitarbeiter: Ein Zwei-Claude-Workflow',
-        ),
+        title: 'Cowork as Design Collaborator: A Two-Claude Workflow',
         type: 'Workflow',
         status: 'Live',
-        summary: t(
-          'The portfolio redesign was driven by two Claude instances working in parallel. Cowork handled the strategy and editorial work; Warp handled the implementation. Each played to a different affordance.',
-          'Das Portfolio-Redesign wurde von zwei parallel arbeitenden Claude-Instanzen vorangetrieben. Cowork hat die Strategie- und Redaktionsarbeit gemacht; Warp hat die Umsetzung gemacht. Jeder hat seine eigene Affordance ausgespielt.',
-        ),
-        tried: t(
-          "Used Claude Cowork (a file-editing, strategy, and writing collaborator) for the substantive design work: case study reviews, copy decisions, structural choices, reading source decks and notes, drafting the scoring rubric, and editing TypeScript content data. In parallel, used Claude in Warp (terminal-based coding collaborator) as the implementation arm: build verification, component layout work, integration changes, image asset handling. I sat between them as the editor and decision-maker, passing state through structured handoff prompts.",
-          'Claude Cowork (ein Mitarbeiter für Dateien, Strategie und Texte) für die inhaltliche Designarbeit genutzt: Fallstudien-Reviews, Copy-Entscheidungen, strukturelle Entscheidungen, Quellmaterial und Notizen lesen, die Bewertungsrubrik entwerfen und Content-Daten in TypeScript pflegen. Parallel Claude in Warp (terminal-basierter Coding-Mitarbeiter) als Umsetzungsarm: Build-Verifikation, Komponenten-Layout-Arbeit, Integrationsänderungen, Bildasset-Handhabung. Ich saß zwischen ihnen als Redakteur und Entscheider und habe Zustand über strukturierte Übergabe-Prompts weitergereicht.',
-        ),
-        learned: t(
-          "Different AI collaborators are good at different things, and forcing one to do the other one's job always feels suboptimal. Cowork excels at substantive judgment: reading source materials, scoring against benchmarks, drafting copy with specific voice rules, deciding what should change. Warp excels at implementation: running builds, systematic find-and-replace, executing layout work, running diffs. Separating their roles and writing handoff prompts to bridge them improved both the speed and the output.",
-          'Unterschiedliche KI-Mitarbeiter sind gut in unterschiedlichen Dingen, und einen zu zwingen, die Arbeit des anderen zu machen, fühlt sich immer suboptimal an. Cowork glänzt bei inhaltlichem Urteil: Quellmaterial lesen, gegen Benchmarks bewerten, Copy mit spezifischen Voice-Regeln entwerfen, entscheiden, was sich ändern soll. Warp glänzt bei der Umsetzung: Builds laufen lassen, systematisches Find-and-Replace, Layout-Arbeit ausführen, Diffs prüfen. Ihre Rollen zu trennen und Übergabe-Prompts zu schreiben, um sie zu überbrücken, hat sowohl die Geschwindigkeit als auch das Ergebnis verbessert.',
-        ),
-        didntWork: t(
-          "Started by treating both Claudes as interchangeable. The result was Cowork doing implementation work it could do but slower than Warp, and Warp doing copy work it could do but with less judgment than Cowork. Both worked. Both were suboptimal. The fix was a deliberate division of labor and a discipline around writing self-contained handoff prompts between sessions.",
-          'Angefangen, beide Claudes als austauschbar zu behandeln. Das Ergebnis war, dass Cowork Umsetzungsarbeit gemacht hat, die er machen konnte, aber langsamer als Warp, und Warp Copy-Arbeit gemacht hat, die er machen konnte, aber mit weniger Urteilsvermögen als Cowork. Beides hat funktioniert. Beides war suboptimal. Der Fix war eine bewusste Arbeitsteilung und eine Disziplin rund um das Schreiben selbsterklärender Übergabe-Prompts zwischen Sessions.',
-        ),
-        forYourTeam: t(
-          "AI collaborators have specializations. A team adopting AI shouldn't pick one tool and force-fit it to every job. Different parts of the work benefit from different AI affordances. Build the workflow around the affordances, not around the brand.",
-          'KI-Mitarbeiter haben Spezialisierungen. Ein Team, das KI adoptiert, sollte nicht ein Tool nehmen und es auf jeden Job zwingen. Verschiedene Teile der Arbeit profitieren von verschiedenen KI-Affordances. Baut den Workflow rund um die Affordances, nicht rund um die Marke.',
-        ),
+        summary: 'The portfolio redesign was driven by two Claude instances working in parallel. Cowork handled the strategy and editorial work; Warp handled the implementation. Each played to a different affordance.',
+        tried: "Used Claude Cowork (a file-editing, strategy, and writing collaborator) for the substantive design work: case study reviews, copy decisions, structural choices, reading source decks and notes, drafting the scoring rubric, and editing TypeScript content data. In parallel, used Claude in Warp (terminal-based coding collaborator) as the implementation arm: build verification, component layout work, integration changes, image asset handling. I sat between them as the editor and decision-maker, passing state through structured handoff prompts.",
+        learned: "Different AI collaborators are good at different things, and forcing one to do the other one's job always feels suboptimal. Cowork excels at substantive judgment: reading source materials, scoring against benchmarks, drafting copy with specific voice rules, deciding what should change. Warp excels at implementation: running builds, systematic find-and-replace, executing layout work, running diffs. Separating their roles and writing handoff prompts to bridge them improved both the speed and the output.",
+        didntWork: "Started by treating both Claudes as interchangeable. The result was Cowork doing implementation work it could do but slower than Warp, and Warp doing copy work it could do but with less judgment than Cowork. Both worked. Both were suboptimal. The fix was a deliberate division of labor and a discipline around writing self-contained handoff prompts between sessions.",
+        forYourTeam: "AI collaborators have specializations. A team adopting AI shouldn't pick one tool and force-fit it to every job. Different parts of the work benefit from different AI affordances. Build the workflow around the affordances, not around the brand.",
       },
       {
-        title: t(
-          'Anonymizing a Client Case Study Without Losing the Substance',
-          'Eine Kunden-Fallstudie anonymisieren, ohne die Substanz zu verlieren',
-        ),
+        title: 'Anonymizing a Client Case Study Without Losing the Substance',
         type: 'Workflow',
         status: 'Live',
-        summary: t(
-          'When an active client engagement needs to live in a portfolio but the client has not reviewed the writeup yet, anonymization is a design problem of its own.',
-          'Wenn ein aktives Kunden-Engagement in einem Portfolio leben soll, der Kunde aber den Text noch nicht geprüft hat, ist Anonymisierung ein eigenes Designproblem.',
-        ),
-        tried: t(
-          'Renamed a sim-racing telemetry case study from the actual product name to a descriptive label. Stripped specific feature names (the AI surface name, the chat agent name) and replaced them with generic descriptors. Genericized the four worked archetypes by question shape (spatial, temporal, distributional, state-along-line) rather than by product-internal terms. Kept the architectural reframe and the design moves visible. The case is still recognizable as itself but no longer leaks specifics that would identify the client to a competitor.',
-          'Eine Sim-Racing-Telemetrie-Fallstudie vom tatsächlichen Produktnamen auf ein beschreibendes Label umbenannt. Spezifische Feature-Namen (der Name der KI-Oberfläche, der Name des Chat-Agenten) entfernt und durch generische Beschreibungen ersetzt. Die vier ausgearbeiteten Archetypen generisch nach Fragenform (räumlich, zeitlich, verteilungsbezogen, Zustand-entlang-Linie) statt nach produkt-internen Begriffen benannt. Die architektonische Neurahmung und die Designzüge sichtbar gehalten. Der Fall ist immer noch als er selbst erkennbar, aber lässt keine Spezifika mehr durch, die den Kunden gegenüber einem Wettbewerber identifizieren würden.',
-        ),
-        learned: t(
-          "Anonymizing a case study is a constraint that pushes you toward the most defensible version of the design claim. Without the product name to lean on, the case has to stand on the design judgment alone. The reframe ('the agent and the workspace are architecturally separated') is more durable when it's not attached to a specific product's specific features, because the same reframe could apply to other products in the same space. That generality is a feature, not a bug.",
-          'Eine Fallstudie zu anonymisieren ist eine Einschränkung, die einen zur verteidigbarsten Version des Design-Anspruchs drängt. Ohne den Produktnamen, auf den man sich stützen kann, muss der Fall allein auf dem Designurteil stehen. Die Neurahmung („der Agent und die Arbeitsfläche sind architektonisch getrennt") ist haltbarer, wenn sie nicht an die spezifischen Features eines spezifischen Produkts gebunden ist, weil dieselbe Neurahmung auf andere Produkte im selben Raum angewendet werden könnte. Diese Allgemeinheit ist ein Feature, kein Bug.',
-        ),
-        didntWork: t(
-          "First draft used direct quotes from the founder. Even paraphrased, attributed quotes risk identification. Reworked to take ownership of the claims rather than attribute them. The result is tighter and less dependent on a third party's voice. If the case can't stand without that quote, the case is leaning on the wrong thing.",
-          'Der erste Entwurf hat direkte Zitate vom Gründer verwendet. Selbst paraphrasiert riskieren zugeschriebene Zitate eine Identifizierung. Überarbeitet, um die Ansprüche selbst zu vertreten, statt sie zuzuschreiben. Das Ergebnis ist enger und weniger von der Stimme einer dritten Partei abhängig. Wenn der Fall ohne dieses Zitat nicht stehen kann, lehnt er sich an die falsche Sache an.',
-        ),
-        forYourTeam: t(
-          "Building a portfolio that includes active client engagements requires deciding up front what level of attribution is comfortable. The strongest case studies attribute design moves to the designer, not to overheard client conversations. If you can't say it as yours, it probably shouldn't be in the portfolio.",
-          'Ein Portfolio zu bauen, das aktive Kunden-Engagements einschließt, erfordert vorab zu entscheiden, welches Maß an Zuschreibung angenehm ist. Die stärksten Fallstudien schreiben Designzüge dem Designer zu, nicht überhörten Kundengesprächen. Wenn man es nicht als das eigene sagen kann, sollte es wahrscheinlich nicht im Portfolio sein.',
-        ),
+        summary: 'When an active client engagement needs to live in a portfolio but the client has not reviewed the writeup yet, anonymization is a design problem of its own.',
+        tried: 'Renamed a sim-racing telemetry case study from the actual product name to a descriptive label. Stripped specific feature names (the AI surface name, the chat agent name) and replaced them with generic descriptors. Genericized the four worked archetypes by question shape (spatial, temporal, distributional, state-along-line) rather than by product-internal terms. Kept the architectural reframe and the design moves visible. The case is still recognizable as itself but no longer leaks specifics that would identify the client to a competitor.',
+        learned: "Anonymizing a case study is a constraint that pushes you toward the most defensible version of the design claim. Without the product name to lean on, the case has to stand on the design judgment alone. The reframe ('the agent and the workspace are architecturally separated') is more durable when it's not attached to a specific product's specific features, because the same reframe could apply to other products in the same space. That generality is a feature, not a bug.",
+        didntWork: "First draft used direct quotes from the founder. Even paraphrased, attributed quotes risk identification. Reworked to take ownership of the claims rather than attribute them. The result is tighter and less dependent on a third party's voice. If the case can't stand without that quote, the case is leaning on the wrong thing.",
+        forYourTeam: "Building a portfolio that includes active client engagements requires deciding up front what level of attribution is comfortable. The strongest case studies attribute design moves to the designer, not to overheard client conversations. If you can't say it as yours, it probably shouldn't be in the portfolio.",
       },
       {
-        title: t(
-          'Playable Case Studies: Live Demo Embeds',
-          'Spielbare Fallstudien: Live-Demo-Embeds',
-        ),
+        title: 'Playable Case Studies: Live Demo Embeds',
         type: 'Workflow',
         status: 'Live',
-        summary: t(
-          'Both AI product case studies on this site embed live, fully interactive versions of the apps inside iPhone frames, not screenshots. Designed because AI UX is about behavior, and screenshots hide behavior by definition.',
-          'Beide KI-Produkt-Fallstudien auf dieser Seite betten lebendige, voll interaktive Versionen der Apps in iPhone-Rahmen ein, keine Screenshots. So entworfen, weil KI-UX um Verhalten geht, und Screenshots Verhalten per Definition verbergen.',
-        ),
-        tried: t(
-          'Built demo-mode deployments of Cal and Epilog as separate Vercel projects with sanitized data and isolated state. In each expanded case study, the desktop layout is a CSS grid split view: a scrolling six-section narrative on the left, a sticky phone frame on the right with a live iframe of the demo app inside. The frame is a high-resolution iPhone 15 Pro Max PNG overlaid on the iframe with a transparent screen cutout, plus a thin border-ring mask between the iframe and the PNG to hide corner bleed where the app\'s full-width headers and bottom nav painted past the phone\'s rounded screen corners. Mobile drops the iframe entirely and uses inline screenshots at key narrative beats plus an "Explore the app" CTA that opens the demo in a new tab, because a phone inside a phone does not work.',
-          'Demo-Mode-Deployments von Cal und Epilog als separate Vercel-Projekte mit bereinigten Daten und isoliertem Zustand gebaut. In jeder erweiterten Fallstudie ist das Desktop-Layout eine CSS-Grid-Split-Ansicht: links eine scrollende Sechs-Abschnitt-Erzählung, rechts ein klebriger Telefon-Rahmen mit einem Live-Iframe der Demo-App darin. Der Rahmen ist ein hochauflösendes iPhone-15-Pro-Max-PNG, über den Iframe gelegt mit einem transparenten Bildschirm-Ausschnitt, plus eine dünne Rahmenring-Maske zwischen Iframe und PNG, um den Eck-Überlauf zu verstecken, wo die Full-Width-Header und die Bottom-Nav der App über die abgerundeten Bildschirm-Ecken des Telefons hinaus gemalt haben. Mobile lässt den Iframe vollständig fallen und nutzt Inline-Screenshots an wichtigen Erzähl-Schlägen plus einen „Die App erkunden"-CTA, der die Demo in einem neuen Tab öffnet, weil ein Telefon im Telefon nicht funktioniert.',
-        ),
-        learned: t(
-          'For AI products, a screenshot lies by omission. The thing that makes an AI feature good or bad is how it behaves: how the plan generates under your inputs, how voice commands miss, how a missed-dose flow feels under the thumb at the end of a long day. Static images let you show the surface and hide the behavior, which is exactly the part a hiring manager needs to evaluate. Embedding the live app forces honesty and lets the reader interrogate the thing directly while reading the argument for why it was built that way. The narrative tells you what to notice; the demo lets you verify.',
-          'Für KI-Produkte lügt ein Screenshot durch Auslassung. Das, was ein KI-Feature gut oder schlecht macht, ist, wie es sich verhält: wie der Plan unter deinen Eingaben generiert, wie Sprachbefehle danebengehen, wie sich ein Ablauf nach einer verpassten Dosis am Ende eines langen Tages unter den Fingern anfühlt. Statische Bilder lassen dich die Oberfläche zeigen und das Verhalten verbergen, was genau der Teil ist, den ein Hiring Manager bewerten muss. Die Live-App einzubetten erzwingt Ehrlichkeit und lässt den Leser das Ding direkt befragen, während er das Argument liest, warum es so gebaut wurde. Die Erzählung sagt dir, worauf zu achten ist; die Demo lässt dich verifizieren.',
-        ),
-        didntWork: t(
-          "The first three phone-frame attempts were CSS-only (bezels, border-radius, titanium gradients) and all read as flat and obviously fake. Switching to a photographic frame PNG fixed realism but created the corner-bleed problem: the app's sticky headers and bottom nav painted past the screen's rounded corners, and no amount of iframe border-radius or inset tuning could achieve pixel-precise alignment with the PNG. The fix was an empty div with a thick border in the card background color, sitting between the iframe and the PNG, overlapping the frame's inner edge by a couple of pixels to mask the bleed invisibly. Obvious in hindsight, not while iterating.",
-          'Die ersten drei Telefon-Rahmen-Versuche waren nur CSS (Lünetten, Border-Radius, Titanverläufe) und lasen sich alle als flach und offensichtlich gefälscht. Auf ein fotografisches Rahmen-PNG umzusteigen, hat den Realismus gelöst, aber das Eck-Überlauf-Problem erzeugt: Die klebrigen Header und die Bottom-Nav der App haben über die abgerundeten Bildschirm-Ecken hinaus gemalt, und keine Menge an Iframe-Border-Radius oder Inset-Tuning konnte eine pixelgenaue Ausrichtung mit dem PNG erreichen. Der Fix war ein leeres div mit einem dicken Rand in der Karten-Hintergrundfarbe, das zwischen Iframe und PNG sitzt und die innere Kante des Rahmens um ein paar Pixel überlappt, um den Überlauf unsichtbar zu maskieren. Im Nachhinein offensichtlich, beim Iterieren nicht.',
-        ),
-        forYourTeam: t(
-          'Portfolio and marketing sites for AI products should default to embedded live demos over screenshot galleries. When behavior is the product, the medium of presentation has to match the medium of evaluation. A team that accepts screenshot-only case studies for AI work is implicitly asking reviewers to trust the summary over the artifact, which is the opposite of how good design review works. The corollary: design for a demo-mode deployment from day one (sanitized seed data, isolated state, embeddable as an iframe) rather than retrofitting it later.',
-          'Portfolio- und Marketing-Seiten für KI-Produkte sollten standardmäßig auf eingebettete Live-Demos statt auf Screenshot-Galerien setzen. Wenn das Verhalten das Produkt ist, muss das Präsentationsmedium dem Bewertungsmedium entsprechen. Ein Team, das nur Screenshot-Fallstudien für KI-Arbeit akzeptiert, bittet die Reviewer implizit, der Zusammenfassung mehr zu vertrauen als dem Artefakt, was das Gegenteil davon ist, wie gutes Design-Review funktioniert. Der Folgesatz: Entwirf für ein Demo-Mode-Deployment vom ersten Tag an (bereinigte Seed-Daten, isolierter Zustand, als Iframe einbettbar), statt es später nachzurüsten.',
-        ),
+        summary: 'Both AI product case studies on this site embed live, fully interactive versions of the apps inside iPhone frames, not screenshots. Designed because AI UX is about behavior, and screenshots hide behavior by definition.',
+        tried: 'Built demo-mode deployments of Cal and Epilog as separate Vercel projects with sanitized data and isolated state. In each expanded case study, the desktop layout is a CSS grid split view: a scrolling six-section narrative on the left, a sticky phone frame on the right with a live iframe of the demo app inside. The frame is a high-resolution iPhone 15 Pro Max PNG overlaid on the iframe with a transparent screen cutout, plus a thin border-ring mask between the iframe and the PNG to hide corner bleed where the app\'s full-width headers and bottom nav painted past the phone\'s rounded screen corners. Mobile drops the iframe entirely and uses inline screenshots at key narrative beats plus an "Explore the app" CTA that opens the demo in a new tab, because a phone inside a phone does not work.',
+        learned: 'For AI products, a screenshot lies by omission. The thing that makes an AI feature good or bad is how it behaves: how the plan generates under your inputs, how voice commands miss, how a missed-dose flow feels under the thumb at the end of a long day. Static images let you show the surface and hide the behavior, which is exactly the part a hiring manager needs to evaluate. Embedding the live app forces honesty and lets the reader interrogate the thing directly while reading the argument for why it was built that way. The narrative tells you what to notice; the demo lets you verify.',
+        didntWork: "The first three phone-frame attempts were CSS-only (bezels, border-radius, titanium gradients) and all read as flat and obviously fake. Switching to a photographic frame PNG fixed realism but created the corner-bleed problem: the app's sticky headers and bottom nav painted past the screen's rounded corners, and no amount of iframe border-radius or inset tuning could achieve pixel-precise alignment with the PNG. The fix was an empty div with a thick border in the card background color, sitting between the iframe and the PNG, overlapping the frame's inner edge by a couple of pixels to mask the bleed invisibly. Obvious in hindsight, not while iterating.",
+        forYourTeam: 'Portfolio and marketing sites for AI products should default to embedded live demos over screenshot galleries. When behavior is the product, the medium of presentation has to match the medium of evaluation. A team that accepts screenshot-only case studies for AI work is implicitly asking reviewers to trust the summary over the artifact, which is the opposite of how good design review works. The corollary: design for a demo-mode deployment from day one (sanitized seed data, isolated state, embeddable as an iframe) rather than retrofitting it later.',
       },
     ],
   },
   {
-    name: t('Research & Evaluation', 'Forschung & Bewertung'),
+    name: 'Research & Evaluation',
     entries: [
       {
-        title: t(
-          'Scoring My Old Portfolio: Building a Rubric, Then Designing From the Diagnosis',
-          'Mein altes Portfolio bewerten: Eine Rubrik bauen, dann aus der Diagnose entwerfen',
-        ),
+        title: 'Scoring My Old Portfolio: Building a Rubric, Then Designing From the Diagnosis',
         type: 'Evaluation',
         status: 'Live',
-        summary: t(
-          'Built a 9-category rubric against six celebrated portfolios. Scored my old site at 60%. Used the category-level gaps to direct the redesign. Estimated new score: 93%.',
-          'Eine 9-Kategorien-Rubrik gegen sechs gefeierte Portfolios gebaut. Meine alte Seite mit 60 % bewertet. Die Lücken auf Kategorie-Ebene genutzt, um das Redesign zu lenken. Geschätzter neuer Score: 93 %.',
-        ),
-        tried: t(
-          "Identified six celebrated designer portfolios as benchmark references: Simon Pan, Robin Noguier, Adham Dannaway, Buzz Usborne, Alin Buda, and James Foo. Derived a 9-category rubric covering first impression, visual craft, content hierarchy, case study quality, voice, technical execution, strategic positioning, conversion, and originality. Scored my old portfolio against each at a 1-to-5 scale. Total: 27 out of 45, or 60%. Compared against Alin Buda's 42 out of 45 (93%), the top reference. The 15-point gap became the redesign brief.",
-          'Sechs gefeierte Designer-Portfolios als Benchmark-Referenzen identifiziert: Simon Pan, Robin Noguier, Adham Dannaway, Buzz Usborne, Alin Buda und James Foo. Eine 9-Kategorien-Rubrik abgeleitet, die ersten Eindruck, visuelles Handwerk, Inhalts-Hierarchie, Fallstudien-Qualität, Stimme, technische Umsetzung, strategische Positionierung, Konversion und Originalität abdeckt. Mein altes Portfolio gegen jede auf einer 1-bis-5-Skala bewertet. Gesamt: 27 von 45, also 60 %. Verglichen mit Alin Budas 42 von 45 (93 %), der Top-Referenz. Die 15-Punkte-Lücke wurde zum Redesign-Briefing.',
-        ),
-        learned: t(
-          "Working from a rubric instead of a vibe-based 'redesign my site' brief gave the work an objective compass. Every change could be evaluated against a specific category's score. The biggest single-category jump was Content Hierarchy (2 to 5), achieved by removing password walls, dropping modals, and adopting the single-page scroll-through structure. The smallest gain was Case Study Quality (held at 4), because the prior cases were already strong; the gain came from breadth (five detail pages instead of one) rather than depth per case.",
-          'Aus einer Rubrik zu arbeiten statt aus einem stimmungs-basierten „Redesign meine Seite"-Briefing hat der Arbeit einen objektiven Kompass gegeben. Jede Änderung konnte gegen den Score einer bestimmten Kategorie bewertet werden. Der größte Einzelkategorie-Sprung war Inhalts-Hierarchie (2 auf 5), erreicht durch das Entfernen von Passwort-Sperren, das Verwerfen von Modals und die Annahme der Single-Page-Scroll-Through-Struktur. Der kleinste Zugewinn war Fallstudien-Qualität (bei 4 gehalten), weil die vorherigen Fälle bereits stark waren; der Zugewinn kam aus der Breite (fünf Detail-Seiten statt einer) statt aus der Tiefe pro Fall.',
-        ),
-        didntWork: t(
-          'The rubric is opinionated. It privileges scannability, evidence density, and distinctive identity. It under-values depth-on-click for technical readers and accessibility-as-design-statement. The estimated 93% score on the new site is self-assessment against the same opinionated lens. Anyone using a different rubric would score it differently.',
-          'Die Rubrik hat eine Meinung. Sie privilegiert Überfliegbarkeit, Evidenz-Dichte und unverwechselbare Identität. Sie unterbewertet Tiefe-beim-Klick für technische Leser und Barrierefreiheit-als-Design-Aussage. Der geschätzte 93 %-Score auf der neuen Seite ist Selbstbewertung gegen dieselbe meinungs-tragende Linse. Jeder, der eine andere Rubrik nutzt, würde es anders bewerten.',
-        ),
-        forYourTeam: t(
-          "Self-assessment against a rubric you wrote yourself is biased. The mitigation is to write the rubric before doing the redesign and to benchmark against external references. That doesn't remove the bias entirely, but it keeps the work honest. Without a rubric, 'this looks better' is the only available standard; with one, the conversation moves to which category moved how many points and why.",
-          'Selbstbewertung gegen eine Rubrik, die man selbst geschrieben hat, ist befangen. Die Abmilderung ist, die Rubrik vor dem Redesign zu schreiben und gegen externe Referenzen zu benchmarken. Das entfernt die Befangenheit nicht vollständig, hält die Arbeit aber ehrlich. Ohne Rubrik ist „das sieht besser aus" der einzige verfügbare Maßstab; mit einer verschiebt sich das Gespräch dorthin, welche Kategorie sich um wie viele Punkte verschoben hat und warum.',
-        ),
+        summary: 'Built a 9-category rubric against six celebrated portfolios. Scored my old site at 60%. Used the category-level gaps to direct the redesign. Estimated new score: 93%.',
+        tried: "Identified six celebrated designer portfolios as benchmark references: Simon Pan, Robin Noguier, Adham Dannaway, Buzz Usborne, Alin Buda, and James Foo. Derived a 9-category rubric covering first impression, visual craft, content hierarchy, case study quality, voice, technical execution, strategic positioning, conversion, and originality. Scored my old portfolio against each at a 1-to-5 scale. Total: 27 out of 45, or 60%. Compared against Alin Buda's 42 out of 45 (93%), the top reference. The 15-point gap became the redesign brief.",
+        learned: "Working from a rubric instead of a vibe-based 'redesign my site' brief gave the work an objective compass. Every change could be evaluated against a specific category's score. The biggest single-category jump was Content Hierarchy (2 to 5), achieved by removing password walls, dropping modals, and adopting the single-page scroll-through structure. The smallest gain was Case Study Quality (held at 4), because the prior cases were already strong; the gain came from breadth (five detail pages instead of one) rather than depth per case.",
+        didntWork: 'The rubric is opinionated. It privileges scannability, evidence density, and distinctive identity. It under-values depth-on-click for technical readers and accessibility-as-design-statement. The estimated 93% score on the new site is self-assessment against the same opinionated lens. Anyone using a different rubric would score it differently.',
+        forYourTeam: "Self-assessment against a rubric you wrote yourself is biased. The mitigation is to write the rubric before doing the redesign and to benchmark against external references. That doesn't remove the bias entirely, but it keeps the work honest. Without a rubric, 'this looks better' is the only available standard; with one, the conversation moves to which category moved how many points and why.",
       },
       {
-        title: t(
-          'Gemini to Claude: Evaluating AI Provider Quality',
-          'Von Gemini zu Claude: KI-Anbieter-Qualität bewerten',
-        ),
+        title: 'Gemini to Claude: Evaluating AI Provider Quality',
         type: 'Evaluation',
         status: 'Learning',
-        summary: t(
-          'What switching AI providers mid-project taught me about evaluating LLM output quality as a design decision.',
-          'Was mich der Wechsel des KI-Anbieters mitten im Projekt darüber gelehrt hat, LLM-Ausgabequalität als Designentscheidung zu bewerten.',
-        ),
-        tried: t(
-          "Started Cal's plan generation on Gemini 1.5 Flash. Hit persistent reliability issues: API instability, inconsistent output structure, and quality that varied too much session to session to trust as the backbone of a user-facing feature. Switched to Claude Sonnet 4.6 after a structured comparison against the same prompt.",
-          'Cals Plan-Generierung auf Gemini 1.5 Flash begonnen. Auf anhaltende Zuverlässigkeitsprobleme gestoßen: API-Instabilität, inkonsistente Ausgabestruktur und Qualität, die sich von Session zu Session zu stark unterschied, um ihr als Rückgrat eines nutzerseitigen Features zu vertrauen. Auf Claude Sonnet 4.6 gewechselt nach einem strukturierten Vergleich gegen denselben Prompt.',
-        ),
-        learned: t(
-          'LLM evaluation is a UX research problem. The criteria that matter are not benchmark scores; they are output consistency (does it produce the same structure reliably?), tone adherence (does it maintain the persona defined?), constraint following (does it respect the rules?), and failure mode character (when it fails, how does it fail?). Claude failed more gracefully and more predictably. That predictability is what makes it usable in production.',
-          'LLM-Bewertung ist ein UX-Research-Problem. Die Kriterien, die zählen, sind keine Benchmark-Scores; es sind Ausgabe-Konsistenz (produziert es zuverlässig dieselbe Struktur?), Ton-Treue (hält es die definierte Persona durch?), Einschränkungs-Befolgung (respektiert es die Regeln?) und Fehlermodus-Charakter (wenn es scheitert, wie scheitert es?). Claude ist eleganter und vorhersehbarer gescheitert. Diese Vorhersehbarkeit ist es, was es in Produktion nutzbar macht.',
-        ),
-        didntWork: t(
-          'The evaluation process was informal: prompt, compare, decide. A more rigorous rubric applied earlier would have caught the provider mismatch faster. Treating LLM selection as an engineering decision rather than a design decision cost a few days.',
-          'Der Bewertungsprozess war informell: prompten, vergleichen, entscheiden. Eine strengere, früher angewandte Rubrik hätte den Anbieter-Fehlpass schneller erwischt. Die LLM-Auswahl als Engineering-Entscheidung statt als Designentscheidung zu behandeln, hat ein paar Tage gekostet.',
-        ),
-        forYourTeam: t(
-          'Teams evaluating AI providers or models should apply UX research methodology: define evaluation criteria before testing, test against real use cases not benchmarks, and weight failure modes as heavily as success rates. "It usually works" is not a production standard for anything user-facing.',
-          'Teams, die KI-Anbieter oder -Modelle bewerten, sollten UX-Research-Methodik anwenden: Bewertungskriterien vor dem Testen definieren, gegen echte Anwendungsfälle testen, nicht gegen Benchmarks, und Fehlermodi genauso schwer gewichten wie Erfolgsraten. „Es funktioniert meistens" ist kein Produktions-Standard für irgendetwas Nutzerseitiges.',
-        ),
+        summary: 'What switching AI providers mid-project taught me about evaluating LLM output quality as a design decision.',
+        tried: "Started Cal's plan generation on Gemini 1.5 Flash. Hit persistent reliability issues: API instability, inconsistent output structure, and quality that varied too much session to session to trust as the backbone of a user-facing feature. Switched to Claude Sonnet 4.6 after a structured comparison against the same prompt.",
+        learned: 'LLM evaluation is a UX research problem. The criteria that matter are not benchmark scores; they are output consistency (does it produce the same structure reliably?), tone adherence (does it maintain the persona defined?), constraint following (does it respect the rules?), and failure mode character (when it fails, how does it fail?). Claude failed more gracefully and more predictably. That predictability is what makes it usable in production.',
+        didntWork: 'The evaluation process was informal: prompt, compare, decide. A more rigorous rubric applied earlier would have caught the provider mismatch faster. Treating LLM selection as an engineering decision rather than a design decision cost a few days.',
+        forYourTeam: 'Teams evaluating AI providers or models should apply UX research methodology: define evaluation criteria before testing, test against real use cases not benchmarks, and weight failure modes as heavily as success rates. "It usually works" is not a production standard for anything user-facing.',
       },
       {
-        title: t('Guitar Practice Guide', 'Gitarren-Übungs-Guide'),
+        title: 'Guitar Practice Guide',
         type: 'Experiment',
         status: 'Archived',
-        summary: t(
-          'A structured practice app designed to replace aimless noodling with focused sessions that build toward learning a specific song.',
-          'Eine strukturierte Übungs-App, entworfen, um ziellose Spielereien durch fokussierte Sessions zu ersetzen, die auf das Lernen eines bestimmten Songs hinarbeiten.',
-        ),
-        tried: t(
-          'Designed a practice system where each session would be purposeful rather than open-ended, with a curated set of lessons covering theory, technique, and musical concepts that all ladder up to a target song. The idea was to give players a clear throughline: not just "practice guitar for 30 minutes" but "here\'s what you\'re working on today and why it matters for the thing you\'re trying to learn."',
-          'Ein Übungs-System entworfen, in dem jede Session zielgerichtet sein würde statt offen, mit einem kuratierten Satz von Lektionen, die Theorie, Technik und musikalische Konzepte abdecken, die alle auf einen Ziel-Song hinauflaufen. Die Idee war, Spielern einen klaren Roten Faden zu geben: nicht nur „üb 30 Minuten Gitarre", sondern „hier ist, woran du heute arbeitest, und warum es für das zählt, was du zu lernen versuchst".',
-        ),
-        learned: t(
-          'The concept held up. The technical reality did not. Audio processing turned out to be a much deeper problem than the practice structure itself, and the gap between a good idea and a functional musical tool was wider than the project could absorb at the time. Shelved in favor of more pressing work, but the core problem is still worth solving.',
-          'Das Konzept hat gehalten. Die technische Realität nicht. Audio-Verarbeitung hat sich als viel tieferes Problem als die Übungsstruktur selbst herausgestellt, und die Lücke zwischen einer guten Idee und einem funktionalen musikalischen Werkzeug war breiter, als das Projekt zu der Zeit absorbieren konnte. Zugunsten dringenderer Arbeit auf Eis gelegt, aber das Kernproblem ist immer noch lösenswert.',
-        ),
-        didntWork: t(
-          'Audio processing for pitch detection and feedback is a specialized domain with real constraints: latency, noise, and device variation. Underestimated how much of the product depended on solving that before anything else could be validated.',
-          'Audio-Verarbeitung für Tonhöhen-Erkennung und Feedback ist eine spezialisierte Domäne mit echten Einschränkungen: Latenz, Rauschen und Geräte-Variation. Unterschätzt, wie viel des Produkts davon abhing, das zu lösen, bevor irgendetwas anderes validiert werden konnte.',
-        ),
+        summary: 'A structured practice app designed to replace aimless noodling with focused sessions that build toward learning a specific song.',
+        tried: 'Designed a practice system where each session would be purposeful rather than open-ended, with a curated set of lessons covering theory, technique, and musical concepts that all ladder up to a target song. The idea was to give players a clear throughline: not just "practice guitar for 30 minutes" but "here\'s what you\'re working on today and why it matters for the thing you\'re trying to learn."',
+        learned: 'The concept held up. The technical reality did not. Audio processing turned out to be a much deeper problem than the practice structure itself, and the gap between a good idea and a functional musical tool was wider than the project could absorb at the time. Shelved in favor of more pressing work, but the core problem is still worth solving.',
+        didntWork: 'Audio processing for pitch detection and feedback is a specialized domain with real constraints: latency, noise, and device variation. Underestimated how much of the product depended on solving that before anything else could be validated.',
       },
     ],
   },

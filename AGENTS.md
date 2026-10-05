@@ -29,13 +29,14 @@ Spine geometry lives in `:root` (`--rail-track-w`, `--ring-w/h`, `--ring-radius`
 
 ---
 
-## Bilingual, and it is load-bearing
+## English only
 
-Every translatable string in `src/data/cases.ts` and `src/data/lab.ts` is wrapped with `t(en, de)` from `src/lib/i18n.ts`. Use `L(en, de)` for non-string values. The site publishes `/` and `/de/`.
+The site is English-only since 2026-10-05. A native German reader reviewed the translation and found that a lot of the nuance wasn't landing, so the layer was removed rather than patched. The bilingual version is preserved at the git tag `bilingual-final`.
 
-**A missing German argument renders as `[DE] <english>` in production.** Never ship a `t()` call with one argument on a live page.
-
-**Scott is A2 in German and cannot validate idiomatic copy.** Generated German is a known standing risk on this repo, flagged in `Projects/Dev/Portfolio Site/pqdr-confidence-addition-2026-08-05.md`. When adding German, say plainly that it is unvalidated rather than presenting it as finished.
+- Content in `src/data/cases.ts` and `src/data/lab.ts` is plain strings. UI chrome labels live in `src/lib/ui.ts`.
+- `/de` and `/de/*` redirect (307, temporary) to the English equivalents via `vercel.json`, so old links still resolve.
+- The departure board's German labels (Linie / Ziel / Lesezeit) are identity, not translation. They stay, marked `lang="de"`.
+- **Do not reintroduce German copy without a native reviewer in the loop.** Scott is A2 and cannot validate idiomatic German, and machine German that reads off does more damage with Berlin hiring managers than no German.
 
 ---
 
@@ -51,6 +52,7 @@ No a11y tooling is installed in this repo yet. `eslint-plugin-jsx-a11y` does not
 
 - `src/components/spine/` — the rail navigation (`Spine.astro`, `MobileSpine.astro`)
 - `src/components/cases/` — case study sections
-- `src/data/cases.ts`, `src/data/lab.ts` — all content, bilingual
-- `src/pages/` and `src/pages/de/` — routes, mirrored per locale
+- `src/data/cases.ts`, `src/data/lab.ts` — all content
+- `src/lib/ui.ts` — UI chrome labels
+- `src/pages/` — routes
 - `public/resume.pdf` and `public/images/resume/` — generated from the vault's resume hub, never edited here

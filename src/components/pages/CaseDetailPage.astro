@@ -3,26 +3,25 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../Header.astro';
 import Lightbox from '../Lightbox.astro';
 import type { CaseEntry } from '../../data/cases';
-import { asLocale, localizePath, pick, ui } from '../../lib/i18n';
+import { ui } from '../../lib/ui';
 
 interface Props {
   entry: CaseEntry;
 }
 
 const { entry } = Astro.props;
-const locale = asLocale(Astro.currentLocale);
 const colorVar = `var(--color-line-${entry.line})`;
 const detail = entry.detail;
 
-const pageTitle = ui('siteTitleCase', locale).replace('{name}', entry.name);
-const backHref = localizePath(`/#case-${entry.slug}`, locale);
+const pageTitle = ui('siteTitleCase').replace('{name}', entry.name);
+const backHref = `/#case-${entry.slug}`;
 ---
 
 <Layout title={pageTitle} canonicalPath={`/work/${entry.slug}/`}>
   <Header />
 
   <main class={`case-page ${detail?.demoUrl ? 'has-phone' : ''}`} style={`--accent: ${colorVar};`}>
-    <a class="back" href={backHref}>{ui('case.back', locale)}</a>
+    <a class="back" href={backHref}>{ui('case.back')}</a>
 
     {detail ? (
       <div class={`case-grid ${detail.demoUrl ? 'with-phone' : ''}`}>
@@ -30,49 +29,49 @@ const backHref = localizePath(`/#case-${entry.slug}`, locale);
         <header class="case-page-head">
           {detail.chips && (
             <div class="chips">
-              {detail.chips.map((c) => <span class="chip">{pick(c, locale)}</span>)}
+              {detail.chips.map((c) => <span class="chip">{c}</span>)}
             </div>
           )}
           <h1>{entry.name}</h1>
-          <p class="lede">{pick(entry.tagline, locale)}</p>
+          <p class="lede">{entry.tagline}</p>
         </header>
 
         {detail.demoUrl && (
           <div class="demo-cta demo-cta--mobile">
             <a class="demo-btn" href={detail.demoUrl} target="_blank" rel="noopener noreferrer">
-              {ui('case.openDemo', locale)}
+              {ui('case.openDemo')}
             </a>
           </div>
         )}
 
         <div class="hook">
-          {detail.hook.map((p) => <p>{pick(p, locale)}</p>)}
+          {detail.hook.map((p) => <p>{p}</p>)}
         </div>
 
         <div class="sections">
           {detail.sections.map((section) => (
             <article class="section">
               <header class="section-head">
-                <h2>{pick(section.title, locale)}</h2>
-                <p class="section-sub">{pick(section.subtitle, locale)}</p>
+                <h2>{section.title}</h2>
+                <p class="section-sub">{section.subtitle}</p>
               </header>
 
               <div class="section-body">
-                {section.paragraphs.map((p) => <p>{pick(p, locale)}</p>)}
+                {section.paragraphs.map((p) => <p>{p}</p>)}
 
                 {section.decisions && (
                   <div class="decisions">
                     {section.decisions.map((d) => (
                       <div class="decision">
-                        <h4>{pick(d.title, locale)}</h4>
-                        <p>{pick(d.body, locale)}</p>
+                        <h4>{d.title}</h4>
+                        <p>{d.body}</p>
                       </div>
                     ))}
                   </div>
                 )}
 
                 {section.italicOutro && (
-                  <p class="italic-outro">{pick(section.italicOutro, locale)}</p>
+                  <p class="italic-outro">{section.italicOutro}</p>
                 )}
 
                 {section.tryIts && section.tryIts.map((tryIt) => (
@@ -81,15 +80,15 @@ const backHref = localizePath(`/#case-${entry.slug}`, locale);
                       <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
                       <line x1="12" y1="18" x2="12" y2="18"></line>
                     </svg>
-                    <p>{pick(tryIt, locale)}</p>
+                    <p>{tryIt}</p>
                   </div>
                 ))}
 
                 {section.screenshots && (
                   <div class={`screenshots cols-${section.screenshots.columns}`}>
                     {section.screenshots.images.map((img) => {
-                      const altText = pick(img.alt, locale);
-                      const captionText = img.caption ? pick(img.caption, locale) : '';
+                      const altText = img.alt;
+                      const captionText = img.caption ? img.caption : '';
                       return (
                         <button
                           class="screenshot"
@@ -113,10 +112,10 @@ const backHref = localizePath(`/#case-${entry.slug}`, locale);
 
         {detail.outcomeBeat && (
           <section class="outcome-beat">
-            <h2>{pick(detail.outcomeBeat.title, locale)}</h2>
-            {detail.outcomeBeat.paragraphs.map((p) => <p>{pick(p, locale)}</p>)}
+            <h2>{detail.outcomeBeat.title}</h2>
+            {detail.outcomeBeat.paragraphs.map((p) => <p>{p}</p>)}
             {detail.outcomeBeat.highlight && (
-              <p class="highlight">{pick(detail.outcomeBeat.highlight, locale)}</p>
+              <p class="highlight">{detail.outcomeBeat.highlight}</p>
             )}
           </section>
         )}
@@ -124,7 +123,7 @@ const backHref = localizePath(`/#case-${entry.slug}`, locale);
         {detail.demoUrl && (
           <div class="demo-cta demo-cta--bottom">
             <a class="demo-btn" href={detail.demoUrl} target="_blank" rel="noopener noreferrer">
-              {ui('case.tryDemo', locale)}
+              {ui('case.tryDemo')}
             </a>
           </div>
         )}
@@ -144,7 +143,7 @@ const backHref = localizePath(`/#case-${entry.slug}`, locale);
               <div class="phone-mask"></div>
               <img class="phone-png" src="/images/iphone-frame.png" alt="" draggable="false" />
             </div>
-            <p class="phone-caption">{ui('case.demoCaption', locale)}</p>
+            <p class="phone-caption">{ui('case.demoCaption')}</p>
           </div>
         </aside>
       )}
@@ -153,15 +152,15 @@ const backHref = localizePath(`/#case-${entry.slug}`, locale);
       <>
         <header class="case-page-head">
           <h1>{entry.name}</h1>
-          <p class="lede">{pick(entry.tagline, locale)}</p>
+          <p class="lede">{entry.tagline}</p>
         </header>
         <section class="case-page-body">
           <div class="domains">
-            {entry.body.domains.map((d) => <span>{pick(d, locale)}</span>)}
+            {entry.body.domains.map((d) => <span>{d}</span>)}
           </div>
-          <p class="outcome">{pick(entry.body.outcome, locale)}</p>
-          <p class="claim">{pick(entry.body.claim, locale)}</p>
-          <p class="placeholder">{ui('case.placeholder', locale)}</p>
+          <p class="outcome">{entry.body.outcome}</p>
+          <p class="claim">{entry.body.claim}</p>
+          <p class="placeholder">{ui('case.placeholder')}</p>
         </section>
       </>
     ) : null}

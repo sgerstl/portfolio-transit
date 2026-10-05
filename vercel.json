@@ -1,4 +1,16 @@
 {
+  "redirects": [
+    {
+      "source": "/de",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/de/:path*",
+      "destination": "/:path*",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
       "source": "/stats/:path*",

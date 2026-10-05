@@ -1,20 +1,19 @@
 ---
 import type { LabEntry } from '../../data/lab';
 import { LAB_TYPE_LABEL, LAB_STATUS_LABEL } from '../../data/lab';
-import { asLocale, pick, ui } from '../../lib/i18n';
+import { ui } from '../../lib/ui';
 
 interface Props {
   entry: LabEntry;
 }
 
 const { entry } = Astro.props;
-const locale = asLocale(Astro.currentLocale);
 
 const typeClass = `type-${entry.type.toLowerCase()}`;
 const statusKey = entry.status.toLowerCase().replace(/\s+/g, '-');
 const statusClass = `status-${statusKey}`;
 
-const title = pick(entry.title, locale);
+const title = entry.title;
 ---
 
 <details class="lab-compact">
@@ -22,51 +21,51 @@ const title = pick(entry.title, locale);
     <div class="head">
       <h3>{title}</h3>
       <div class="chips">
-        <span class={`chip ${typeClass}`}>{pick(LAB_TYPE_LABEL[entry.type], locale)}</span>
-        <span class={`chip ${statusClass}`}>{pick(LAB_STATUS_LABEL[entry.status], locale)}</span>
+        <span class={`chip ${typeClass}`}>{LAB_TYPE_LABEL[entry.type]}</span>
+        <span class={`chip ${statusClass}`}>{LAB_STATUS_LABEL[entry.status]}</span>
       </div>
     </div>
-    <p class="summary-text">{pick(entry.summary, locale)}</p>
+    <p class="summary-text">{entry.summary}</p>
     <span class="toggle">
-      <span class="toggle-label toggle-more">{ui('lab.readMore', locale)}</span>
-      <span class="toggle-label toggle-less">{ui('lab.collapse', locale)}</span>
+      <span class="toggle-label toggle-more">{ui('lab.readMore')}</span>
+      <span class="toggle-label toggle-less">{ui('lab.collapse')}</span>
     </span>
   </summary>
 
   <div class="body-wrap">
     <div class="body">
       <section>
-        <span class="label">{ui('lab.tried', locale)}</span>
-        <p>{pick(entry.tried, locale)}</p>
+        <span class="label">{ui('lab.tried')}</span>
+        <p>{entry.tried}</p>
       </section>
       <section>
-        <span class="label">{ui('lab.learned', locale)}</span>
-        <p>{pick(entry.learned, locale)}</p>
+        <span class="label">{ui('lab.learned')}</span>
+        <p>{entry.learned}</p>
       </section>
       {entry.didntWork && (
         <section>
-          <span class="label">{ui('lab.didntWork', locale)}</span>
-          <p>{pick(entry.didntWork, locale)}</p>
+          <span class="label">{ui('lab.didntWork')}</span>
+          <p>{entry.didntWork}</p>
         </section>
       )}
       {entry.forYourTeam && (
         <section>
-          <span class="label">{ui('lab.forYourTeam', locale)}</span>
-          <p>{pick(entry.forYourTeam, locale)}</p>
+          <span class="label">{ui('lab.forYourTeam')}</span>
+          <p>{entry.forYourTeam}</p>
         </section>
       )}
 
       {entry.links && entry.links.length > 0 && (
         <div class="links">
           {entry.links.map((l) => (
-            <a href={l.url} target="_blank" rel="noopener noreferrer">{pick(l.label, locale)} ↗</a>
+            <a href={l.url} target="_blank" rel="noopener noreferrer">{l.label} ↗</a>
           ))}
         </div>
       )}
 
       {entry.demoUrl && !entry.links && (
         <div class="links">
-          <a href={entry.demoUrl} data-demo data-demo-title={title} target="_blank" rel="noopener noreferrer">{ui('lab.openDemo', locale)}</a>
+          <a href={entry.demoUrl} data-demo data-demo-title={title} target="_blank" rel="noopener noreferrer">{ui('lab.openDemo')}</a>
         </div>
       )}
     </div>

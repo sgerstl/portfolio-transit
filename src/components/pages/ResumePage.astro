@@ -1,9 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Header from '../Header.astro';
-import { asLocale, localizePath, ui } from '../../lib/i18n';
+import { ui } from '../../lib/ui';
 
-const locale = asLocale(Astro.currentLocale);
 const RESUME_PAGES = ['/images/resume/page-1.png', '/images/resume/page-2.png'];
 
 // A4 at 200dpi, the size `pdftoppm -png -r 200` produces from the vault's
@@ -15,15 +14,15 @@ const RESUME_PAGE_W = 1653;
 const RESUME_PAGE_H = 2339;
 ---
 
-<Layout title={ui('siteTitleResume', locale)} canonicalPath="/resume/">
+<Layout title={ui('siteTitleResume')} canonicalPath="/resume/">
   <Header />
 
   <main class="resume-page">
-    <a class="back" href={localizePath('/', locale)}>{ui('lab.back', locale)}</a>
+    <a class="back" href="/">{ui('lab.back')}</a>
 
     <header class="resume-head">
-      <h1>{ui('resume.title', locale)}</h1>
-      <p class="lede">{ui('resume.lede', locale)}</p>
+      <h1>{ui('resume.title')}</h1>
+      <p class="lede">{ui('resume.lede')}</p>
     </header>
 
     <div class="actions">
@@ -33,10 +32,10 @@ const RESUME_PAGE_H = 2339;
           <polyline points="7 10 12 15 17 10"></polyline>
           <line x1="12" y1="15" x2="12" y2="3"></line>
         </svg>
-        {ui('resume.download', locale)}
+        {ui('resume.download')}
       </a>
       <a class="open-btn" href="/resume.pdf" target="_blank" rel="noopener noreferrer">
-        {ui('resume.openTab', locale)}
+        {ui('resume.openTab')}
       </a>
     </div>
 

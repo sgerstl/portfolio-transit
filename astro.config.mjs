@@ -9,13 +9,6 @@ import react from '@astrojs/react';
 export default defineConfig({
   site: 'https://ux.scottgerstl.com',
   trailingSlash: 'always',
-  i18n: {
-    defaultLocale: 'en',
-    locales: ['en', 'de'],
-    routing: {
-      prefixDefaultLocale: false,
-    },
-  },
 
   vite: {
     plugins: [tailwindcss()]

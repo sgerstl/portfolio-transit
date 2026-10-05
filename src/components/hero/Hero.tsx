@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { smoothScrollTo } from '../../lib/scroll';
-import { ui, type Locale } from '../../lib/i18n';
+import { ui } from '../../lib/ui';
 
 type StatCard = {
   num: string;
@@ -11,30 +11,22 @@ type StatCard = {
 
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 
-// Brightly stat 01 highlights the dollar figure in bold. Split the localized
-// string on the figure and re-wrap. Falls back to plain text if the locale
-// translation doesn't contain the EN figure literal.
+// Brightly stat 01 highlights the dollar figure in bold. Split the string on
+// the figure and re-wrap. Falls back to plain text if the figure is missing.
 function renderBrightlyText(text: string): React.ReactNode {
-  const candidates = ['$1.575B', '1,575 Mrd. $', '1.575 Mrd. $'];
-  for (const candidate of candidates) {
-    const idx = text.indexOf(candidate);
-    if (idx === -1) continue;
-    return (
-      <>
-        {text.slice(0, idx)}
-        <strong>{candidate}</strong>
-        {text.slice(idx + candidate.length)}
-      </>
-    );
-  }
-  return text;
+  const figure = '$1.575B';
+  const idx = text.indexOf(figure);
+  if (idx === -1) return text;
+  return (
+    <>
+      {text.slice(0, idx)}
+      <strong>{figure}</strong>
+      {text.slice(idx + figure.length)}
+    </>
+  );
 }
 
-interface HeroProps {
-  locale?: Locale;
-}
-
-export default function Hero({ locale = 'en' }: HeroProps) {
+export default function Hero() {
   const heroRef = useRef<HTMLElement | null>(null);
   const preludeRef = useRef<HTMLDivElement | null>(null);
   const cardsRef = useRef<HTMLLIElement[]>([]);
@@ -43,20 +35,20 @@ export default function Hero({ locale = 'en' }: HeroProps) {
     {
       num: '01',
       target: 'brightly',
-      ariaLabel: ui('hero.ariaBrightly', locale),
-      text: renderBrightlyText(ui('hero.statBrightly', locale)),
+      ariaLabel: ui('hero.ariaBrightly'),
+      text: renderBrightlyText(ui('hero.statBrightly')),
     },
     {
       num: '02',
       target: 'epilog',
-      ariaLabel: ui('hero.ariaEpilog', locale),
-      text: ui('hero.statEpilog', locale),
+      ariaLabel: ui('hero.ariaEpilog'),
+      text: ui('hero.statEpilog'),
     },
     {
       num: '03',
       target: 'cal',
-      ariaLabel: ui('hero.ariaCal', locale),
-      text: ui('hero.statCal', locale),
+      ariaLabel: ui('hero.ariaCal'),
+      text: ui('hero.statCal'),
     },
   ];
 
@@ -177,13 +169,13 @@ export default function Hero({ locale = 'en' }: HeroProps) {
   }, []);
 
   return (
-    <section className="hero" aria-label={ui('hero.ariaIntro', locale)} ref={heroRef}>
+    <section className="hero" aria-label={ui('hero.ariaIntro')} ref={heroRef}>
       <div className="hero-prelude" ref={preludeRef}>
         <p className="hero-prelude-line">
-          {ui('hero.prelude', locale)}
+          {ui('hero.prelude')}
         </p>
         <p className="hero-qualifiers">
-          {ui('hero.qualifiers', locale)}
+          {ui('hero.qualifiers')}
         </p>
       </div>
       <ul className="hero-cards">
@@ -209,12 +201,12 @@ export default function Hero({ locale = 'en' }: HeroProps) {
             if (el) cardsRef.current[STAT_CARDS.length] = el;
           }}
         >
-          <span className="prop-label">{ui('hero.propLabel', locale)}</span>
+          <span className="prop-label">{ui('hero.propLabel')}</span>
           <p className="prop-primary">
-            {ui('hero.propPrimary', locale)}
+            {ui('hero.propPrimary')}
           </p>
           <p className="prop-secondary">
-            {ui('hero.propSecondary', locale)}
+            {ui('hero.propSecondary')}
           </p>
         </li>
       </ul>

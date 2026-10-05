@@ -14,18 +14,16 @@ import Accordion from '../cases/Accordion.astro';
 import Lightbox from '../Lightbox.astro';
 import DemoModal from '../DemoModal.astro';
 import { SECTIONS, casesForLine } from '../../data/cases';
-import { asLocale, ui } from '../../lib/i18n';
-
-const locale = asLocale(Astro.currentLocale);
+import { ui } from '../../lib/ui';
 ---
 
-<Layout title={ui('siteTitle', locale)} canonicalPath="/">
+<Layout title={ui('siteTitle')} canonicalPath="/">
   <Header />
   <DepartureBoard />
 
   <div class="page">
     <MapWallpaper />
-    <Hero client:load locale={locale} />
+    <Hero client:load />
 
     <div class="spine-container" id="cases">
       <Spine />

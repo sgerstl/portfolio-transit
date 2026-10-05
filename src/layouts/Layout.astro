@@ -3,35 +3,28 @@ import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 import Analytics from '../components/Analytics.astro';
 import ContactFab from '../components/ContactFab.astro';
-import { asLocale, localizePath, ui, type Locale } from '../lib/i18n';
+import { ui } from '../lib/ui';
 
 interface Props {
   title?: string;
   // Keeps a page out of search results. Used by unlisted pages that are shared
   // by link only (e.g. /joy-experiment).
   noindex?: boolean;
-  // Optional canonical-path override for hreflang generation. If not provided,
-  // we use the current pathname (stripped of /de prefix).
+  // Optional canonical-path override. Defaults to the current pathname.
   canonicalPath?: string;
 }
 
-const locale: Locale = asLocale(Astro.currentLocale);
-const { title = ui('siteTitle', locale), canonicalPath, noindex = false } = Astro.props;
+const { title = ui('siteTitle'), canonicalPath, noindex = false } = Astro.props;
 
 const site = 'https://ux.scottgerstl.com';
-const ogTitle = ui('og.title', locale);
-const ogDesc = ui('og.description', locale);
+const ogTitle = ui('og.title');
+const ogDesc = ui('og.description');
 
-// Build a canonical EN-form path (no /de prefix) so hreflang alternates can
-// be derived deterministically.
-const currentPath = canonicalPath ?? Astro.url.pathname.replace(/^\/de(\/|$)/, '/');
-const enUrl = `${site}${localizePath(currentPath, 'en')}`;
-const deUrl = `${site}${localizePath(currentPath, 'de')}`;
-const canonicalUrl = `${site}${localizePath(currentPath, locale)}`;
+const canonicalUrl = `${site}${canonicalPath ?? Astro.url.pathname}`;
 ---
 
 <!doctype html>
-<html lang={locale}>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -46,22 +39,12 @@ const canonicalUrl = `${site}${localizePath(currentPath, locale)}`;
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     <title>{title}</title>
     <link rel="canonical" href={canonicalUrl} />
-    {
-      /* Unlisted pages are English-only, so they advertise no German alternate. */
-      !noindex && (
-        <>
-          <link rel="alternate" hreflang="en" href={enUrl} />
-          <link rel="alternate" hreflang="de" href={deUrl} />
-          <link rel="alternate" hreflang="x-default" href={enUrl} />
-        </>
-      )
-    }
     <meta property="og:title" content={ogTitle} />
     <meta property="og:description" content={ogDesc} />
     <meta property="og:image" content={`${site}/og-image.png`} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:type" content="website" />
-    <meta property="og:locale" content={locale === 'de' ? 'de_DE' : 'en_US'} />
+    <meta property="og:locale" content="en_US" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={`${site}/og-image.png`} />
     <meta name="twitter:title" content={ogTitle} />

@@ -4,26 +4,24 @@ import Header from '../Header.astro';
 import LabCardCompact from '../lab/LabCardCompact.astro';
 import DemoModal from '../DemoModal.astro';
 import { LAB_CATEGORIES } from '../../data/lab';
-import { asLocale, localizePath, pick, ui } from '../../lib/i18n';
-
-const locale = asLocale(Astro.currentLocale);
+import { ui } from '../../lib/ui';
 ---
 
-<Layout title={ui('siteTitleLab', locale)} canonicalPath="/lab/">
+<Layout title={ui('siteTitleLab')} canonicalPath="/lab/">
   <Header />
 
   <main class="lab-page">
-    <a class="back" href={localizePath('/', locale)}>{ui('lab.back', locale)}</a>
+    <a class="back" href="/">{ui('lab.back')}</a>
 
     <header class="lab-page-head">
-      <h1>{ui('lab.title', locale)}</h1>
-      <p class="lede">{ui('lab.lede', locale)}</p>
+      <h1>{ui('lab.title')}</h1>
+      <p class="lede">{ui('lab.lede')}</p>
     </header>
 
     {LAB_CATEGORIES.map((category) => (
       <section class="lab-category">
         <div class="cat-head">
-          <h2>{pick(category.name, locale)}</h2>
+          <h2>{category.name}</h2>
           <div class="rule"></div>
         </div>
 

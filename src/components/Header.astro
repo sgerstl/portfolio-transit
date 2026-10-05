@@ -1,25 +1,21 @@
 ---
-import { asLocale, localizePath, ui } from '../lib/i18n';
-
-const locale = asLocale(Astro.currentLocale);
+import { ui } from '../lib/ui';
 
 const navLinks = [
-  { label: ui('nav.cases', locale), href: localizePath('/#section-ai', locale) },
-  { label: ui('nav.lab', locale), href: localizePath('/lab/', locale) },
-  { label: ui('nav.resume', locale), href: localizePath('/resume/', locale) },
-  { label: ui('nav.about', locale), href: localizePath('/#case-about', locale) },
-  { label: ui('nav.contact', locale), href: localizePath('/#case-contact', locale) },
+  { label: ui('nav.cases'), href: '/#section-ai' },
+  { label: ui('nav.lab'), href: '/lab/' },
+  { label: ui('nav.resume'), href: '/resume/' },
+  { label: ui('nav.about'), href: '/#case-about' },
+  { label: ui('nav.contact'), href: '/#case-contact' },
 ];
 
-const enLabel = ui('header.langEnglish', locale);
-const deLabel = ui('header.langGerman', locale);
-const taglineLabel = ui('header.tagline', locale);
-const menuOpenLabel = ui('header.menuOpen', locale);
-const menuCloseLabel = ui('header.menuClose', locale);
+const taglineLabel = ui('header.tagline');
+const menuOpenLabel = ui('header.menuOpen');
+const menuCloseLabel = ui('header.menuClose');
 ---
 
 <header class="site-header">
-  <a class="brand-link" href={localizePath('/', locale)} aria-label="Scott Gerstl | Home">
+  <a class="brand-link" href="/" aria-label="Scott Gerstl | Home">
     <img class="brand-img" src="/wordmark.svg" alt="Scott Gerstl" />
   </a>
   <span class="tagline">{taglineLabel}</span>
@@ -28,22 +24,6 @@ const menuCloseLabel = ui('header.menuClose', locale);
       <a href={link.href}>{link.label}</a>
     ))}
   </nav>
-  <span class="lang-divider" aria-hidden="true">|</span>
-  <span class="lang-toggle" role="group" aria-label="Language">
-    <a
-      class:list={['lang-link', locale === 'en' && 'lang-link--active']}
-      href="/"
-      data-lang-link="en"
-      aria-current={locale === 'en' ? 'true' : undefined}
-    >{enLabel}</a>
-    <span class="lang-sep" aria-hidden="true">·</span>
-    <a
-      class:list={['lang-link', locale === 'de' && 'lang-link--active']}
-      href="/de/"
-      data-lang-link="de"
-      aria-current={locale === 'de' ? 'true' : undefined}
-    >{deLabel}</a>
-  </span>
   <button
     class="hamburger"
     type="button"
@@ -91,24 +71,6 @@ const menuCloseLabel = ui('header.menuClose', locale);
     smoothScrollTo(window.scrollY + r.top - HEADER_OFFSET);
     return true;
   }
-
-  function buildSwitchPath(targetLocale: 'en' | 'de'): string {
-    const path = location.pathname.replace(/^\/de(\/|$)/, '/');
-    const base = targetLocale === 'en' ? path : (path === '/' ? '/de/' : `/de${path}`);
-    // Intentionally drop location.hash. The hash may be a stale anchor
-    // from an earlier nav-link click ("Cases" sets #section-ai via
-    // replaceState and we never clear it on subsequent scroll), and
-    // preserving it would force the new-locale page to auto-scroll to
-    // that anchor on load. Scroll preservation happens via sessionStorage
-    // below instead.
-    return base + location.search;
-  }
-
-  function setLocaleCookie(loc: 'en' | 'de') {
-    document.cookie = `pref-locale=${loc}; Path=/; Max-Age=31536000; SameSite=Lax`;
-  }
-
-  const SCROLL_RESTORE_KEY = 'pref-locale-scroll-y';
 
   function init() {
     controller?.abort();
@@ -203,30 +165,6 @@ const menuCloseLabel = ui('header.menuClose', locale);
       );
     });
 
-    // ---- Language toggle ------------------------------------------
-    document.querySelectorAll<HTMLAnchorElement>('.site-header [data-lang-link]').forEach((a) => {
-      a.addEventListener(
-        'click',
-        (e) => {
-          const target = a.dataset.langLink as 'en' | 'de' | undefined;
-          if (!target) return;
-          e.preventDefault();
-          setLocaleCookie(target);
-          // Stash the current scroll position so the new-locale page can
-          // restore it on load. Pages are mostly text-replacement of the
-          // same components, so Y position maps to roughly the same content.
-          try {
-            sessionStorage.setItem(SCROLL_RESTORE_KEY, String(window.scrollY));
-          } catch {
-            // sessionStorage can throw in some private-browsing modes; OK
-            // to skip the restore in that case.
-          }
-          location.assign(buildSwitchPath(target));
-        },
-        { signal },
-      );
-    });
-
     // ---- Brand link: same-page scroll-to-top ----------------------
     const brand = document.querySelector<HTMLAnchorElement>('.site-header .brand-link');
     if (brand) {
@@ -246,28 +184,7 @@ const menuCloseLabel = ui('header.menuClose', locale);
     }
 
     // ---- Initial scroll on page load ------------------------------
-    // Priority: if the language toggle just navigated us, restore the
-    // saved Y position from sessionStorage. Otherwise honor the URL hash.
-    let restoredFromToggle = false;
-    try {
-      const saved = sessionStorage.getItem(SCROLL_RESTORE_KEY);
-      if (saved !== null) {
-        sessionStorage.removeItem(SCROLL_RESTORE_KEY);
-        const y = parseInt(saved, 10);
-        if (!isNaN(y)) {
-          // Wait two frames so the page has laid out before scrolling.
-          // Avoids landing short when fonts / images still affect height.
-          requestAnimationFrame(() =>
-            requestAnimationFrame(() => window.scrollTo(0, y)),
-          );
-          restoredFromToggle = true;
-        }
-      }
-    } catch {
-      // sessionStorage unavailable; fall through to hash handling
-    }
-
-    if (!restoredFromToggle && location.hash) {
+    if (location.hash) {
       const hash = location.hash;
       window.scrollTo(0, 0);
       requestAnimationFrame(() => requestAnimationFrame(() => scrollToHash(hash)));
@@ -360,53 +277,6 @@ const menuCloseLabel = ui('header.menuClose', locale);
     opacity: 0.6;
   }
 
-  .lang-divider {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 400;
-    font-size: 14px;
-    color: var(--color-text-soft);
-    opacity: 0.4;
-    user-select: none;
-  }
-
-  .lang-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .lang-link {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 600;
-    font-size: 14px;
-    color: var(--color-text);
-    text-decoration: none;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    opacity: 0.5;
-    transition: opacity 0.15s ease;
-  }
-
-  .lang-link--active {
-    opacity: 1;
-  }
-
-  .lang-link:hover {
-    opacity: 0.8;
-  }
-
-  .lang-link--active:hover {
-    opacity: 1;
-  }
-
-  .lang-sep {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 400;
-    font-size: 14px;
-    color: var(--color-text-soft);
-    user-select: none;
-  }
-
   /* ---- Hamburger button (hidden on desktop) ---- */
   .hamburger {
     display: none;
@@ -481,16 +351,9 @@ const menuCloseLabel = ui('header.menuClose', locale);
       display: none;
     }
 
-    .lang-divider {
-      display: none;
-    }
-
-    .lang-toggle {
-      margin-left: auto;
-    }
-
     .hamburger {
       display: inline-flex;
+      margin-left: auto;
     }
 
     /* The mobile menu is a SIBLING of the header in the DOM so its
