@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import './hero-variants.css';
+import RingObject from './RingObject';
 import { smoothScrollTo } from '../../lib/scroll';
 import { ui } from '../../lib/ui';
 
@@ -13,13 +14,14 @@ type StatCard = {
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 
 // MOCK: three hero directions behind ?hero=a|b|c, for comparison only.
-type Variant = 'current' | 'a' | 'b' | 'c' | 'd';
+type Variant = 'current' | 'a' | 'b' | 'c' | 'd' | 'e';
 const VARIANTS: { key: Variant; label: string }[] = [
   { key: 'current', label: 'Live' },
   { key: 'a', label: 'A · Refine' },
   { key: 'b', label: 'B · Route strip' },
   { key: 'c', label: 'C · Station sign' },
   { key: 'd', label: 'D · Lit map' },
+  { key: 'e', label: 'E · Ring' },
 ];
 
 // Proof points matched to the 2026-10-08 resume screen pass: paid work only.
@@ -144,7 +146,7 @@ export default function Hero() {
 
   useEffect(() => {
     const v = new URLSearchParams(window.location.search).get('hero');
-    if (v === 'a' || v === 'b' || v === 'c' || v === 'd') setVariant(v);
+    if (v === 'a' || v === 'b' || v === 'c' || v === 'd' || v === 'e') setVariant(v);
   }, []);
 
   const STAT_CARDS: StatCard[] = [
@@ -358,6 +360,40 @@ export default function Hero() {
             </li>
           </ul>
           {qualifiers}
+        </section>
+        {switcher}
+      </>
+    );
+  }
+
+  if (variant === 'e') {
+    return (
+      <>
+        <section className="hero hv hv--d hv--e" aria-label={ui('hero.ariaIntro')} ref={heroRef}>
+          <div className="hv-d-grid">
+            <div className="hv-d-text">
+              <div className="hero-prelude hv-head">
+                <p className="hv-kicker">
+                  <img className="hv-d-face" src="/images/scott-headshot.png" alt="" />
+                  {KICKER}
+                </p>
+                <h1 className="hv-h1">{ui('hero.propPrimary')}</h1>
+                <p className="hv-lead">{ui('hero.propSecondary')}</p>
+              </div>
+              <ul className="hero-cards hv-stations">
+                {PROOF.map((p) => (
+                  <li key={p.href} className="hero-card hv-station">
+                    <a href={p.href}>
+                      <span className="hv-fig">{p.fig}</span>
+                      <span className="hv-label">{p.label}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              {qualifiers}
+            </div>
+            <RingObject />
+          </div>
         </section>
         {switcher}
       </>

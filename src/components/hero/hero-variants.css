@@ -566,6 +566,72 @@
   .hv--d::before { width: calc(100% - 140px); }
 }
 
+/* ── E · Ring ───────────────────────────────────────────
+   D's left column; the right half is the turning Ringbahn object. */
+.hv-ring {
+  position: relative;
+  width: 100%;
+  justify-self: stretch;
+  margin: -24px 0 0;
+  pointer-events: auto;
+}
+
+.hv-ring-canvas {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  cursor: grab;
+  touch-action: none;
+}
+.hv-ring-canvas:active {
+  cursor: grabbing;
+}
+
+.hv-ring-cap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: -8px;
+  font-family: var(--font-condensed);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+}
+
+.hv-ring-pause {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: white;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.22);
+  color: var(--color-text);
+  cursor: pointer;
+}
+.hv-ring-pause svg {
+  width: 12px;
+  height: 12px;
+  fill: currentColor;
+}
+.hv-ring-pause:hover {
+  box-shadow: inset 0 0 0 2px var(--color-text);
+}
+.hv-ring-pause:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 2px;
+}
+
+@media (max-width: 1199px) {
+  .hv-ring { display: none; }
+}
+
 /* ── MOCK switcher ───────────────────────────────────── */
 .hv-switch {
   position: fixed;
