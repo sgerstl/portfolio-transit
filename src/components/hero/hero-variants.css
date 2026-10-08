@@ -381,6 +381,191 @@
   margin-top: 16px;
 }
 
+/* ── D · Lit map ─────────────────────────────────────────
+   A's left column with a bigger headline, and an excerpt of the network on
+   the right in the wallpaper map's language. The headshot is the origin
+   station both lines leave from. */
+.hv--d::before {
+  width: min(1240px, calc(100% - 140px));
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-bg) 94%, transparent) 0%,
+    color-mix(in srgb, var(--color-bg) 94%, transparent) 55%,
+    color-mix(in srgb, var(--color-bg) 90%, transparent) 100%
+  );
+}
+
+.hv-d-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 660px) minmax(0, 540px);
+  column-gap: 56px;
+  align-items: start;
+}
+
+.hv--d .hv-head {
+  max-width: 660px;
+  margin-bottom: 40px;
+}
+
+.hv--d .hv-h1 {
+  font-size: 76px;
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+}
+
+.hv--d .hv-lead {
+  margin-top: 20px;
+}
+
+.hv--d .hv-kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Small face for widths where the map is hidden. */
+.hv-d-face {
+  display: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.hv--d .hv-station .hv-fig {
+  font-size: 36px;
+}
+.hv--d .hv-station a {
+  grid-template-columns: 124px 1fr;
+}
+.hv--d .hv-stations {
+  gap: 14px;
+}
+
+.hv-net {
+  width: 100%;
+  height: auto;
+  margin-top: 8px;
+  overflow: visible;
+  pointer-events: auto;
+}
+
+.hv-net-track {
+  fill: none;
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+/* MOCK: --color-line-ai holds the orange (see global.css). */
+.hv-net-line--cs1 .hv-net-track { stroke: var(--color-line-ai); }
+.hv-net-line--cs2 .hv-net-track { stroke: var(--color-line-ent); }
+.hv-net-line--cs1 .hv-net-term { fill: var(--color-line-ai); }
+.hv-net-line--cs2 .hv-net-term { fill: var(--color-line-ent); }
+
+.hv-net-ring {
+  fill: white;
+  stroke: var(--color-ring-stroke);
+  stroke-width: 2;
+  transition: stroke-width 0.15s ease-out;
+}
+
+.hv-net-hit {
+  fill: transparent;
+}
+
+.hv-net-name {
+  font-family: var(--font-condensed);
+  font-size: 21px;
+  font-weight: 600;
+  fill: var(--color-text);
+  dominant-baseline: middle;
+}
+
+.hv-net-domain {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 400;
+  fill: var(--color-text-soft);
+  dominant-baseline: middle;
+}
+
+.hv-net-stop:hover .hv-net-ring,
+.hv-net-stop:focus-visible .hv-net-ring {
+  stroke-width: 5;
+}
+.hv-net-stop:hover .hv-net-name,
+.hv-net-stop:focus-visible .hv-net-name {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+.hv-net-stop:focus-visible {
+  outline: none;
+}
+.hv-net-stop:focus-visible .hv-net-hit {
+  stroke: var(--color-text);
+  stroke-width: 2;
+  rx: 4px;
+}
+
+.hv-net-origin-ring {
+  fill: white;
+  stroke: var(--color-ring-stroke);
+  stroke-width: 2;
+}
+
+.hv-net-pill--cs1 { fill: var(--color-line-ai); }
+.hv-net-pill--cs2 { fill: var(--color-line-ent); }
+.hv-net-pilltext {
+  font-family: var(--font-condensed);
+  font-size: 13px;
+  font-weight: 600;
+  fill: #1a1714;
+  dominant-baseline: middle;
+}
+
+/* One moment of motion: the lines draw out from the origin, then the
+   stations arrive. Skipped entirely under reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .hv-net-track {
+    animation: hv-net-draw 900ms cubic-bezier(0.2, 0.7, 0.2, 1) 150ms both;
+  }
+  .hv-net-line--cs2 .hv-net-track {
+    animation-delay: 300ms;
+  }
+  .hv-net-stop,
+  .hv-net-term,
+  .hv-net-legend {
+    animation: hv-net-arrive 260ms ease-out both;
+    animation-delay: calc(600ms + var(--i, 0) * 90ms);
+  }
+  .hv-net-term,
+  .hv-net-legend {
+    animation-delay: 1000ms;
+  }
+}
+
+@keyframes hv-net-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes hv-net-arrive {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* The map needs room; below 1200 it gives way and the face moves into the
+   kicker so the human detail stays. */
+@media (max-width: 1199px) {
+  .hv-d-grid { grid-template-columns: minmax(0, 1fr); }
+  .hv-net { display: none; }
+  .hv-d-face { display: block; }
+  .hv--d .hv-h1 { font-size: 56px; }
+  .hv--d::before { width: calc(100% - 140px); }
+}
+
 /* ── MOCK switcher ───────────────────────────────────── */
 .hv-switch {
   position: fixed;
@@ -435,6 +620,10 @@
 /* ── Mobile ──────────────────────────────────────────── */
 @media (max-width: 767px) {
   .hv { padding-top: 80px; }
+  .hv--d .hv-h1 { font-size: 38px; }
+  .hv--d::before { width: 100%; }
+  .hv--d .hv-station a { grid-template-columns: 100px 1fr; }
+  .hv--d .hv-station .hv-fig { font-size: 30px; }
   .hv::before { left: 0; max-width: 100%; }
 
   /* The live hero hides its prelude on mobile; the variants keep it,
