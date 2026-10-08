@@ -46,6 +46,9 @@ import { ui } from '../../lib/ui';
                 line={c.line}
                 body={c.body}
                 personal={c.personal}
+                ai={c.ai}
+                demo={!!c.detail?.demoUrl}
+                readingMinutes={c.readingMinutes}
               />
             ))}
           </Cases>

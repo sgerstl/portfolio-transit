@@ -13,8 +13,8 @@
   --color-rail-blue: #009DE0;
   --color-ring-stroke: #555555;
 
-  --color-line-ai: #43AF00;
-  --color-line-ent: #DA5A00;
+  --color-line-ai: #DA5A00; /* MOCK: swapped so CS1 Professional keeps the brand orange; rename keys before shipping */
+  --color-line-ent: #43AF00;
   --color-line-pers: #896CAE;
 
   --font-sans: 'Inter', sans-serif;

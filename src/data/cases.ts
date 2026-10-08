@@ -7,6 +7,7 @@ export type CaseSlug =
   | 'brightly'
   | 'fleet'
   | 'pqdr'
+  | 'ziggy'
   | 'about'
   | 'contact';
 
@@ -80,6 +81,8 @@ export type CaseEntry = {
   tagline: string;
   line: LineKey;
   readingMinutes: number;
+  /** Shows the AI badge on the card. AI is a property of the work, not a line. */
+  ai?: boolean;
   body?: CaseBody;
   detail?: CaseDetail;
   personal?: PersonalBody;
@@ -90,8 +93,9 @@ export const CASES: CaseEntry[] = [
     slug: 'epilog',
     name: 'Epilog',
     tagline: 'AI caught a drug interaction. The neurologist confirmed it.',
-    line: 'ai',
+    line: 'ent',
     readingMinutes: 4,
+    ai: true,
     body: {
       domains: [
         'Healthcare',
@@ -203,8 +207,9 @@ export const CASES: CaseEntry[] = [
     slug: 'cal',
     name: 'Cal',
     tagline: 'AI as deliverable. AI as builder. AI inside the product.',
-    line: 'ai',
+    line: 'ent',
     readingMinutes: 3,
+    ai: true,
     body: {
       domains: [
         'Cycling',
@@ -333,6 +338,7 @@ export const CASES: CaseEntry[] = [
     tagline: 'Race-engineer practice, designed into an AI product.',
     line: 'ai',
     readingMinutes: 6,
+    ai: true,
     body: {
       domains: [
         'Motorsports',
@@ -497,7 +503,7 @@ export const CASES: CaseEntry[] = [
     slug: 'brightly',
     name: 'Brightly',
     tagline: 'Design direction for a $1.575B acquisition.',
-    line: 'ent',
+    line: 'ai',
     readingMinutes: 6,
     body: {
       domains: [
@@ -631,7 +637,7 @@ export const CASES: CaseEntry[] = [
     slug: 'fleet',
     name: 'Fleet',
     tagline: 'Three tools and two forms, consolidated into one.',
-    line: 'ent',
+    line: 'ai',
     readingMinutes: 5,
     body: {
       domains: [
@@ -757,8 +763,9 @@ export const CASES: CaseEntry[] = [
     slug: 'pqdr',
     name: 'Power Quality and Demand Response',
     tagline: 'AI insight, operator decision. 200+ industrial locations.',
-    line: 'ent',
+    line: 'ai',
     readingMinutes: 5,
+    ai: true,
     body: {
       domains: [
         'Energy',
@@ -885,6 +892,27 @@ export const CASES: CaseEntry[] = [
     },
   },
   {
+    slug: 'ziggy',
+    name: 'Ziggy',
+    tagline: 'An agent arranges my day. The data fills it in.',
+    line: 'ent',
+    readingMinutes: 6,
+    ai: true,
+    body: {
+      domains: ['Personal AI', 'Agent design', 'Android'],
+      outcome: 'A phone app I use every morning. It pulls my calendar, health data, messages and to-dos onto one screen, and an AI agent decides what goes first and why. The agent can only point at real things in my notes, and the app fills in every number and date itself.',
+      visualLabel: 'ZIGGY · TODAY ON THE OLED DISPLAY',
+      visualLayout: 'full',
+      metrics: [
+        { num: '5 days', label: 'Sketch to an installed Android app' },
+        { num: '~5', label: 'Notifications a day, by design' },
+        { num: '0', label: 'Numbers written by the model' },
+      ],
+      claim: "I design agent interfaces that can't make up a number.",
+      ctaHref: '/work/ziggy',
+    },
+  },
+  {
     slug: 'about',
     name: 'About',
     tagline: 'What I do, and why this site is a transit map.',
@@ -936,27 +964,41 @@ export const CASES: CaseEntry[] = [
   },
 ];
 
-export const SECTIONS: { line: LineKey; code: string; title: string; subtitle: string }[] = [
+export const SECTIONS: {
+  line: LineKey;
+  code: string;
+  title: string;
+  subtitle: string;
+  /** Stop order on the line. Paid work leads, matching the resume. */
+  stops: CaseSlug[];
+}[] = [
   {
     line: 'ai',
     code: 'CS1',
-    title: 'AI Case Studies',
-    subtitle: '3 stops · AI features, AI products, AI as the design medium',
+    title: 'Professional Work',
+    subtitle: '4 stops · for employers and clients',
+    stops: ['brightly', 'sim-racing', 'pqdr', 'fleet'],
   },
   {
     line: 'ent',
     code: 'CS2',
-    title: 'Enterprise Case Studies',
-    subtitle: '3 stops · vision, workflows, and operator surfaces',
+    title: 'Independent Builds',
+    subtitle: '3 stops · designed and built solo with AI',
+    stops: ['epilog', 'ziggy', 'cal'],
   },
   {
     line: 'pers',
     code: 'P',
     title: 'Personal',
     subtitle: '2 stops · who I am and how to reach me',
+    stops: ['about', 'contact'],
   },
 ];
 
 export function casesForLine(line: LineKey): CaseEntry[] {
-  return CASES.filter((c) => c.line === line);
+  const section = SECTIONS.find((s) => s.line === line);
+  if (!section) return [];
+  return section.stops
+    .map((slug) => CASES.find((c) => c.slug === slug))
+    .filter((c): c is CaseEntry => !!c);
 }
