@@ -11,6 +11,8 @@
   --color-text: #4B4B4B;
   --color-text-soft: #6a6258;
   --color-rail-blue: #009DE0;
+  /* Station-sign navy, after DB S-Bahn platform signs. Used only by the hero sign. */
+  --color-sign-navy: #1E2A6E;
   --color-ring-stroke: #555555;
 
   --color-line-ai: #DA5A00; /* MOCK: swapped so CS1 Professional keeps the brand orange; rename keys before shipping */

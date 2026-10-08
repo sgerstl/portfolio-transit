@@ -213,8 +213,7 @@
    After a Berlin S-Bahn platform sign (Westkreuz): station name on a dark
    enamel panel, hairline rules between connection bands, and each band
    packed to the right edge as destination, pictograms, line badge, arrow.
-   The panel uses --color-text; real DB signs are navy, which would need a
-   new token. */
+   The panel is --color-sign-navy, after the DB signs. */
 .hv-signwrap {
   width: 860px;
   max-width: 100%;
@@ -224,7 +223,7 @@
 
 .hv-sign {
   width: 100%;
-  background: var(--color-text);
+  background: var(--color-sign-navy);
   color: white;
   border-radius: 6px;
   box-shadow:
@@ -351,7 +350,7 @@
   background: white;
 }
 .hv-sign .hv-sign-row:hover .hv-tile--arrow svg {
-  stroke: var(--color-text);
+  stroke: var(--color-sign-navy);
 }
 
 /* Line badges: stadium pills like the S-Bahn's. Dark text, because white
