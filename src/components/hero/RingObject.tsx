@@ -37,7 +37,6 @@ const SPREE: LatLon[] = [
   [52.5258, 13.2905], [52.5345, 13.2705],
 ];
 
-const TV_TOWER: LatLon = [52.5208, 13.4094];
 const CENTER: LatLon = [52.508, 13.378];
 const M_PER_UNIT = 8200;
 
@@ -74,8 +73,8 @@ function cylinder(c: V3, r: number, h: number, n = 14, y0 = 0): Seg[] {
 function dome(c: V3, r: number, y0: number, n = 12): Seg[] {
   const [x, , z] = c;
   const out: Seg[] = [];
-  for (let k = 0; k < 3; k++) {
-    const a = (k / 3) * Math.PI;
+  for (let k = 0; k < 4; k++) {
+    const a = (k / 4) * Math.PI;
     for (let i = 0; i < n; i++) {
       const t0 = (i / n) * Math.PI, t1 = ((i + 1) / n) * Math.PI;
       const p = (t: number): V3 => [x + r * Math.cos(t) * Math.cos(a), y0 + r * Math.sin(t), z + r * Math.cos(t) * Math.sin(a)];
@@ -86,6 +85,41 @@ function dome(c: V3, r: number, y0: number, n = 12): Seg[] {
 }
 function line(pts: V3[]): Seg[] {
   return pts.slice(1).map((p, i) => [pts[i], p] as Seg);
+}
+// Floor lines: horizontal rings around a box at even heights.
+function floors(c: V3, w: number, d: number, h: number, n: number, y0 = 0): Seg[] {
+  const [x, , z] = c, hw = w / 2, hd = d / 2;
+  const out: Seg[] = [];
+  for (let k = 1; k < n; k++) {
+    const y = y0 + (h * k) / n;
+    const r: V3[] = [[x - hw, y, z - hd], [x + hw, y, z - hd], [x + hw, y, z + hd], [x - hw, y, z + hd]];
+    for (let i = 0; i < 4; i++) out.push([r[i], r[(i + 1) % 4]]);
+  }
+  return out;
+}
+// Window bays: verticals on both long faces.
+function bays(c: V3, w: number, d: number, h: number, n: number, y0 = 0): Seg[] {
+  const [x, , z] = c, hw = w / 2, hd = d / 2;
+  const out: Seg[] = [];
+  for (let k = 1; k < n; k++) {
+    const bx = x - hw + (w * k) / n;
+    out.push([[bx, y0, z - hd], [bx, y0 + h, z - hd]], [[bx, y0, z + hd], [bx, y0 + h, z + hd]]);
+  }
+  return out;
+}
+function boxAt(c: V3, w: number, d: number, h: number, y0: number): Seg[] {
+  return box(c, w, d, h).map(([a, b]) => [[a[0], a[1] + y0, a[2]], [b[0], b[1] + y0, b[2]]] as Seg);
+}
+function pyramid(c: V3, s: number, y0: number, h: number): Seg[] {
+  const [x, , z] = c, hs = s / 2;
+  const apex: V3 = [x, y0 + h, z];
+  const b: V3[] = [[x - hs, y0, z - hs], [x + hs, y0, z - hs], [x + hs, y0, z + hs], [x - hs, y0, z + hs]];
+  return b.map((p) => [p, apex] as Seg);
+}
+function ring(c: V3, r: number, y: number, n = 16): Seg[] {
+  const [x, , z] = c;
+  const pts = Array.from({ length: n }, (_, i) => [x + r * Math.cos((i / n) * Math.PI * 2), y, z + r * Math.sin((i / n) * Math.PI * 2)] as V3);
+  return pts.map((p, i) => [p, pts[(i + 1) % n]] as Seg);
 }
 
 type Landmark = {
@@ -99,93 +133,223 @@ type Landmark = {
   blurb: string;
   lift: number; // label height above ground
   below?: boolean; // hang the label under the landmark instead
-  build: (c: V3) => Seg[];
+  // 'home' is the one stop that isn't an industry: it leads to About, is
+  // styled differently, and the train doesn't run to it.
+  kind?: 'home';
+  // m: outlines, drawn full weight; d: floors, bays and roof detail, drawn light
+  build: (c: V3) => { m: Seg[]; d: Seg[] };
 };
 
 // Order is the tab order: paid work first, matching the lines below.
 const LANDMARKS: Landmark[] = [
   {
     id: 'siemensstadt', domain: 'Manufacturing', place: 'Siemensstadt', at: [52.5387, 13.2702],
-    href: '/work/brightly', caseName: 'Brightly', minutes: 6,
+    href: '/work/brightly/', caseName: 'Brightly', minutes: 6,
     blurb: 'Siemens acquired Brightly for $1.575B in 2022. I set its design direction.',
-    lift: 0.2,
-    build: (c) => [
-      ...box([c[0] + 0.03, 0, c[2]], 0.11, 0.06, 0.06),
-      // sawtooth roof
-      ...line([[c[0] - 0.025, 0.06, c[2] - 0.03], [c[0] + 0.0, 0.09, c[2] - 0.03], [c[0] + 0.0, 0.06, c[2] - 0.03], [c[0] + 0.03, 0.09, c[2] - 0.03], [c[0] + 0.03, 0.06, c[2] - 0.03], [c[0] + 0.06, 0.09, c[2] - 0.03], [c[0] + 0.06, 0.06, c[2] - 0.03]]),
-      // the Wernerwerk clock tower
-      ...box([c[0] - 0.05, 0, c[2]], 0.025, 0.025, 0.17),
-    ],
+    lift: 0.24,
+    build: (c) => {
+      const hall: V3 = [c[0] + 0.03, 0, c[2]];
+      const tower: V3 = [c[0] - 0.055, 0, c[2]];
+      // sawtooth roof: four north-light teeth across the hall
+      const teeth: Seg[] = [];
+      for (let k = 0; k < 4; k++) {
+        const x0 = hall[0] - 0.06 + k * 0.03, x1 = x0 + 0.03;
+        teeth.push(
+          ...line([[x0, 0.055, hall[2] - 0.03], [x0, 0.078, hall[2] - 0.03], [x1, 0.055, hall[2] - 0.03]]),
+          ...line([[x0, 0.055, hall[2] + 0.03], [x0, 0.078, hall[2] + 0.03], [x1, 0.055, hall[2] + 0.03]]),
+          [[x0, 0.078, hall[2] - 0.03], [x0, 0.078, hall[2] + 0.03]],
+        );
+      }
+      return {
+        m: [...box(hall, 0.12, 0.06, 0.055), ...teeth, ...box(tower, 0.026, 0.026, 0.17), ...pyramid(tower, 0.026, 0.17, 0.03)],
+        d: [
+          ...floors(hall, 0.12, 0.06, 0.055, 2), ...bays(hall, 0.12, 0.06, 0.055, 8),
+          ...floors(tower, 0.026, 0.026, 0.17, 7),
+          // the clock face near the top
+          ...boxAt(tower, 0.016, 0.028, 0.016, 0.135),
+        ],
+      };
+    },
   },
   {
     id: 'klingenberg', domain: 'Energy', place: 'Kraftwerk Klingenberg', at: [52.495, 13.496],
-    href: '/work/pqdr', caseName: 'PQ + DR', minutes: 5,
+    href: '/work/pqdr/', caseName: 'PQ + DR', minutes: 5,
     blurb: 'A city power station. PQ + DR put AI insight in front of operators at 200+ industrial sites.',
-    lift: 0.2,
-    build: (c) => [
-      ...box(c, 0.1, 0.05, 0.07),
-      ...cylinder([c[0] - 0.025, 0, c[2]], 0.009, 0.18, 8, 0.07),
-      ...cylinder([c[0] + 0.025, 0, c[2]], 0.009, 0.18, 8, 0.07),
-    ],
+    lift: 0.27,
+    build: (c) => {
+      const stacks = [-0.035, 0, 0.035].flatMap((dx) => cylinder([c[0] + dx, 0, c[2] - 0.008], 0.0085, 0.17, 10, 0.075));
+      return {
+        m: [...box(c, 0.11, 0.05, 0.075), ...stacks],
+        d: [
+          ...floors(c, 0.11, 0.05, 0.075, 3), ...bays(c, 0.11, 0.05, 0.075, 9),
+          ...[-0.035, 0, 0.035].flatMap((dx) => ring([c[0] + dx, 0, c[2] - 0.008], 0.0085, 0.2, 10)),
+        ],
+      };
+    },
   },
   {
     id: 'westhafen', domain: 'Logistics', place: 'Westhafen', at: [52.5395, 13.3415],
-    href: '/work/fleet', caseName: 'Fleet', minutes: 5,
+    href: '/work/fleet/', caseName: 'Fleet', minutes: 5,
     blurb: "Berlin's freight port. Fleet turned three yard tools and two forms into one.",
-    lift: 0.15,
-    build: (c) => [
-      ...box([c[0], 0, c[2] + 0.02], 0.12, 0.03, 0.025),
-      // two quay cranes
-      ...line([[c[0] - 0.03, 0, c[2]], [c[0] - 0.03, 0.11, c[2]], [c[0] - 0.08, 0.11, c[2]], [c[0] - 0.08, 0.095, c[2]]]),
-      ...line([[c[0] + 0.03, 0, c[2]], [c[0] + 0.03, 0.11, c[2]], [c[0] - 0.02, 0.11, c[2]], [c[0] - 0.02, 0.095, c[2]]]),
-    ],
+    lift: 0.17,
+    build: (c) => {
+      const store: V3 = [c[0] + 0.03, 0, c[2] + 0.028];
+      const hw = 0.05, hd = 0.016, eave = 0.035, ridge = 0.052;
+      const roof: Seg[] = [
+        [[store[0] - hw, ridge, store[2]], [store[0] + hw, ridge, store[2]]],
+        [[store[0] - hw, eave, store[2] - hd], [store[0] - hw, ridge, store[2]]], [[store[0] - hw, ridge, store[2]], [store[0] - hw, eave, store[2] + hd]],
+        [[store[0] + hw, eave, store[2] - hd], [store[0] + hw, ridge, store[2]]], [[store[0] + hw, ridge, store[2]], [store[0] + hw, eave, store[2] + hd]],
+      ];
+      // a portal crane: two leg pairs, a deck, a mast and a jib reaching over the water
+      const crane = (x0: number): Seg[] => {
+        const z0 = c[2] - 0.01, zf = z0 - 0.012, zb = z0 + 0.012;
+        return [
+          [[x0 - 0.01, 0, zf], [x0 - 0.01, 0.07, zf]], [[x0 + 0.01, 0, zf], [x0 + 0.01, 0.07, zf]],
+          [[x0 - 0.01, 0, zb], [x0 - 0.01, 0.07, zb]], [[x0 + 0.01, 0, zb], [x0 + 0.01, 0.07, zb]],
+          ...ring([x0, 0, z0], 0.014, 0.07, 4),
+          [[x0, 0.07, z0], [x0, 0.12, z0]],
+          [[x0, 0.09, z0], [x0 - 0.075, 0.09, z0]],
+          [[x0, 0.12, z0], [x0 - 0.075, 0.09, z0]],
+          [[x0 - 0.075, 0.09, z0], [x0 - 0.075, 0.07, z0]],
+        ];
+      };
+      return {
+        m: [...box(store, hw * 2, hd * 2, eave), ...roof, ...crane(c[0] - 0.02), ...crane(c[0] + 0.035)],
+        d: [...floors(store, hw * 2, hd * 2, eave, 3), ...bays(store, hw * 2, hd * 2, eave, 8)],
+      };
+    },
   },
   {
     id: 'avus', domain: 'Motorsports', place: 'AVUS', at: [52.4855, 13.2645],
-    href: '/work/sim-racing', caseName: 'Sim Racing Coach', minutes: 6,
+    href: '/work/sim-racing/', caseName: 'Sim Racing Coach', minutes: 6,
     blurb: "Berlin's old racing circuit. Two paid engagements designing an AI race engineer.",
-    lift: 0.08,
+    lift: 0.1,
     build: (c) => {
-      // a long straight with the banked Nordkurve, as a narrow loop
-      const a: V3 = [c[0] + 0.1, 0, c[2] - 0.17], b: V3 = [c[0] - 0.1, 0, c[2] + 0.17];
-      const off = 0.012;
-      const out: Seg[] = [
-        [[a[0] - off, 0, a[2] - off * 0.6], [b[0] - off, 0, b[2] - off * 0.6]],
-        [[a[0] + off, 0, a[2] + off * 0.6], [b[0] + off, 0, b[2] + off * 0.6]],
-      ];
-      // banking at the north end
-      out.push([[a[0] - off, 0, a[2] - off * 0.6], [a[0], 0.03, a[2] - 0.02]], [[a[0] + off, 0, a[2] + off * 0.6], [a[0], 0.03, a[2] - 0.02]]);
-      return out;
+      // the long straights, with the banked Nordkurve swinging round at the north end
+      const dir: [number, number] = [0.5, -0.86];
+      const nrm: [number, number] = [0.86, 0.5];
+      const L = 0.075, sep = 0.042;
+      const pt = (t: number, side: number, y = 0): V3 => [c[0] + dir[0] * t + nrm[0] * side, y, c[2] + dir[1] * t + nrm[1] * side];
+      const curve: Seg[] = [];
+      const n = 14, r = sep;
+      for (const end of [1, -1]) {
+        for (let i = 0; i < n; i++) {
+          const a0 = (i / n) * Math.PI, a1 = ((i + 1) / n) * Math.PI;
+          // the north end is the banked Nordkurve
+          const bank = end === 1 ? 0.02 : 0;
+          const q = (a: number): V3 => pt(end * (L + Math.sin(a) * r), -Math.cos(a) * r, bank * Math.sin(a));
+          curve.push([q(a0), q(a1)]);
+        }
+      }
+      const stand: V3 = pt(0, sep + 0.02);
+      return {
+        m: [[pt(-L, -r), pt(L, -r)], [pt(-L, r), pt(L, r)], ...curve, ...box(stand, 0.05, 0.018, 0.022)],
+        d: [...bays(stand, 0.05, 0.018, 0.022, 6), [pt(-L, 0), pt(L, 0)]],
+      };
     },
   },
   {
     id: 'charite', domain: 'Healthcare', place: 'Charité', at: [52.5265, 13.3775],
-    href: '/work/epilog', caseName: 'Epilog', minutes: 4,
+    href: '/work/epilog/', caseName: 'Epilog', minutes: 4,
     blurb: "Berlin's university hospital. Epilog's AI caught a drug interaction a doctor missed.",
-    lift: 0.24,
-    build: (c) => [...box(c, 0.035, 0.07, 0.19), ...box([c[0] + 0.04, 0, c[2] + 0.02], 0.05, 0.05, 0.05)],
+    lift: 0.26,
+    build: (c) => {
+      const pod: V3 = [c[0] + 0.045, 0, c[2] + 0.012];
+      return {
+        m: [...box(c, 0.034, 0.075, 0.2), ...box(pod, 0.06, 0.06, 0.04)],
+        d: [...floors(c, 0.034, 0.075, 0.2, 14), ...floors(pod, 0.06, 0.06, 0.04, 3)],
+      };
+    },
   },
   {
     id: 'velodrom', domain: 'Cycling', place: 'Velodrom', at: [52.53, 13.45],
-    href: '/work/cal', caseName: 'Cal', minutes: 3,
+    href: '/work/cal/', caseName: 'Cal', minutes: 3,
     blurb: "Berlin's track-cycling arena. Cal coaches my own training.",
-    lift: 0.09,
-    build: (c) => cylinder(c, 0.055, 0.025, 18),
+    lift: 0.1,
+    build: (c) => {
+      const ribs: Seg[] = [];
+      for (let i = 0; i < 16; i++) {
+        const a = (i / 16) * Math.PI * 2;
+        ribs.push([[c[0] + 0.03 * Math.cos(a), 0.03, c[2] + 0.03 * Math.sin(a)], [c[0] + 0.058 * Math.cos(a), 0.022, c[2] + 0.058 * Math.sin(a)]]);
+      }
+      return {
+        m: [...cylinder(c, 0.058, 0.022, 32), ...ring(c, 0.03, 0.03, 20)],
+        d: [...ribs, ...ring(c, 0.058, 0.011, 32)],
+      };
+    },
   },
   {
     id: 'tu', domain: 'Education', place: 'TU Berlin', at: [52.5126, 13.3267],
-    href: '/work/brightly', caseName: 'Brightly', minutes: 6,
+    href: '/work/brightly/', caseName: 'Brightly', minutes: 6,
     blurb: "Brightly's platform ran schools and universities as well as factories.",
-    lift: 0.12,
-    build: (c) => box(c, 0.13, 0.035, 0.055),
+    lift: 0.13,
+    build: (c) => {
+      const front = c[2] - 0.0225;
+      // central bay stepping forward, with a pediment
+      const ped: Seg[] = line([[c[0] - 0.016, 0.06, front], [c[0], 0.075, front], [c[0] + 0.016, 0.06, front]]);
+      return {
+        m: [...box(c, 0.14, 0.035, 0.05), ...box([c[0], 0, c[2] - 0.005], 0.032, 0.045, 0.06), ...ped],
+        d: [...floors(c, 0.14, 0.035, 0.05, 3), ...bays(c, 0.14, 0.035, 0.05, 12)],
+      };
+    },
   },
   {
     id: 'reichstag', domain: 'Government', place: 'Reichstag', at: [52.5186, 13.3762],
-    href: '/work/brightly', caseName: 'Brightly', minutes: 6,
+    href: '/work/brightly/', caseName: 'Brightly', minutes: 6,
     blurb: 'And city and state governments.',
     lift: 0,
     below: true,
-    build: (c) => [...box(c, 0.08, 0.055, 0.045), ...dome(c, 0.025, 0.045)],
+    build: (c) => {
+      const towers = [[-1, -1], [1, -1], [1, 1], [-1, 1]].flatMap(([sx, sz]) =>
+        box([c[0] + sx * 0.032, 0, c[2] + sz * 0.02], 0.016, 0.016, 0.058),
+      );
+      return {
+        m: [...box(c, 0.08, 0.056, 0.045), ...towers, ...ring(c, 0.022, 0.045, 16), ...dome(c, 0.022, 0.045)],
+        d: [...floors(c, 0.08, 0.056, 0.045, 2), ...bays(c, 0.08, 0.056, 0.045, 7), ...ring(c, 0.016, 0.061, 14)],
+      };
+    },
+  },
+  {
+    id: 'fernsehturm', domain: 'About me', place: 'Berlin, by way of North Carolina', at: [52.5208, 13.4094],
+    href: '/#case-about', caseName: 'About', minutes: 2,
+    blurb: 'What I do, and why this site is a transit map.',
+    lift: 0.6, // floats clear of the antenna tip, and of the Healthcare label below it
+    kind: 'home',
+    build: (c) => {
+      const [x, , z] = c;
+      const m: Seg[] = [], d: Seg[] = [];
+      // tapered concrete shaft
+      const shaftTop = 0.24, n = 8;
+      const rAt = (y: number) => 0.012 - (0.005 * y) / shaftTop;
+      for (let i = 0; i < n; i++) {
+        const a = (i / n) * Math.PI * 2;
+        const p = (y: number): V3 => [x + rAt(y) * Math.cos(a), y, z + rAt(y) * Math.sin(a)];
+        (i % 2 === 0 ? m : d).push([p(0.02), p(shaftTop)]);
+      }
+      for (let k = 1; k <= 5; k++) d.push(...ring(c, rAt((shaftTop * k) / 6), (shaftTop * k) / 6, n));
+      // the sphere: meridians as outline, parallels as detail
+      const cy = 0.275, R = 0.034, segs = 20;
+      for (let k = 0; k < 4; k++) {
+        const ang = (k / 4) * Math.PI;
+        for (let i = 0; i < segs; i++) {
+          const t0 = (i / segs) * Math.PI * 2, t1 = ((i + 1) / segs) * Math.PI * 2;
+          const q = (t: number): V3 => [x + R * Math.cos(t) * Math.cos(ang), cy + R * Math.sin(t), z + R * Math.cos(t) * Math.sin(ang)];
+          m.push([q(t0), q(t1)]);
+        }
+      }
+      for (const lat of [-0.5, 0, 0.5]) d.push(...ring(c, R * Math.cos(lat), cy + R * Math.sin(lat), 18));
+      // upper shaft and antenna
+      m.push(...cylinder(c, 0.005, 0.07, 6, cy + R));
+      m.push([[x, cy + R + 0.07, z], [x, 0.5, z]]);
+      for (let k = 0; k < 5; k++) d.push(...ring(c, 0.004, cy + R + 0.08 + k * 0.022, 6));
+      // the pavilion at its foot, with its folded roof
+      m.push(...ring(c, 0.05, 0, 20), ...ring(c, 0.05, 0.016, 20));
+      for (let i = 0; i < 12; i++) {
+        const a = (i / 12) * Math.PI * 2;
+        d.push([[x + 0.05 * Math.cos(a), 0.016, z + 0.05 * Math.sin(a)], [x + rAt(0.02) * Math.cos(a), 0.024, z + rAt(0.02) * Math.sin(a)]]);
+      }
+      return { m, d };
+    },
   },
 ];
 
@@ -278,8 +442,6 @@ export default function RingObject() {
     const ringTrack = smoothClosed(stations, 10);
     const stadtbahn = smoothOpen(STADTBAHN.map((p) => toLocal(p)), 6);
     const spree = smoothOpen(SPREE.map((p) => toLocal(p, -0.02)), 6);
-    const tv = toLocal(TV_TOWER);
-    const TOWER_H = 0.42;
 
     const seg: number[] = [0];
     for (let i = 1; i <= ringTrack.length; i++) {
@@ -304,7 +466,7 @@ export default function RingObject() {
         const dd = Math.hypot(ringTrack[i][0] - c[0], ringTrack[i][2] - c[2]);
         if (dd < bestDist) { bestDist = dd; best = i; }
       }
-      return { c, segs: lm.build(c), stopD: seg[best], facing: Math.atan2(c[0], c[2]) };
+      return { c, geo: lm.build(c), stopD: seg[best], facing: Math.atan2(c[0], c[2]) };
     });
 
     const grid: V3[] = [];
@@ -320,11 +482,15 @@ export default function RingObject() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
     resize();
-    const ro = new ResizeObserver(resize);
+    const ro = new ResizeObserver(() => { resize(); measure(); });
     ro.observe(canvas);
 
     // North at the back, turned a little so the Ring reads as an object.
-    let yaw = -0.35, pitch = 0.95, vYaw = 0;
+    // A gentle sway around a good viewing angle instead of a full spin, so
+    // landmarks never line up behind one another and the layout stays
+    // familiar. Dragging moves the base; the sway continues around it.
+    let baseYaw = -0.35, swayT = 0, yaw = baseYaw, pitch = 0.95, vYaw = 0;
+    const SWAY = 0.42, SWAY_PERIOD = 38;
     let dragging = false, lastX = 0, lastY = 0, idleAt = 0;
     let trainD = 0, last = performance.now();
 
@@ -334,7 +500,7 @@ export default function RingObject() {
       const x1 = x * cy - z * sy, z1 = x * sy + z * cy;
       const cp = Math.cos(pitch), sp = Math.sin(pitch);
       const y2 = y * cp + z1 * sp, z2 = -y * sp + z1 * cp;
-      const D = 3.2, f = Math.min(w, h) * 1.4;
+      const D = 3.2, f = Math.min(w, h) * 1.55;
       const s = f / (z2 + D);
       return { x: w / 2 + x1 * s, y: h * 0.45 - y2 * s, depth: z2, s };
     };
@@ -359,20 +525,89 @@ export default function RingObject() {
       strokeSegs(segs, color, width, aMul);
     };
 
-    const drawTower = () => {
-      const base = project(tv), top = project([tv[0], TOWER_H, tv[2]]);
-      const ball = project([tv[0], TOWER_H * 0.6, tv[2]]), tip = project([tv[0], TOWER_H * 1.25, tv[2]]);
-      ctx.strokeStyle = INK;
-      ctx.globalAlpha = alpha(base.depth);
-      ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(base.x, base.y); ctx.lineTo(top.x, top.y); ctx.stroke();
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(top.x, top.y); ctx.lineTo(tip.x, tip.y); ctx.stroke();
-      const r = Math.max(2, Math.min(16, 0.05 * ball.s));
-      ctx.lineWidth = 1.25;
-      ctx.beginPath(); ctx.arc(ball.x, ball.y, r, 0, Math.PI * 2); ctx.stroke();
-      ctx.beginPath(); ctx.ellipse(ball.x, ball.y, r, r * 0.32, 0, 0, Math.PI * 2); ctx.stroke();
-      ctx.globalAlpha = 1;
+
+    // ── Label placement, the way a cartographer would ──────────────────
+    // Each frame: the chosen label first, then nearest-first. Each tries
+    // its preferred side, then the others; if none fits without overlap it
+    // fades out until there's room. A label keeps its last good side.
+    type Side = 'above' | 'below' | 'right' | 'left';
+    const sizes: [number, number][] = LANDMARKS.map(() => [80, 24]);
+    const measure = () => {
+      labelRefs.current.forEach((el, i) => { if (el) sizes[i] = [el.offsetWidth, el.offsetHeight]; });
+    };
+    measure();
+    document.fonts?.ready.then(measure);
+    const lastSide: (Side | null)[] = LANDMARKS.map(() => null);
+    const hitBoxes: [number, number, number, number, number][] = LANDMARKS.map(() => [0, 0, 0, 0, 0]);
+    // The landmark under a canvas point, nearest first; a few px of slack.
+    const landmarkAt = (px: number, py: number) => {
+      let best = -1, bestDepth = Infinity;
+      hitBoxes.forEach(([x0, y0, x1, y1, d], i) => {
+        if (px >= x0 - 6 && px <= x1 + 6 && py >= y0 - 6 && py <= y1 + 6 && d < bestDepth) { best = i; bestDepth = d; }
+      });
+      return best;
+    };
+    const shown: boolean[] = LANDMARKS.map(() => true);
+    const placeLabels = (act: number | null) => {
+      const items = marks.map((m, i) => {
+        const top = project([m.c[0], LANDMARKS[i].lift, m.c[2]]);
+        const base = project([m.c[0], 0, m.c[2]]);
+        return { i, top, base, depth: base.depth };
+      });
+      // Chosen stop first, then industries nearest-first; the home stop yields.
+      const rank = (k: number) => (k === act ? 0 : LANDMARKS[k].kind === 'home' ? 2 : 1);
+      items.sort((a, b) => rank(a.i) - rank(b.i) || a.depth - b.depth);
+      const placed: [number, number, number, number][] = [];
+      const PAD = 4;
+      const hits = (x: number, y: number, lw: number, lh: number) =>
+        placed.some(([px, py, pw, ph]) => x < px + pw + PAD && x + lw + PAD > px && y < py + ph + PAD && y + lh + PAD > py);
+      for (const it of items) {
+        const { i, top, base } = it;
+        const [lw, lh] = sizes[i];
+        const half = 0.075 * top.s;
+        const mid = (top.y + base.y) / 2;
+        const at = (side: Side): [number, number] => {
+          switch (side) {
+            case 'above': return [top.x - lw / 2, top.y - lh - 4];
+            case 'below': return [base.x - lw / 2, base.y + 8];
+            case 'right': return [top.x + half, mid - lh / 2];
+            default: return [top.x - half - lw, mid - lh / 2];
+          }
+        };
+        const pref: Side[] = LANDMARKS[i].kind === 'home'
+          ? ['above', 'right', 'below', 'left'] // stay clear of the Mitte cluster to its west
+          : LANDMARKS[i].below ? ['below', 'above', 'right', 'left'] : ['above', 'below', 'right', 'left'];
+        const tries = lastSide[i] ? [lastSide[i] as Side, ...pref.filter((p) => p !== lastSide[i])] : pref;
+        // A label sitting on a different landmark's building implies the
+        // wrong place, so the first pass avoids other buildings as well as
+        // labels; the second pass relaxes that before giving up.
+        const onOtherBuilding = (x: number, y: number) =>
+          hitBoxes.some(([bx0, by0, bx1, by1], k) => k !== i && x < bx1 && x + lw > bx0 && y < by1 && y + lh > by0);
+        let pos: [number, number] | null = null;
+        for (const strict of [true, false]) {
+          for (const side of tries) {
+            const [x, y] = at(side);
+            const inside = x >= 0 && x + lw <= w && y >= 0 && y + lh <= h;
+            if (inside && !hits(x, y, lw, lh) && !(strict && onOtherBuilding(x, y))) { pos = [x, y]; lastSide[i] = side; break; }
+          }
+          if (pos) break;
+        }
+        if (!pos && i === act) pos = at(lastSide[i] ?? pref[0]);
+        const el = labelRefs.current[i];
+        if (!el) continue;
+        if (pos) {
+          placed.push([pos[0], pos[1], lw, lh]);
+          el.style.transform = `translate(${pos[0]}px, ${pos[1]}px)`;
+          el.style.opacity = String(i === act ? 1 : Math.max(0.6, alpha(it.depth)));
+          el.style.pointerEvents = 'auto';
+          shown[i] = true;
+        } else if (shown[i]) {
+          el.style.opacity = '0';
+          el.style.pointerEvents = 'none';
+          shown[i] = false;
+        }
+        el.style.zIndex = String(i === act ? 50 : Math.round(20 - it.depth * 10));
+      }
     };
 
     let raf = 0;
@@ -389,18 +624,19 @@ export default function RingObject() {
       // stay where the visitor is aiming. Dragging still turns it.
       const hold = pointerInRef.current;
 
-      if (act !== null && modeRef.current === 'focus') {
-        // Keyboard: turn the chosen landmark to the front.
-        const target = marks[act].facing - Math.PI;
-        const d = angDiff(yaw, target);
-        yaw = instant ? target : yaw + d * Math.min(1, dt * 4);
-      } else if (!dragging) {
-        if (moving && !hold && now - idleAt > 1500) yaw += 0.09 * dt;
-        yaw += vYaw;
+      if (moving && !hold && !dragging && now - idleAt > 1500 && act === null) swayT += dt;
+      const swayOff = SWAY * Math.sin((swayT / SWAY_PERIOD) * Math.PI * 2);
+
+      // Selections never turn the map: the layout stays where the visitor
+      // learned it, and label placement already guarantees the chosen
+      // label is shown. Only dragging moves the base angle.
+      if (!dragging) {
+        baseYaw += vYaw;
         vYaw *= 0.92;
       }
+      yaw = baseYaw + swayOff;
 
-      if (act !== null) {
+      if (act !== null && LANDMARKS[act].kind !== 'home') {
         // Run the train to the chosen landmark and wait there.
         const td = angDiff((trainD / LOOP) * Math.PI * 2, (marks[act].stopD / LOOP) * Math.PI * 2) / (Math.PI * 2) * LOOP;
         if (instant) trainD = marks[act].stopD;
@@ -434,21 +670,21 @@ export default function RingObject() {
         }
         ctx.globalAlpha = 1;
 
-        drawTower();
 
         marks.forEach((m, i) => {
           const on = act === i;
-          strokeSegs(m.segs, on ? ACCENT : INK, on ? 1.75 : 1.15, on ? 1.25 : 0.9);
-          // Label anchor floats above the landmark.
-          const p = project([m.c[0], LANDMARKS[i].lift, m.c[2]]);
-          const el = labelRefs.current[i];
-          if (el) {
-            const lift = LANDMARKS[i].below ? 'translate(-50%, 10px)' : 'translate(-50%, -100%)';
-            el.style.transform = `translate(${p.x}px, ${p.y}px) ${lift}`;
-            el.style.opacity = String(on ? 1 : Math.max(0.55, alpha(p.depth)));
-            el.style.zIndex = String(on ? 50 : Math.round(20 - p.depth * 10));
+          strokeSegs(m.geo.d, on ? ACCENT : INK, on ? 0.9 : 0.6, on ? 0.9 : 0.5);
+          strokeSegs(m.geo.m, on ? ACCENT : INK, on ? 1.75 : 1.15, on ? 1.25 : 0.9);
+          // Screen bounds of the building, so the building itself is a target.
+          let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+          for (const sg of m.geo.m) for (const v of sg) {
+            const p = project(v);
+            if (p.x < x0) x0 = p.x; if (p.x > x1) x1 = p.x;
+            if (p.y < y0) y0 = p.y; if (p.y > y1) y1 = p.y;
           }
+          hitBoxes[i] = [x0, y0, x1, y1, project(m.c).depth];
         });
+        placeLabels(act);
 
         for (let k = 14; k >= 0; k--) {
           const a = project(pointAt(trainD - k * 0.018));
@@ -465,18 +701,42 @@ export default function RingObject() {
     };
     raf = requestAnimationFrame(frame);
 
+    let downX = 0, downY = 0;
+    const local = (e: PointerEvent) => {
+      const r = canvas.getBoundingClientRect();
+      return [e.clientX - r.left, e.clientY - r.top] as const;
+    };
     const down = (e: PointerEvent) => {
-      dragging = true; lastX = e.clientX; lastY = e.clientY; vYaw = 0;
+      dragging = true; lastX = downX = e.clientX; lastY = downY = e.clientY; vYaw = 0;
       canvas.setPointerCapture(e.pointerId);
     };
     const move = (e: PointerEvent) => {
-      if (!dragging) return;
+      if (!dragging) {
+        // Hovering a building does what hovering its label does.
+        const [px, py] = local(e);
+        const i = landmarkAt(px, py);
+        canvas.style.cursor = i >= 0 ? 'pointer' : '';
+        if (i >= 0 && e.pointerType === 'mouse' && activeRef.current !== i) {
+          modeRef.current = 'pointer';
+          activeRef.current = i;
+          setActive(i);
+        }
+        return;
+      }
       const dx = e.clientX - lastX, dy = e.clientY - lastY;
       lastX = e.clientX; lastY = e.clientY;
-      yaw += dx * 0.008; vYaw = dx * 0.008;
+      baseYaw += dx * 0.008; vYaw = dx * 0.008;
       pitch = Math.max(0.55, Math.min(1.35, pitch - dy * 0.005));
     };
-    const up = () => { dragging = false; idleAt = performance.now(); };
+    const up = (e: PointerEvent) => {
+      dragging = false; idleAt = performance.now();
+      // A press that barely moved is a click: open the building's case.
+      if (Math.hypot(e.clientX - downX, e.clientY - downY) < 5) {
+        const [px, py] = local(e);
+        const i = landmarkAt(px, py);
+        if (i >= 0) window.location.href = LANDMARKS[i].href;
+      }
+    };
     canvas.addEventListener('pointerdown', down);
     canvas.addEventListener('pointermove', move);
     canvas.addEventListener('pointerup', up);
@@ -517,7 +777,7 @@ export default function RingObject() {
               key={m.id}
               ref={(el) => { labelRefs.current[i] = el; }}
               href={m.href}
-              className={`hv-rb-label${active === i ? ' is-active' : ''}`}
+              className={`hv-rb-label${m.kind === 'home' ? ' hv-rb-label--home' : ''}${active === i ? ' is-active' : ''}`}
               onMouseEnter={() => { modeRef.current = 'pointer'; setActive(i); }}
               onFocus={() => {
                 // Focus that follows a click is the pointer's, not the keyboard's.
@@ -527,9 +787,9 @@ export default function RingObject() {
               onBlur={() => {
                 if (modeRef.current === 'focus') { modeRef.current = null; setActive((a) => (a === i ? null : a)); }
               }}
-              aria-label={`${m.domain}: ${m.place}. ${m.blurb} Read the ${m.caseName} case study.`}
+              aria-label={m.kind === 'home' ? `About me: ${m.place}. ${m.blurb}` : `${m.domain}: ${m.place}. ${m.blurb} Read the ${m.caseName} case study.`}
             >
-              {m.domain}
+              {m.kind === 'home' ? 'About' : m.domain}
             </a>
           ))}
         </nav>
@@ -541,14 +801,14 @@ export default function RingObject() {
             {lm ? (
               <>
                 <p className="hv-rb-eyebrow">
-                  <span className="hv-rb-marker" aria-hidden="true" />
+                  <span className={`hv-rb-marker${lm.kind === 'home' ? ' hv-rb-marker--home' : ''}`} aria-hidden="true" />
                   {lm.domain}
                 </p>
                 <p className="hv-rb-place">{lm.place}</p>
                 <p className="hv-rb-blurb">{lm.blurb}</p>
                 {/* Pointer convenience: keyboard users already have the label link. */}
                 <a className="hv-rb-go" href={lm.href} tabIndex={-1}>
-                  <span className="hv-rb-go-text">Read the {lm.caseName} case</span>
+                  <span className="hv-rb-go-text">{lm.kind === 'home' ? 'Read about me' : `Read the ${lm.caseName} case`}</span>
                   <span className="hv-rb-go-time">{lm.minutes} min</span>
                   <span className="hv-rb-go-arrow" aria-hidden="true">
                     <svg viewBox="0 0 16 16"><path d="M2.5 8h10M8.5 3.5 13 8l-4.5 4.5" /></svg>
@@ -559,7 +819,7 @@ export default function RingObject() {
               <>
                 <p className="hv-rb-eyebrow">
                   <span className="hv-rb-marker hv-rb-marker--idle" aria-hidden="true" />
-                  Ringbahn · {LANDMARKS.length} stops
+                  Ringbahn · {LANDMARKS.filter((m) => m.kind !== 'home').length} industries
                 </p>
                 <p className="hv-rb-place">Pick an industry</p>
                 <p className="hv-rb-blurb">Each stop is a place in Berlin tied to work I've done.</p>

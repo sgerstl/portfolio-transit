@@ -616,6 +616,15 @@
   background: color-mix(in srgb, var(--color-bg) 85%, transparent);
   text-decoration: none;
   will-change: transform;
+  transition: opacity 0.2s ease-out, background-color 0.15s ease-out, color 0.15s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hv-rb-label { transition: none; }
+}
+/* The home stop: outlined, so it reads as a different kind of stop. */
+.hv-rb-label--home {
+  background: var(--color-bg);
+  box-shadow: inset 0 0 0 1.5px var(--color-text);
 }
 .hv-rb-label:hover,
 .hv-rb-label.is-active {
@@ -668,6 +677,11 @@
   height: 10px;
   border-radius: 2px;
   background: var(--color-line-ai);
+}
+.hv-rb-marker--home {
+  border-radius: 50%;
+  background: white;
+  box-shadow: inset 0 0 0 3px var(--color-rail-blue);
 }
 .hv-rb-marker--idle {
   border-radius: 50%;

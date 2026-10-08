@@ -26,9 +26,9 @@ const VARIANTS: { key: Variant; label: string }[] = [
 
 // Proof points matched to the 2026-10-08 resume screen pass: paid work only.
 const PROOF = [
-  { href: '/work/brightly', fig: '$1.575B', label: 'Set the design direction for the Brightly acquisition', short: 'Brightly' },
-  { href: '/work/pqdr', fig: '200+', label: 'Industrial locations running operator tools I designed', short: 'PQDR' },
-  { href: '/work/sim-racing', fig: '2', label: 'Paid AI-agent engagements since 2025', short: 'Sim Racing' },
+  { href: '/work/brightly/', fig: '$1.575B', label: 'Set the design direction for the Brightly acquisition', short: 'Brightly' },
+  { href: '/work/pqdr/', fig: '200+', label: 'Industrial locations running operator tools I designed', short: 'PQDR' },
+  { href: '/work/sim-racing/', fig: '2', label: 'Paid AI-agent engagements since 2025', short: 'Sim Racing' },
 ];
 const KICKER = 'Scott Gerstl · Design leader · Berlin';
 
@@ -42,19 +42,19 @@ const NET_LINES: { key: 'cs1' | 'cs2'; d: string; stops: Stop[] }[] = [
     key: 'cs1',
     d: 'M128 84 H300 L380 164 V500',
     stops: [
-      { href: '/work/brightly', name: 'Brightly', domain: 'Manufacturing', x: 222, y: 84, side: 'above' },
-      { href: '/work/pqdr', name: 'PQ + DR', domain: 'Energy', x: 380, y: 236, side: 'right' },
-      { href: '/work/fleet', name: 'Fleet', domain: 'Logistics', x: 380, y: 336, side: 'right' },
-      { href: '/work/sim-racing', name: 'Sim Racing', domain: 'Motorsports', x: 380, y: 436, side: 'right' },
+      { href: '/work/brightly/', name: 'Brightly', domain: 'Manufacturing', x: 222, y: 84, side: 'above' },
+      { href: '/work/pqdr/', name: 'PQ + DR', domain: 'Energy', x: 380, y: 236, side: 'right' },
+      { href: '/work/fleet/', name: 'Fleet', domain: 'Logistics', x: 380, y: 336, side: 'right' },
+      { href: '/work/sim-racing/', name: 'Sim Racing', domain: 'Motorsports', x: 380, y: 436, side: 'right' },
     ],
   },
   {
     key: 'cs2',
     d: 'M115 115 L170 170 V500',
     stops: [
-      { href: '/work/epilog', name: 'Epilog', domain: 'Healthcare', x: 170, y: 252, side: 'right' },
-      { href: '/work/ziggy', name: 'Ziggy', domain: 'Everyday', x: 170, y: 352, side: 'right' },
-      { href: '/work/cal', name: 'Cal', domain: 'Cycling', x: 170, y: 452, side: 'right' },
+      { href: '/work/epilog/', name: 'Epilog', domain: 'Healthcare', x: 170, y: 252, side: 'right' },
+      { href: '/work/ziggy/', name: 'Ziggy', domain: 'Everyday', x: 170, y: 352, side: 'right' },
+      { href: '/work/cal/', name: 'Cal', domain: 'Cycling', x: 170, y: 452, side: 'right' },
     ],
   },
 ];
@@ -446,9 +446,9 @@ export default function Hero() {
       line?: 'cs1' | 'cs2';
       dir: 'right' | 'down';
     }[] = [
-      { href: '/work/brightly', name: 'Brightly', detail: 'Design direction for a $1.575B acquisition', line: 'cs1', dir: 'right' },
-      { href: '/work/pqdr', name: 'Power Quality', detail: 'Operator tools at 200+ industrial locations', tiles: ['ai'], line: 'cs1', dir: 'right' },
-      { href: '/work/sim-racing', name: 'Sim Racing Coach', detail: 'Two paid AI-agent engagements', tiles: ['ai'], line: 'cs1', dir: 'right' },
+      { href: '/work/brightly/', name: 'Brightly', detail: 'Design direction for a $1.575B acquisition', line: 'cs1', dir: 'right' },
+      { href: '/work/pqdr/', name: 'Power Quality', detail: 'Operator tools at 200+ industrial locations', tiles: ['ai'], line: 'cs1', dir: 'right' },
+      { href: '/work/sim-racing/', name: 'Sim Racing Coach', detail: 'Two paid AI-agent engagements', tiles: ['ai'], line: 'cs1', dir: 'right' },
       { href: '#section-ent', name: 'Independent builds', detail: 'Epilog, Ziggy, Cal', line: 'cs2', dir: 'down' },
       { href: '/resume', name: 'Resume', detail: 'Two pages, PDF', tiles: ['doc'], dir: 'right' },
     ];
