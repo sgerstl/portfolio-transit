@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import './hero-variants.css';
 import { smoothScrollTo } from '../../lib/scroll';
 import { ui } from '../../lib/ui';
 
@@ -10,6 +11,23 @@ type StatCard = {
 };
 
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
+
+// MOCK: three hero directions behind ?hero=a|b|c, for comparison only.
+type Variant = 'current' | 'a' | 'b' | 'c';
+const VARIANTS: { key: Variant; label: string }[] = [
+  { key: 'current', label: 'Live' },
+  { key: 'a', label: 'A · Refine' },
+  { key: 'b', label: 'B · Route strip' },
+  { key: 'c', label: 'C · Station sign' },
+];
+
+// Proof points matched to the 2026-10-08 resume screen pass: paid work only.
+const PROOF = [
+  { href: '/work/brightly', fig: '$1.575B', label: 'Set the design direction for the Brightly acquisition', short: 'Brightly' },
+  { href: '/work/pqdr', fig: '200+', label: 'Industrial locations running operator tools I designed', short: 'PQDR' },
+  { href: '/work/sim-racing', fig: '2', label: 'Paid AI-agent engagements since 2025', short: 'Sim Racing' },
+];
+const KICKER = 'Scott Gerstl · Design leader · Berlin';
 
 // Brightly stat 01 highlights the dollar figure in bold. Split the string on
 // the figure and re-wrap. Falls back to plain text if the figure is missing.
@@ -30,6 +48,12 @@ export default function Hero() {
   const heroRef = useRef<HTMLElement | null>(null);
   const preludeRef = useRef<HTMLDivElement | null>(null);
   const cardsRef = useRef<HTMLLIElement[]>([]);
+  const [variant, setVariant] = useState<Variant>('current');
+
+  useEffect(() => {
+    const v = new URLSearchParams(window.location.search).get('hero');
+    if (v === 'a' || v === 'b' || v === 'c') setVariant(v);
+  }, []);
 
   const STAT_CARDS: StatCard[] = [
     {
@@ -55,9 +79,11 @@ export default function Hero() {
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const heroEl = heroRef.current;
-    const preludeEl = preludeRef.current;
-    const cardsEls = cardsRef.current.filter(Boolean);
     if (!heroEl) return;
+    // Query the DOM rather than refs so every variant gets the same scroll-out.
+    const preludeEl = heroEl.querySelector<HTMLElement>('.hero-prelude');
+    const cardsEls = Array.from(heroEl.querySelectorAll<HTMLLIElement>('.hero-cards > .hero-card'));
+    window.dispatchEvent(new Event('spine:redraw'));
 
     const getExitDistance = () =>
       window.innerHeight * (window.innerWidth < 768 ? 0.7 : 1.2);
@@ -166,9 +192,119 @@ export default function Hero() {
       clickHandlers.forEach(([card, fn]) => card.removeEventListener('click', fn));
       keydownHandlers.forEach(([card, fn]) => card.removeEventListener('keydown', fn));
     };
-  }, []);
+  }, [variant]);
+
+  const switcher = (
+    <nav className="hv-switch" aria-label="Mock: hero direction">
+      <span className="hv-switch-tag">Mock</span>
+      {VARIANTS.map((v) => (
+        <a
+          key={v.key}
+          href={v.key === 'current' ? '/' : `/?hero=${v.key}`}
+          aria-current={variant === v.key ? 'page' : undefined}
+        >
+          {v.label}
+        </a>
+      ))}
+    </nav>
+  );
+
+  const header = (
+    <div className="hero-prelude hv-head">
+      <p className="hv-kicker">{KICKER}</p>
+      <h1 className="hv-h1">{ui('hero.propPrimary')}</h1>
+      <p className="hv-lead">{ui('hero.propSecondary')}</p>
+    </div>
+  );
+  const qualifiers = <p className="hv-meta">{ui('hero.qualifiers')}</p>;
+
+  if (variant === 'a') {
+    return (
+      <>
+        <section className="hero hv hv--a" aria-label={ui('hero.ariaIntro')} ref={heroRef}>
+          {header}
+          <ul className="hero-cards hv-stations">
+            {PROOF.map((p) => (
+              <li key={p.href} className="hero-card hv-station">
+                <a href={p.href}>
+                  <span className="hv-fig">{p.fig}</span>
+                  <span className="hv-label">{p.label}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          {qualifiers}
+        </section>
+        {switcher}
+      </>
+    );
+  }
+
+  if (variant === 'b') {
+    return (
+      <>
+        <section className="hero hv hv--b" aria-label={ui('hero.ariaIntro')} ref={heroRef}>
+          {header}
+          <ul className="hero-cards hv-routewrap">
+            <li className="hero-card hv-route">
+              <ol className="hv-stops">
+                {PROOF.map((p) => (
+                  <li key={p.href} className="hv-stop">
+                    <a href={p.href}>
+                      <span className="hv-fig">{p.fig}</span>
+                      <span className="hv-ring" aria-hidden="true"></span>
+                      <span className="hv-label">{p.label}</span>
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </li>
+          </ul>
+          {qualifiers}
+        </section>
+        {switcher}
+      </>
+    );
+  }
+
+  if (variant === 'c') {
+    return (
+      <>
+        <section className="hero hv hv--c" aria-label={ui('hero.ariaIntro')} ref={heroRef}>
+          <ul className="hero-cards hv-signwrap">
+            <li className="hero-card hv-sign">
+              <div className="hv-sign-panel">
+                <p className="hv-kicker">{KICKER}</p>
+                <h1 className="hv-h1">{ui('hero.propPrimary')}</h1>
+              </div>
+              <ul className="hv-sign-lines" aria-label="Lines on this site">
+                <li><span className="hv-pill hv-pill--ai">CS1</span>Professional work</li>
+                <li><span className="hv-pill hv-pill--ent">CS2</span>Independent builds</li>
+                <li><span className="hv-pill hv-pill--pers">P</span>About and contact</li>
+              </ul>
+            </li>
+            <li className="hero-card hv-transfer">
+              <p className="hv-lead">{ui('hero.propSecondary')}</p>
+              <div className="hv-transfer-row">
+                <span className="hv-transfer-label">Change here for</span>
+                {PROOF.map((p) => (
+                  <a key={p.href} href={p.href} className="hv-transfer-link">
+                    <span className="hv-transfer-fig">{p.fig}</span> {p.short}
+                    <span aria-hidden="true"> →</span>
+                  </a>
+                ))}
+              </div>
+            </li>
+          </ul>
+          {qualifiers}
+        </section>
+        {switcher}
+      </>
+    );
+  }
 
   return (
+    <>
     <section className="hero" aria-label={ui('hero.ariaIntro')} ref={heroRef}>
       <div className="hero-prelude" ref={preludeRef}>
         <p className="hero-prelude-line">
@@ -211,5 +347,7 @@ export default function Hero() {
         </li>
       </ul>
     </section>
+    {switcher}
+    </>
   );
 }

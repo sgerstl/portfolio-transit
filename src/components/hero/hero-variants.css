@@ -1,0 +1,445 @@
+/* MOCK: three hero directions, shown with ?hero=a|b|c.
+   Shared type ladder for all three: Barlow Condensed 600 for display,
+   Inter 400 for text. Two weights per view. */
+
+/* The cards used to double as a backing surface. Without them the map
+   runs through the text, so a scrim quiets it behind the copy. It starts
+   right of the rail so the rail and its rings stay visible. */
+.hv {
+  padding-top: 128px;
+}
+
+.hv::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 140px;
+  width: 1000px;
+  max-width: calc(100% - 140px);
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-bg) 94%, transparent) 0%,
+    color-mix(in srgb, var(--color-bg) 94%, transparent) 72%,
+    color-mix(in srgb, var(--color-bg) 0%, transparent) 100%
+  );
+  mask-image: linear-gradient(180deg, #000 0%, #000 72%, transparent 92%);
+  pointer-events: none;
+}
+
+.hv .hero-card {
+  overflow: visible;
+  border-radius: 0;
+}
+
+.hv a {
+  pointer-events: auto;
+  color: inherit;
+  text-decoration: none;
+}
+
+.hv a:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.hv-head {
+  max-width: 860px;
+  margin-bottom: 48px;
+}
+
+.hv-kicker {
+  font-family: var(--font-condensed);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+  margin-bottom: 16px;
+}
+
+.hv-h1 {
+  font-family: var(--font-condensed);
+  font-size: 60px;
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.005em;
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.hv-lead {
+  margin-top: 16px;
+  max-width: 60ch;
+  font-family: var(--font-sans);
+  font-size: 19px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-text-soft);
+}
+
+.hv-meta {
+  margin-top: 40px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-text-soft);
+}
+
+.hv-fig {
+  font-family: var(--font-condensed);
+  font-weight: 600;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.hv-label {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--color-text);
+}
+
+/* ── A · Refine in place ─────────────────────────────────
+   Proof points hang off the existing rail as stations. The spine
+   draws a ring at each item's centre; a short tick joins ring and text. */
+.hv-stations {
+  gap: 20px;
+  padding-top: 0;
+  width: auto;
+}
+
+.hv-station {
+  position: relative;
+}
+
+.hv-station::before {
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: 50%;
+  width: 14px;
+  height: 2px;
+  background: var(--color-ring-stroke);
+}
+
+.hv-station a {
+  display: grid;
+  grid-template-columns: 148px 1fr;
+  align-items: baseline;
+  column-gap: 16px;
+}
+
+.hv-station .hv-fig {
+  font-size: 44px;
+}
+
+.hv-station a:hover .hv-label {
+  text-decoration: underline;
+  text-decoration-color: var(--color-rail-blue);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+/* ── B · Route strip ─────────────────────────────────────
+   The Linienband over U-Bahn doors: one line, three stops. The line
+   starts at the vertical rail, where the spine draws a junction ring. */
+.hv-routewrap {
+  width: 860px;
+  max-width: 100%;
+  padding-top: 0;
+}
+
+.hv-route {
+  position: relative;
+  width: 100%;
+}
+
+.hv-route::before {
+  content: '';
+  position: absolute;
+  left: -27px;
+  right: 24px;
+  top: 50%;
+  height: 6px;
+  margin-top: -3px;
+  background: var(--color-rail-blue);
+  border-radius: 0 3px 3px 0;
+}
+
+.hv-stops {
+  position: relative;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.hv-stop a {
+  display: grid;
+  grid-template-rows: 1fr 18px 1fr;
+  justify-items: center;
+  row-gap: 14px;
+  text-align: center;
+  padding: 0 12px;
+}
+
+.hv-stop .hv-fig {
+  align-self: end;
+  font-size: 44px;
+}
+
+.hv-ring {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: inset 0 0 0 2px var(--color-ring-stroke);
+}
+
+.hv-stop .hv-label {
+  align-self: start;
+  max-width: 24ch;
+}
+
+.hv-stop a:hover .hv-ring {
+  box-shadow: inset 0 0 0 5px var(--color-rail-blue);
+}
+
+/* ── C · Station sign ────────────────────────────────────
+   The proposition as the station name, the site's lines listed the
+   way a platform sign lists the lines that stop there. */
+.hv-signwrap {
+  width: 900px;
+  max-width: 100%;
+  padding-top: 0;
+  gap: 28px;
+}
+
+.hv-sign {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  width: 100%;
+  background: white;
+  border-radius: 8px;
+  box-shadow:
+    inset 0 0 0 4px var(--color-text),
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+.hv-sign-panel {
+  padding: 32px 36px 36px;
+}
+
+.hv-sign .hv-h1 {
+  font-size: 46px;
+}
+
+.hv-sign-lines {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  padding: 32px 36px 32px 32px;
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--color-text);
+}
+
+.hv-sign-lines li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+}
+
+.hv-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 4px;
+  font-family: var(--font-condensed);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* Dark text in a line-coloured ring. White text on the line colours fails
+   4.5:1 (orange 3.86, green 2.85, purple 4.36), so colour rides on the ring
+   and the label stays legible. MOCK: --color-line-ai holds the orange. */
+.hv-pill {
+  background: white;
+  color: var(--color-text);
+}
+.hv-pill--ai { box-shadow: inset 0 0 0 3px var(--color-line-ai); }
+.hv-pill--ent { box-shadow: inset 0 0 0 3px var(--color-line-ent); }
+.hv-pill--pers { box-shadow: inset 0 0 0 3px var(--color-line-pers); }
+
+.hv-transfer .hv-lead {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.hv-transfer-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.hv-transfer-label {
+  font-family: var(--font-condensed);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+  margin-right: 4px;
+}
+
+.hv-transfer-link {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  padding: 8px 14px;
+  border-radius: 4px;
+  background: white;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.22);
+  transition: box-shadow 0.15s ease-out;
+}
+
+.hv-transfer-link:hover {
+  box-shadow: inset 0 0 0 2px var(--color-text);
+}
+
+.hv-transfer-fig {
+  font-family: var(--font-condensed);
+  font-weight: 600;
+  font-size: 17px;
+}
+
+/* ── MOCK switcher ───────────────────────────────────── */
+.hv-switch {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 8px;
+  background: var(--color-text);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  font-family: var(--font-sans);
+  font-size: 13px;
+}
+
+.hv-switch-tag {
+  padding: 0 8px;
+  font-family: var(--font-condensed);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #d6d6d6;
+}
+
+.hv-switch a {
+  padding: 6px 10px;
+  border-radius: 6px;
+  color: white;
+  text-decoration: none;
+}
+
+.hv-switch a[aria-current='page'] {
+  background: white;
+  color: var(--color-text);
+}
+
+.hv-switch a:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
+/* ── Mid width ───────────────────────────────────────── */
+@media (max-width: 1199px) and (min-width: 768px) {
+  .hv-h1 { font-size: 48px; }
+  .hv-sign .hv-h1 { font-size: 42px; }
+}
+
+/* ── Mobile ──────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .hv { padding-top: 80px; }
+  .hv::before { left: 0; max-width: 100%; }
+
+  /* The live hero hides its prelude on mobile; the variants keep it,
+     because the headline is the point. */
+  .hv .hero-prelude {
+    display: block;
+  }
+
+  .hv-head { margin-bottom: 28px; }
+  .hv-kicker { font-size: 13px; margin-bottom: 10px; }
+  .hv-h1 { font-size: 34px; }
+  .hv-lead { font-size: 16px; margin-top: 12px; }
+  .hv-meta { margin-top: 24px; font-size: 12px; }
+
+  .hv-stations,
+  .hv-routewrap {
+    border-left: 3px solid var(--color-rail-blue);
+    padding-left: 14px;
+    gap: 14px;
+  }
+  .hv-station::before { display: none; }
+  .hv-station a { grid-template-columns: 100px 1fr; column-gap: 10px; }
+  .hv-station .hv-fig { font-size: 30px; }
+  .hv-label { font-size: 14px; }
+
+  /* B collapses to the same vertical list; on a phone the rail is vertical. */
+  .hv-route::before { display: none; }
+  .hv-stops { grid-template-columns: 1fr; gap: 14px; }
+  .hv-stop a {
+    grid-template-rows: none;
+    grid-template-columns: 100px 1fr;
+    justify-items: start;
+    align-items: baseline;
+    text-align: left;
+    padding: 0;
+    column-gap: 10px;
+  }
+  .hv-stop .hv-fig { font-size: 30px; }
+  .hv-ring { display: none; }
+
+  .hv-sign { grid-template-columns: 1fr; }
+  .hv-sign-panel { padding: 22px 22px 18px; }
+  .hv-sign .hv-h1 { font-size: 30px; }
+  .hv-sign-lines {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    padding: 14px 22px 20px;
+    border-left: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    font-size: 13px;
+  }
+  .hv-sign-lines li { gap: 6px; }
+  .hv-pill { min-width: 36px; height: 22px; font-size: 13px; }
+  .hv-transfer-link { font-size: 14px; }
+
+  .hv-switch { bottom: 8px; font-size: 12px; }
+  .hv-switch a { padding: 6px 7px; }
+  .hv-switch-tag { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hv-transfer-link { transition: none; }
+}
