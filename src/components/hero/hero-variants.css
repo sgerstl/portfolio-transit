@@ -210,120 +210,176 @@
 }
 
 /* ── C · Station sign ────────────────────────────────────
-   The proposition as the station name, the site's lines listed the
-   way a platform sign lists the lines that stop there. */
+   After a Berlin S-Bahn platform sign (Westkreuz): station name on a dark
+   enamel panel, hairline rules between connection bands, and each band
+   packed to the right edge as destination, pictograms, line badge, arrow.
+   The panel uses --color-text; real DB signs are navy, which would need a
+   new token. */
 .hv-signwrap {
-  width: 900px;
+  width: 860px;
   max-width: 100%;
   padding-top: 0;
   gap: 28px;
 }
 
 .hv-sign {
-  display: grid;
-  grid-template-columns: 1fr auto;
   width: 100%;
-  background: white;
-  border-radius: 8px;
+  background: var(--color-text);
+  color: white;
+  border-radius: 6px;
   box-shadow:
-    inset 0 0 0 4px var(--color-text),
-    0 1px 2px rgba(0, 0, 0, 0.04),
-    0 8px 24px rgba(0, 0, 0, 0.05);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    0 12px 32px rgba(0, 0, 0, 0.10);
 }
 
-.hv-sign-panel {
-  padding: 32px 36px 36px;
+.hv-sign-name {
+  padding: 26px 32px 28px;
 }
 
-.hv-sign .hv-h1 {
-  font-size: 46px;
-}
-
-.hv-sign-lines {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 12px;
-  padding: 32px 36px 32px 32px;
-  border-left: 1px solid rgba(0, 0, 0, 0.08);
-  font-family: var(--font-sans);
-  font-size: 15px;
-  color: var(--color-text);
-}
-
-.hv-sign-lines li {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  white-space: nowrap;
-}
-
-.hv-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 44px;
-  height: 24px;
-  padding: 0 8px;
-  border-radius: 4px;
-  font-family: var(--font-condensed);
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-}
-
-/* Dark text in a line-coloured ring. White text on the line colours fails
-   4.5:1 (orange 3.86, green 2.85, purple 4.36), so colour rides on the ring
-   and the label stays legible. MOCK: --color-line-ai holds the orange. */
-.hv-pill {
-  background: white;
-  color: var(--color-text);
-}
-.hv-pill--ai { box-shadow: inset 0 0 0 3px var(--color-line-ai); }
-.hv-pill--ent { box-shadow: inset 0 0 0 3px var(--color-line-ent); }
-.hv-pill--pers { box-shadow: inset 0 0 0 3px var(--color-line-pers); }
-
-.hv-transfer .hv-lead {
-  margin-top: 0;
-  margin-bottom: 20px;
-}
-
-.hv-transfer-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-}
-
-.hv-transfer-label {
+.hv-sign-sub {
   font-family: var(--font-condensed);
   font-size: 15px;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-text-soft);
-  margin-right: 4px;
+  color: rgba(255, 255, 255, 0.78);
+  margin-bottom: 12px;
 }
 
-.hv-transfer-link {
+.hv-sign .hv-h1 {
+  color: white;
+  font-size: 48px;
+}
+
+.hv-sign-rows {
+  list-style: none;
+}
+
+.hv-sign-rows li {
+  border-top: 1px solid rgba(255, 255, 255, 0.28);
+}
+
+.hv-sign .hv-sign-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+  min-height: 48px;
+  padding: 8px 12px 8px 32px;
+  transition: background-color 0.15s ease-out;
+}
+
+.hv-sign .hv-sign-row:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.hv-sign .hv-sign-row:focus-visible {
+  outline: 2px solid white;
+  outline-offset: -4px;
+  border-radius: 4px;
+}
+
+.hv-sign-dest {
+  text-align: right;
+  line-height: 1.2;
+}
+
+.hv-sign-destname {
+  font-family: var(--font-condensed);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.hv-sign-detail {
+  margin-left: 10px;
   font-family: var(--font-sans);
   font-size: 15px;
-  padding: 8px 14px;
-  border-radius: 4px;
-  background: white;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.22);
-  transition: box-shadow 0.15s ease-out;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.78);
 }
 
-.hv-transfer-link:hover {
-  box-shadow: inset 0 0 0 2px var(--color-text);
+.hv-sign-marks {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
-.hv-transfer-fig {
+/* Pictogram tiles: white-outlined squares, as on the real signs. */
+.hv-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.9);
+}
+
+.hv-tile svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: white;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hv-tile--text {
   font-family: var(--font-condensed);
+  font-size: 15px;
   font-weight: 600;
-  font-size: 17px;
+  letter-spacing: 0.02em;
+}
+
+.hv-tile--arrow {
+  margin-left: 4px;
+  width: 34px;
+  height: 34px;
+}
+
+.hv-tile--arrow svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2;
+}
+
+.hv-sign .hv-sign-row:hover .hv-tile--arrow {
+  background: white;
+}
+.hv-sign .hv-sign-row:hover .hv-tile--arrow svg {
+  stroke: var(--color-text);
+}
+
+/* Line badges: stadium pills like the S-Bahn's. Dark text, because white
+   on these line colours fails 4.5:1; real networks switch text colour per
+   line for the same reason. #1a1714 has no token (the live hero uses it
+   for its bold figure). MOCK: --color-line-ai holds the orange. */
+.hv-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 46px;
+  height: 24px;
+  padding: 0 9px;
+  border-radius: 12px;
+  font-family: var(--font-condensed);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: #1a1714;
+}
+.hv-badge--cs1 { background: var(--color-line-ai); }
+.hv-badge--cs2 { background: var(--color-line-ent); }
+
+.hv-under .hv-lead {
+  margin-top: 0;
+}
+.hv-under .hv-meta {
+  margin-top: 16px;
 }
 
 /* ── MOCK switcher ───────────────────────────────────── */
@@ -374,6 +430,7 @@
 @media (max-width: 1199px) and (min-width: 768px) {
   .hv-h1 { font-size: 48px; }
   .hv-sign .hv-h1 { font-size: 42px; }
+  .hv-signwrap { width: 100%; }
 }
 
 /* ── Mobile ──────────────────────────────────────────── */
@@ -419,21 +476,20 @@
   .hv-stop .hv-fig { font-size: 30px; }
   .hv-ring { display: none; }
 
-  .hv-sign { grid-template-columns: 1fr; }
-  .hv-sign-panel { padding: 22px 22px 18px; }
+  .hv-sign-name { padding: 20px 18px 22px; }
+  .hv-sign-sub { font-size: 12px; margin-bottom: 8px; }
   .hv-sign .hv-h1 { font-size: 30px; }
-  .hv-sign-lines {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 8px 14px;
-    padding: 14px 22px 20px;
-    border-left: none;
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
-    font-size: 13px;
+  .hv-sign .hv-sign-row {
+    justify-content: space-between;
+    padding: 8px 10px 8px 18px;
+    gap: 10px;
   }
-  .hv-sign-lines li { gap: 6px; }
-  .hv-pill { min-width: 36px; height: 22px; font-size: 13px; }
-  .hv-transfer-link { font-size: 14px; }
+  .hv-sign-dest { text-align: left; }
+  .hv-sign-destname { display: block; font-size: 18px; }
+  .hv-sign-detail { display: block; margin-left: 0; font-size: 13px; }
+  .hv-tile { width: 26px; height: 26px; }
+  .hv-tile--arrow { width: 30px; height: 30px; }
+  .hv-badge { min-width: 40px; height: 22px; font-size: 13px; }
 
   .hv-switch { bottom: 8px; font-size: 12px; }
   .hv-switch a { padding: 6px 7px; }
@@ -441,5 +497,5 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hv-transfer-link { transition: none; }
+  .hv-sign .hv-sign-row { transition: none; }
 }

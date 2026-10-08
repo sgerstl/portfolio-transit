@@ -268,35 +268,75 @@ export default function Hero() {
   }
 
   if (variant === 'c') {
+    // Modelled on a Berlin S-Bahn platform sign: station name on a dark
+    // panel, then connection bands packed to the right edge. Each band reads
+    // destination, pictograms, line badge, arrow tile.
+    const rows: {
+      href: string;
+      name: string;
+      detail: string;
+      tiles?: ('ai' | 'doc')[];
+      line?: 'cs1' | 'cs2';
+      dir: 'right' | 'down';
+    }[] = [
+      { href: '/work/brightly', name: 'Brightly', detail: 'Design direction for a $1.575B acquisition', line: 'cs1', dir: 'right' },
+      { href: '/work/pqdr', name: 'Power Quality', detail: 'Operator tools at 200+ industrial locations', tiles: ['ai'], line: 'cs1', dir: 'right' },
+      { href: '/work/sim-racing', name: 'Sim Racing Coach', detail: 'Two paid AI-agent engagements', tiles: ['ai'], line: 'cs1', dir: 'right' },
+      { href: '#section-ent', name: 'Independent builds', detail: 'Epilog, Ziggy, Cal', line: 'cs2', dir: 'down' },
+      { href: '/resume', name: 'Resume', detail: 'Two pages, PDF', tiles: ['doc'], dir: 'right' },
+    ];
     return (
       <>
         <section className="hero hv hv--c" aria-label={ui('hero.ariaIntro')} ref={heroRef}>
           <ul className="hero-cards hv-signwrap">
             <li className="hero-card hv-sign">
-              <div className="hv-sign-panel">
-                <p className="hv-kicker">{KICKER}</p>
+              <div className="hv-sign-name">
+                <p className="hv-sign-sub">{KICKER}</p>
                 <h1 className="hv-h1">{ui('hero.propPrimary')}</h1>
               </div>
-              <ul className="hv-sign-lines" aria-label="Lines on this site">
-                <li><span className="hv-pill hv-pill--ai">CS1</span>Professional work</li>
-                <li><span className="hv-pill hv-pill--ent">CS2</span>Independent builds</li>
-                <li><span className="hv-pill hv-pill--pers">P</span>About and contact</li>
-              </ul>
+              <nav aria-label="Connections">
+                <ul className="hv-sign-rows">
+                  {rows.map((r) => (
+                    <li key={r.href}>
+                      <a href={r.href} className="hv-sign-row">
+                        <span className="hv-sign-dest">
+                          <span className="hv-sign-destname">{r.name}</span>
+                          <span className="hv-sign-detail">{r.detail}</span>
+                        </span>
+                        <span className="hv-sign-marks" aria-hidden="true">
+                          {r.tiles?.map((t) =>
+                            t === 'ai' ? (
+                              <span key={t} className="hv-tile hv-tile--text">AI</span>
+                            ) : (
+                              <span key={t} className="hv-tile">
+                                <svg viewBox="0 0 16 16"><path d="M4 1.5h5.5L12.5 4.5V14.5H4Z M9.5 1.5V4.5H12.5 M6 8h4.5 M6 10.5h4.5" /></svg>
+                              </span>
+                            ),
+                          )}
+                          {r.line && (
+                            <span className={`hv-badge hv-badge--${r.line}`}>{r.line.toUpperCase()}</span>
+                          )}
+                          <span className="hv-tile hv-tile--arrow">
+                            <svg viewBox="0 0 16 16">
+                              {r.dir === 'right' ? (
+                                <path d="M2.5 8h10 M8.5 3.5 13 8l-4.5 4.5" />
+                              ) : (
+                                <path d="M8 2.5v10 M3.5 8.5 8 13l4.5-4.5" />
+                              )}
+                            </svg>
+                          </span>
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
             </li>
-            <li className="hero-card hv-transfer">
+            <li className="hero-card hv-under">
               <p className="hv-lead">{ui('hero.propSecondary')}</p>
-              <div className="hv-transfer-row">
-                <span className="hv-transfer-label">Change here for</span>
-                {PROOF.map((p) => (
-                  <a key={p.href} href={p.href} className="hv-transfer-link">
-                    <span className="hv-transfer-fig">{p.fig}</span> {p.short}
-                    <span aria-hidden="true"> →</span>
-                  </a>
-                ))}
-              </div>
+              {qualifiers}
             </li>
           </ul>
-          {qualifiers}
         </section>
         {switcher}
       </>
