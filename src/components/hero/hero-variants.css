@@ -628,28 +628,129 @@
 }
 
 .hv-rb-cap {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  margin-top: -12px;
-  min-height: 48px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  column-gap: 16px;
+  margin-top: -72px;
+  position: relative;
+  padding-left: 24px;
 }
 
-.hv-rb-cap-text {
-  max-width: 46ch;
-  font-family: var(--font-sans);
-  font-size: 14px;
-  line-height: 1.45;
+/* Fixed height so moving between stops never shifts the page. */
+.hv-rb-live {
+  min-height: 128px;
+}
+
+/* The legend sits low in the hero, where the shared scrim fades out; keep
+   the map quiet behind it. */
+.hv--e::before {
+  mask-image: linear-gradient(180deg, #000 0%, #000 90%, transparent 100%);
+}
+
+.hv-rb-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-condensed);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--color-text-soft);
 }
-.hv-rb-cap-text strong {
+
+/* A station marker: filled in the accent for a chosen stop, an open ring
+   when nothing is chosen. MOCK: --color-line-ai holds the orange. */
+.hv-rb-marker {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--color-line-ai);
+}
+.hv-rb-marker--idle {
+  border-radius: 50%;
+  background: white;
+  box-shadow: inset 0 0 0 2px var(--color-ring-stroke);
+}
+
+.hv-rb-place {
+  margin-top: 4px;
+  font-family: var(--font-condensed);
+  font-size: 26px;
   font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.005em;
   color: var(--color-text);
 }
-.hv-rb-cap-case {
+
+.hv-rb-blurb {
+  margin-top: 6px;
+  max-width: 50ch;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-text-soft);
+}
+
+.hv-rb-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  font-family: var(--font-condensed);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: var(--color-text);
-  white-space: nowrap;
+  text-decoration: none;
+}
+.hv-rb-go-time {
+  color: var(--color-text-soft);
+  font-variant-numeric: tabular-nums;
+}
+.hv-rb-go-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1.5px var(--color-text);
+  transition: background-color 0.15s ease-out;
+}
+.hv-rb-go-arrow svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: var(--color-text);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.hv-rb-go:hover .hv-rb-go-text {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+.hv-rb-go:hover .hv-rb-go-arrow {
+  background: var(--color-text);
+}
+.hv-rb-go:hover .hv-rb-go-arrow svg {
+  stroke: white;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hv-rb-legend {
+    animation: hv-rb-in 180ms ease-out both;
+  }
+}
+@keyframes hv-rb-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
 }
 
 .hv-rb-pause {

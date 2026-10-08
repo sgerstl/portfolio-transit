@@ -189,7 +189,6 @@ const LANDMARKS: Landmark[] = [
   },
 ];
 
-const DEFAULT_CAPTION = 'Berlin · Ringbahn · pick an industry';
 
 function smoothClosed(pts: V3[], steps = 8): V3[] {
   const out: V3[] = [];
@@ -337,7 +336,7 @@ export default function RingObject() {
       const y2 = y * cp + z1 * sp, z2 = -y * sp + z1 * cp;
       const D = 3.2, f = Math.min(w, h) * 1.4;
       const s = f / (z2 + D);
-      return { x: w / 2 + x1 * s, y: h * 0.5 - y2 * s, depth: z2, s };
+      return { x: w / 2 + x1 * s, y: h * 0.45 - y2 * s, depth: z2, s };
     };
     const alpha = (depth: number) => Math.max(0.3, Math.min(1, 0.8 - depth * 0.45));
 
@@ -496,15 +495,17 @@ export default function RingObject() {
   const lm = active !== null ? LANDMARKS[active] : null;
 
   return (
-    <figure className="hv-rb">
-      <div
-        className="hv-rb-stage"
-        onPointerEnter={(e) => { if (e.pointerType === 'mouse') pointerInRef.current = true; }}
-        onPointerLeave={() => {
-          pointerInRef.current = false;
-          if (modeRef.current === 'pointer') { modeRef.current = null; setActive(null); }
-        }}
-      >
+    <figure
+      className="hv-rb"
+      // The pointer area spans the Ring and its legend, so the visitor can
+      // travel down to the case link without dropping the selection.
+      onPointerEnter={(e) => { if (e.pointerType === 'mouse') pointerInRef.current = true; }}
+      onPointerLeave={() => {
+        pointerInRef.current = false;
+        if (modeRef.current === 'pointer') { modeRef.current = null; setActive(null); }
+      }}
+    >
+      <div className="hv-rb-stage">
         <canvas
           ref={canvasRef}
           className="hv-rb-canvas"
@@ -534,16 +535,38 @@ export default function RingObject() {
         </nav>
       </div>
       <figcaption className="hv-rb-cap">
-        <p className="hv-rb-cap-text" aria-live="polite">
-          {lm ? (
-            <>
-              <strong>{lm.place}</strong> · {lm.blurb}{' '}
-              <span className="hv-rb-cap-case">{lm.caseName}, {lm.minutes} min →</span>
-            </>
-          ) : (
-            DEFAULT_CAPTION
-          )}
-        </p>
+        {/* Stable live region; the keyed inner block restarts its fade. */}
+        <div className="hv-rb-live" aria-live="polite">
+          <div className="hv-rb-legend" key={active ?? 'idle'}>
+            {lm ? (
+              <>
+                <p className="hv-rb-eyebrow">
+                  <span className="hv-rb-marker" aria-hidden="true" />
+                  {lm.domain}
+                </p>
+                <p className="hv-rb-place">{lm.place}</p>
+                <p className="hv-rb-blurb">{lm.blurb}</p>
+                {/* Pointer convenience: keyboard users already have the label link. */}
+                <a className="hv-rb-go" href={lm.href} tabIndex={-1}>
+                  <span className="hv-rb-go-text">Read the {lm.caseName} case</span>
+                  <span className="hv-rb-go-time">{lm.minutes} min</span>
+                  <span className="hv-rb-go-arrow" aria-hidden="true">
+                    <svg viewBox="0 0 16 16"><path d="M2.5 8h10M8.5 3.5 13 8l-4.5 4.5" /></svg>
+                  </span>
+                </a>
+              </>
+            ) : (
+              <>
+                <p className="hv-rb-eyebrow">
+                  <span className="hv-rb-marker hv-rb-marker--idle" aria-hidden="true" />
+                  Ringbahn · {LANDMARKS.length} stops
+                </p>
+                <p className="hv-rb-place">Pick an industry</p>
+                <p className="hv-rb-blurb">Each stop is a place in Berlin tied to work I've done.</p>
+              </>
+            )}
+          </div>
+        </div>
         <button
           type="button"
           className="hv-rb-pause"
