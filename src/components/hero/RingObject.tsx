@@ -237,6 +237,10 @@ export default function RingObject() {
   const pausedRef = useRef(false);
   const [active, setActive] = useState<number | null>(null);
   const activeRef = useRef<number | null>(null);
+  // How the current selection was made. Only keyboard focus turns the Ring;
+  // a pointer selection never moves its target out from under the cursor.
+  const modeRef = useRef<'pointer' | 'focus' | null>(null);
+  const pointerInRef = useRef(false);
   const reducedRef = useRef(false);
 
   useEffect(() => {
@@ -251,7 +255,7 @@ export default function RingObject() {
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get('lm');
     const i = LANDMARKS.findIndex((m) => m.id === id);
-    if (i >= 0) { snapRef.current = true; activeRef.current = i; setActive(i); }
+    if (i >= 0) { snapRef.current = true; modeRef.current = 'focus'; activeRef.current = i; setActive(i); }
   }, []);
   useEffect(() => { pausedRef.current = paused; }, [paused]);
   useEffect(() => { activeRef.current = active; }, [active]);
@@ -382,19 +386,28 @@ export default function RingObject() {
       const instant = reducedRef.current || snapRef.current;
       snapRef.current = false;
 
-      if (act !== null) {
-        // Turn the chosen landmark to the front, and run the train to it.
+      // While the pointer is over the object, it holds still so targets
+      // stay where the visitor is aiming. Dragging still turns it.
+      const hold = pointerInRef.current;
+
+      if (act !== null && modeRef.current === 'focus') {
+        // Keyboard: turn the chosen landmark to the front.
         const target = marks[act].facing - Math.PI;
         const d = angDiff(yaw, target);
         yaw = instant ? target : yaw + d * Math.min(1, dt * 4);
+      } else if (!dragging) {
+        if (moving && !hold && now - idleAt > 1500) yaw += 0.09 * dt;
+        yaw += vYaw;
+        vYaw *= 0.92;
+      }
+
+      if (act !== null) {
+        // Run the train to the chosen landmark and wait there.
         const td = angDiff((trainD / LOOP) * Math.PI * 2, (marks[act].stopD / LOOP) * Math.PI * 2) / (Math.PI * 2) * LOOP;
         if (instant) trainD = marks[act].stopD;
         else trainD += Math.sign(td) * Math.min(Math.abs(td), LOOP * dt * 0.45);
-      } else if (!dragging) {
-        if (moving && now - idleAt > 1500) yaw += 0.09 * dt;
-        yaw += vYaw;
-        vYaw *= 0.92;
-        if (moving) trainD += (LOOP * dt) / 36;
+      } else if (moving) {
+        trainD += (LOOP * dt) / 36;
       }
 
       if (!heroGone && w > 60) {
@@ -484,7 +497,14 @@ export default function RingObject() {
 
   return (
     <figure className="hv-rb">
-      <div className="hv-rb-stage">
+      <div
+        className="hv-rb-stage"
+        onPointerEnter={(e) => { if (e.pointerType === 'mouse') pointerInRef.current = true; }}
+        onPointerLeave={() => {
+          pointerInRef.current = false;
+          if (modeRef.current === 'pointer') { modeRef.current = null; setActive(null); }
+        }}
+      >
         <canvas
           ref={canvasRef}
           className="hv-rb-canvas"
@@ -497,10 +517,15 @@ export default function RingObject() {
               ref={(el) => { labelRefs.current[i] = el; }}
               href={m.href}
               className={`hv-rb-label${active === i ? ' is-active' : ''}`}
-              onMouseEnter={() => setActive(i)}
-              onMouseLeave={() => setActive((a) => (a === i ? null : a))}
-              onFocus={() => setActive(i)}
-              onBlur={() => setActive((a) => (a === i ? null : a))}
+              onMouseEnter={() => { modeRef.current = 'pointer'; setActive(i); }}
+              onFocus={() => {
+                // Focus that follows a click is the pointer's, not the keyboard's.
+                if (!pointerInRef.current) modeRef.current = 'focus';
+                setActive(i);
+              }}
+              onBlur={() => {
+                if (modeRef.current === 'focus') { modeRef.current = null; setActive((a) => (a === i ? null : a)); }
+              }}
               aria-label={`${m.domain}: ${m.place}. ${m.blurb} Read the ${m.caseName} case study.`}
             >
               {m.domain}
