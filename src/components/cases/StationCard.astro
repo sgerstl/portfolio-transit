@@ -19,8 +19,14 @@ interface Props {
 
 const { slug, name, tagline, line, body, ai, demo, readingMinutes } = Astro.props;
 const colorVar = `var(--color-line-${line})`;
-// One figure, and only a real one: a number or an amount, not a word.
-const metric = body.metrics.find((m) => /^[\d$~]/.test(m.num));
+// One figure, and only a real one: a number or an amount, not a word. A
+// case the hero features names its own (cardMetric) so the card doesn't
+// repeat the hero tile's number.
+const metric =
+  body.cardMetric !== undefined
+    ? body.metrics[body.cardMetric]
+    : body.metrics.find((m) => /^[\d$~]/.test(m.num));
+const cardLine = body.cardTagline ?? tagline;
 ---
 
 <article class="station" data-case={slug} id={`case-${slug}`} style={`--card-color: ${colorVar};`}>
@@ -40,7 +46,7 @@ const metric = body.metrics.find((m) => /^[\d$~]/.test(m.num));
       {ai && <span class="station-badge">AI</span>}
       {demo && <span class="station-badge station-badge--outline">Live demo</span>}
     </div>
-    <p class="station-tagline">{tagline}</p>
+    <p class="station-tagline">{cardLine}</p>
     {metric && (
       <p class="station-metric">
         <span class="station-metric-num">{metric.num}</span>

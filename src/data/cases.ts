@@ -28,6 +28,11 @@ export type CaseBody = {
   metrics: CaseMetric[];
   claim: string;
   ctaHref: string;
+  // The homepage station card's own line and figure (index into metrics),
+  // for cases the hero already features: the card says something the hero
+  // tile doesn't, instead of repeating its number.
+  cardTagline?: string;
+  cardMetric?: number;
 };
 
 export type CaseDecision = { title: string; body: string };
@@ -529,6 +534,8 @@ export const CASES: CaseEntry[] = [
       ],
       claim: 'I lead design vision that holds up under acquisition-grade scrutiny.',
       ctaHref: '/work/brightly',
+      cardTagline: 'One design language and integration model for the whole portfolio.',
+      cardMetric: 2,
     },
     detail: {
       chips: ['Enterprise', 'Platform Vision', 'Design System', 'B2B SaaS'],
@@ -792,6 +799,8 @@ export const CASES: CaseEntry[] = [
       ],
       claim: 'I design operator-facing surfaces that turn AI insight into industrial-scale operational decisions.',
       ctaHref: '/work/pqdr',
+      cardTagline: 'AI insight, operator decision.',
+      cardMetric: 1,
     },
     detail: {
       chips: ['Enterprise', 'AI Insight', 'Operator UX', 'Industrial'],
