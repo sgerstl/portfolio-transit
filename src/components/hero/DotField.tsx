@@ -452,11 +452,7 @@ export default function DotField({ active, departures }: { active: string | null
   // object, not the operator's mark.
   return (
     <div className="hvg-board" ref={boardRef}>
-      {/* Depth: the yellow electronics box the board is mounted on, and the
-          housing's own edge. Both sit behind the face in 3D. */}
       <div className="hvg-arm" aria-hidden="true" />
-      <div className="hvg-box" aria-hidden="true" />
-      <div className="hvg-edge" aria-hidden="true" />
       <div className="hvg-face">
         <div className="hvg-head" aria-hidden="true" lang="de">
           <span className="hvg-col-line">Linie</span>
