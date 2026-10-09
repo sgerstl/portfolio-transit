@@ -917,7 +917,7 @@ export const CASES: CaseEntry[] = [
     name: 'Ziggy',
     tagline: 'An agent arranges my day. The data fills it in.',
     line: 'indie',
-    readingMinutes: 6,
+    readingMinutes: 3,
     ai: true,
     body: {
       domains: ['Personal AI', 'Agent design', 'Android'],
@@ -945,126 +945,19 @@ export const CASES: CaseEntry[] = [
         "Android",
       ],
       hook: [
-        "Ziggy is the screen I look at first every morning. It gathers my calendar, last night's sleep, messages from people I know and the dated tasks in my notes, and an AI agent decides what deserves the top of the screen. When nothing needs me, it says so: \"Clear until 18:00.\"",
-        "I built it in five days with Claude Code, on top of the notes I already keep. The interesting part was deciding what the agent is allowed to do. It chooses what I see, and every number it shows is looked up from the data. Nothing changes without my tap.",
+        "Ziggy is a phone app that puts my calendar, last night's sleep, messages and dated tasks on one screen. An AI agent decides what goes first.",
+        "I built it in five days with Claude Code as a design craft exercise. The interesting decisions were about the object, and about how little of the screen the model gets to touch.",
       ],
       sections: [
-        {
-          title: "The vault knew. Nothing was looking.",
-          subtitle: "Why a missed ticket release became an app",
-          paragraphs: [
-            "In September I missed the ticket release for a product design meetup I wanted to get into. The date was in my notes. It sat in a table cell, and the reminder was a calendar file I never imported. Nothing that shows me dates ever read that note.",
-            "So I went looking for every other date like it. One script now collects every date I have to act on, wherever it lives in my notes, into one list. Its first run found 26 overdue follow-ups, the oldest from April.",
-            "A list only helps if I see it. I wanted one screen that put those dates next to the rest of my day, and that screen became Ziggy.",
-          ],
-          decisions: [
-            {
-              title: "Dates live in fields a script can read.",
-              body: "A date I have to act on never lives only in a sentence. If a script can't find it, nothing will remind me.",
-            },
-            {
-              title: "Urgent has one definition.",
-              body: "The urgent strip on Today and the notifications use the same rule, so old backlog never buzzes my phone.",
-            },
-            {
-              title: "Success is time away from the phone.",
-              body: "Ziggy shows one decision at a time. When the queue is empty, it tells me how long I can stop looking.",
-            },
-          ],
-          italicOutro: "Most of the work was noticing that my notes already had the answer and nothing was asking them.",
-        },
-        {
-          title: "The model picks, the data fills in",
-          subtitle: "How an agent arranges a screen it isn't allowed to write",
-          paragraphs: [
-            "Three times a day, Claude reads a summary of my notes and writes the morning plan. It writes a one-line headline and picks up to six cards, each one a reference to something real in my notes with a short reason for showing it.",
-            "The phone looks each reference up and builds the card from the data itself. If the model names something that doesn't exist, the card never appears. The model never supplies a date or a count.",
-            "I had to learn the same lesson about my own rules. On the first morning with real watch data, Ziggy told me \"Recovery looks low\" after one short night, while my heart-rate variability was normal. That verdict was my rule, and it was wrong. Now a verdict only appears when there's a rule I trust behind it, and numbers without one, like temperature and wind on the ride check, show up plain with no colour.",
-          ],
-          decisions: [
-            {
-              title: "One format for everything the agent says.",
-              body: "The morning plan and every answer use the same structure and the same set of cards. Today is the answer to a question I didn't have to ask.",
-            },
-            {
-              title: "Reading is free, writing asks.",
-              body: "Done and Snooze each wait for a tap, and either can be undone. The phone never edits my notes directly. It files a GitHub issue, and a small script with no model applies it.",
-            },
-          ],
-          italicOutro: "If a model can't write the number, it can't get the number wrong. A lot of designing for AI is deciding which parts of the screen it gets to touch.",
-          tryIts: [
-            "On Today in the demo, tap a line and press DONE. The line leaves the list straight away, and the count on its key drops by one.",
-          ],
-          screenshots: {
-            columns: 3,
-            images: [
-              {
-                src: "/images/cases/ziggy/ziggy-today-plan.jpg",
-                alt: "Ziggy Today screen with the agent's headline, ride check and Needs You list",
-                caption: "The plan's headline",
-              },
-              {
-                src: "/images/cases/ziggy/ziggy-line-selected.jpg",
-                alt: "A selected line on Today with DONE, SNOOZE and OPEN keys below",
-                caption: "A tap before any write",
-              },
-              {
-                src: "/images/cases/ziggy/ziggy-after-done.jpg",
-                alt: "Today after DONE, with the line gone and plan cards showing reason lines",
-                caption: "Cards with their reasons",
-              },
-            ],
-          },
-        },
-        {
-          title: "Three ways to answer",
-          subtitle: "Routing a question by how much I need to trust the answer",
-          paragraphs: [
-            "Ziggy has one question box. A router answers from data already on the phone when it can, like when my next meeting is or where a job application stands. When it isn't sure, Gemini Nano votes LOCAL or DEEP. Nano is a small model that runs on the phone for free. Anything that needs depth goes to Claude, which reads all of my notes.",
-            "Nano used to answer questions itself. It was fast, and on the first day it gave me one contact's career history under someone else's name. So it lost the job of answering and kept the job of voting, where the worst it can do is send a question down the slower path.",
-            "That slower path is visible on purpose. When a question goes to Claude, Ziggy says \"Checking with Blue Lion…\", after the MacBook the answers first came from. They now come from a GitHub Action in under a minute and arrive as an encrypted notification, so nothing at home has to be switched on.",
-            "Moving them was the first thing I did after a bad night. At 2 am on day two I told Claude that Ziggy was pretty useless, and that the deep answers from my own notes were the only part I'd keep. A code review the next day found that the \"read-only\" Claude behind those answers wasn't. My notes' permission file let it run Python and push to git. It now runs locked down, with file reading and search and nothing else.",
-          ],
-          italicOutro: "Showing the slow path is what makes the fast one believable. If Ziggy hid the hand-off, I wouldn't know which answers to double-check.",
-          tryIts: [
-            "Press the orange ziggy key and ask \"What's my plan for Saltfern?\" The hand-off to Blue Lion shows while it works, and the answer prints with a card that opens the prep note.",
-          ],
-          screenshots: {
-            columns: 2,
-            images: [
-              {
-                src: "/images/cases/ziggy/ziggy-blue-lion-printing.jpg",
-                alt: "Ask screen showing a question handed to Blue Lion, with a progress bar",
-                caption: "The hand-off, shown",
-              },
-              {
-                src: "/images/cases/ziggy/ziggy-blue-lion-answer.jpg",
-                alt: "Blue Lion's printed answer about an interview, with a card linking the prep note",
-                caption: "The answer, with its source",
-              },
-            ],
-          },
-        },
-        {
-          title: "Saying what it doesn't know",
-          subtitle: "Small signals for stale data and an unsure system",
-          paragraphs: [
-            "A screen I trust at a glance has to tell me when it's out of date. The home-screen widget shows Blue Lion's morning brief only until I've acted on what it names, and then it switches to the live list. Once its snapshot is an hour old, it says AS OF.",
-            "Lights mean something or stay off. The early design had status lights for everything. They went, and trouble reaching my notes now shows as one line on Today's date row, only when something is wrong.",
-            "One 6 pm call buzzed my phone three times, once for each place it was recorded. Now one thing gets one reminder from Ziggy. It aims for five notifications a day at most, and they arrive silent overnight.",
-            "Privacy works the same way. Health appointments show as APPOINTMENT on the home screen. Message text stays on the phone for 48 hours and reaches my notes only if I log it with two taps.",
-          ],
-          italicOutro: "For an agent, the honest empty state and the honest stale state matter as much as the answer.",
-        },
         {
           title: "Designed as an object",
           subtitle: "Structure first, then materials, then measured",
           paragraphs: [
             "The first look borrowed from the handheld computer in Quantum Leap, the show Ziggy is named after. It read as a themed app. The direction that stuck treats Ziggy as a piece of hardware in the spirit of Teenage Engineering, with grey moulded keys under a display and lights that only come on when something is waiting.",
             "The keys stay put and the display changes. Each new look became a material of that one object, a set of token overrides on the same structure, and the demo ships on the OLED one. On OLED everything drawn in pixels uses the same 1.5px dot on a 2px grid. Something bigger uses more of those dots, so the fonts are generated from glyph tables with the dot built in.",
-            "When the app felt slow, I asked about rewriting it natively. Profiling on the phone took an hour and showed the cost was mine. Frosted glass on every header put 21.5% of frames over budget, and solid headers brought that down to about 3%. A later fix took a page swipe from 38 frames to 149. A native rewrite would have taken weeks.",
+            "When the app felt slow, I asked about rewriting it natively. An hour of profiling on the phone showed the cost was mine. Frosted glass on every header put 21.5% of frames over budget, and solid headers brought that down to about 3%.",
           ],
-          italicOutro: "Measure before you rewrite. The slowness was two things I had built.",
+          italicOutro: "Measure before you rewrite. The slowness was something I had built.",
           screenshots: {
             columns: 2,
             images: [
@@ -1081,13 +974,59 @@ export const CASES: CaseEntry[] = [
             ],
           },
         },
+        {
+          title: "Where the AI shows up",
+          subtitle: "Three rules for an agent that arranges a screen",
+          paragraphs: [
+            "Three times a day, Claude reads a summary of my notes and writes the plan for Today. That's a one-line headline and up to six cards, each one pointing at something real in my notes with a short reason for showing it.",
+          ],
+          decisions: [
+            {
+              title: "The model picks, the data fills in.",
+              body: "The phone looks up each card the model names and builds it from the data. If the model names something that doesn't exist, the card never appears, and the model never writes a date or a count.",
+            },
+            {
+              title: "The slow path is visible.",
+              body: "A router answers quick questions from data already on the phone. Questions that need all of my notes go to Claude, and Ziggy shows the hand-off to Blue Lion while it works. If it hid that, I wouldn't know which answers to double-check.",
+            },
+            {
+              title: "It says when it doesn't know.",
+              body: "The home-screen widget says AS OF once its snapshot is an hour old. Lights stay off unless something is waiting, and a verdict like \"recovery looks low\" only appears when there's a rule I trust behind it.",
+            },
+          ],
+          tryIts: [
+            "Press the orange ziggy key and ask \"What's my plan for Saltfern?\" The hand-off to Blue Lion shows while it works, and the answer prints with a card that opens the prep note.",
+            "On Today, tap a line and press DONE. Nothing reaches the notes without that tap.",
+          ],
+          italicOutro: "A lot of designing for AI is deciding which parts of the screen it gets to touch.",
+          screenshots: {
+            columns: 3,
+            images: [
+              {
+                src: "/images/cases/ziggy/ziggy-today-plan.jpg",
+                alt: "Ziggy Today screen with the agent's headline, ride check and Needs You list",
+                caption: "The plan's headline",
+              },
+              {
+                src: "/images/cases/ziggy/ziggy-blue-lion-printing.jpg",
+                alt: "Ask screen showing a question handed to Blue Lion, with a progress bar",
+                caption: "The hand-off, shown",
+              },
+              {
+                src: "/images/cases/ziggy/ziggy-blue-lion-answer.jpg",
+                alt: "Blue Lion's printed answer about an interview, with a card linking the prep note",
+                caption: "The answer, with its source",
+              },
+            ],
+          },
+        },
       ],
       outcomeBeat: {
         title: "What Ziggy is now",
         paragraphs: [
-          "I started Ziggy on 3 October 2026, and it has one user. It runs on my Pixel, and a demo with an invented person runs in any browser. It isn't a product. Phone makers own the data permissions, and WhatsApp has no API for reading messages. What it shows is how I think an agent should show up in someone's day.",
+          "I started Ziggy on 3 October 2026, and it has one user. It isn't a product. Phone makers own the data permissions, and WhatsApp has no API for reading messages. The demo on this page runs on an invented person.",
         ],
-        highlight: "The test I care about is whether it's still the first thing I look at in a month, and how quickly I put it down.",
+        highlight: "The test I care about is whether it's still the first thing I look at in a month.",
       },
     },
   },
