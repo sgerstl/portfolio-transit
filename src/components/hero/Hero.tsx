@@ -163,11 +163,15 @@ export default function Hero() {
   const cardsRef = useRef<HTMLLIElement[]>([]);
   const [variant, setVariant] = useState<Variant>('current');
   const [fActive, setFActive] = useState<string | null>(null);
+  // MOCK: which hover indicator G's tiles use, ?hover=wash|rule|frame.
+  const [gHover, setGHover] = useState<'wash' | 'rule' | 'frame'>('wash');
   const leaveTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
     const v = new URLSearchParams(window.location.search).get('hero');
     if (v === 'a' || v === 'e' || v === 'f' || v === 'g') setVariant(v);
+    const h = new URLSearchParams(window.location.search).get('hover');
+    if (h === 'rule' || h === 'frame') setGHover(h);
   }, []);
 
   const STAT_CARDS: StatCard[] = [
@@ -379,7 +383,7 @@ export default function Hero() {
     };
     return (
       <>
-        <section className={`hero hv hv--f${g ? ' hv--g' : ''}`} aria-label={ui('hero.ariaIntro')} ref={heroRef}>
+        <section className={`hero hv hv--f${g ? ` hv--g hv--hover-${gHover}` : ''}`} aria-label={ui('hero.ariaIntro')} ref={heroRef}>
           <div className="hvf-top">
             <div className="hvf-text">
               <h1 className="hvf-h1">{F_H1}</h1>
