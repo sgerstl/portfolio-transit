@@ -592,8 +592,9 @@ const backHref = `/#case-${entry.slug}`;
       border-left-width: 5px;
     }
 
+    /* Above the 17px body, as the 20px lede sits above 16px body on desktop */
     .lede {
-      font-size: 16px;
+      font-size: 19px;
       padding-left: 19px;
     }
 
@@ -607,8 +608,11 @@ const backHref = `/#case-${entry.slug}`;
       padding-bottom: 24px;
     }
 
+    /* Phone type scale (2026-10-09): long reading 17, supporting 16, meta 14, labels 13, headings 18/22/24.
+       Reading text no longer shrinks below desktop on a phone. */
     .hook p {
-      font-size: 15px;
+      font-size: 17px;
+      line-height: 1.55;
     }
 
     .sections {
@@ -620,11 +624,11 @@ const backHref = `/#case-${entry.slug}`;
     }
 
     .section-head h2 {
-      font-size: 22px;
+      font-size: 24px;
     }
 
     .section-sub {
-      font-size: 13px;
+      font-size: 14px;
     }
 
     .section-body {
@@ -633,7 +637,20 @@ const backHref = `/#case-${entry.slug}`;
 
     .section-body p,
     .outcome-beat p {
-      font-size: 15px;
+      font-size: 17px;
+      line-height: 1.55;
+    }
+
+    .decision h4 {
+      font-size: 18px;
+    }
+
+    .decision p {
+      font-size: 16px !important;
+    }
+
+    .chip {
+      font-size: 13px;
     }
 
     .screenshots.cols-3 {
@@ -642,7 +659,7 @@ const backHref = `/#case-${entry.slug}`;
     }
 
     .screenshot-caption {
-      font-size: 11px;
+      font-size: 13px;
       padding: 6px 4px;
     }
 
@@ -660,7 +677,7 @@ const backHref = `/#case-${entry.slug}`;
     }
 
     .outcome-beat h2 {
-      font-size: 20px;
+      font-size: 22px;
     }
   }
 
