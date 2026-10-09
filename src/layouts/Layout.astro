@@ -63,6 +63,8 @@ const canonicalUrl = `${site}${canonicalPath ?? Astro.url.pathname}`;
     <ClientRouter />
     <Analytics />
     <script>
+      import { navigate } from 'astro:transitions/client';
+
       document.addEventListener('contextmenu', (e) => {
         const target = e.target as HTMLElement | null;
         if (target?.tagName === 'IMG' && !target.hasAttribute('data-allow-save')) {
@@ -70,9 +72,16 @@ const canonicalUrl = `${site}${canonicalPath ?? Astro.url.pathname}`;
         }
       });
 
+
       // Remember the page before this one, so a back link can tell whether going back in history returns the reader
-      // to the home page.
+      // to the home page. Also note the history length on arrival: an embedded demo (an iframe) adds its own pages
+      // to the tab's history, and then history.back() would step through the demo instead of leaving the page.
+      let arrivalHistoryLength = history.length;
+      // Only the top-level page keeps this record: a page of this site loaded inside a frame must not overwrite it.
+      const topLevel = window.top === window;
       document.addEventListener('astro:page-load', () => {
+        if (!topLevel) return;
+        arrivalHistoryLength = history.length;
         try {
           const cur = sessionStorage.getItem('nav:cur');
           if (cur !== location.pathname) {
@@ -82,18 +91,45 @@ const canonicalUrl = `${site}${canonicalPath ?? Astro.url.pathname}`;
         } catch {}
       });
 
-      // A link marked data-back goes back in history when the reader came from the home page, so the router
-      // crossfades and restores their scroll position, the same as the browser's back button. Landing on a case
-      // directly, or a modified click, follows the link. Capture phase, so it runs before the router's handler.
+      // Leaving the home page: keep its scroll position, so a back link can put the reader there again.
+      document.addEventListener('astro:before-preparation', (e) => {
+        const from = (e as Event & { from?: URL }).from;
+        if (topLevel && from?.pathname === '/') {
+          try {
+            sessionStorage.setItem('home:scrollY', String(Math.round(window.scrollY)));
+          } catch {}
+        }
+      });
+
+      // Back on the home page through a back link: restore that position as the new page goes in, before the
+      // crossfade's picture of it is taken, so nothing jumps.
+      document.addEventListener('astro:after-swap', () => {
+        try {
+          if (location.pathname === '/' && sessionStorage.getItem('home:restore') === '1') {
+            sessionStorage.removeItem('home:restore');
+            const y = Number(sessionStorage.getItem('home:scrollY') || 0);
+            window.scrollTo({ left: 0, top: y, behavior: 'instant' });
+          }
+        } catch {}
+      });
+
+      // A link marked data-back returns the reader to the home page where they were, with the router's crossfade.
+      // Untouched history: a true back, the same as the browser's button. If an embedded demo has added its own
+      // pages, back would walk through those, so it navigates home instead and restores the saved position. Landing
+      // on a case directly, or a modified click, follows the link. Capture phase, so it runs before the router.
       document.addEventListener(
         'click',
         (e) => {
           const a = (e.target as HTMLElement | null)?.closest?.('a[data-back]');
           if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
           try {
-            if (sessionStorage.getItem('nav:prev') === '/' && history.length > 1) {
-              e.preventDefault();
+            if (sessionStorage.getItem('nav:prev') !== '/') return;
+            e.preventDefault();
+            if (history.length === arrivalHistoryLength && history.length > 1) {
               history.back();
+            } else {
+              sessionStorage.setItem('home:restore', '1');
+              navigate('/');
             }
           } catch {}
         },
