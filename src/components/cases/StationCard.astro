@@ -1,0 +1,271 @@
+---
+import type { LineKey, CaseSlug, CaseBody } from '../../data/cases';
+
+// MOCK (hero G): a case as a station card. Screenshot left, name, badges,
+// the one-line tagline and one figure right, reading time at the end. The
+// whole card is one link to the case page; the old in-place preview
+// (accordion) is gone, because with the screenshot and figure on the card
+// it only repeated the case page and cost a click.
+interface Props {
+  slug: CaseSlug;
+  name: string;
+  tagline: string;
+  line: LineKey;
+  body: CaseBody;
+  ai?: boolean;
+  demo?: boolean;
+  readingMinutes?: number;
+}
+
+const { slug, name, tagline, line, body, ai, demo, readingMinutes } = Astro.props;
+const colorVar = `var(--color-line-${line})`;
+// One figure, and only a real one: a number or an amount, not a word.
+const metric = body.metrics.find((m) => /^[\d$~]/.test(m.num));
+---
+
+<article class="station" data-case={slug} id={`case-${slug}`} style={`--card-color: ${colorVar};`}>
+  <div class="chip"></div>
+  <div class="station-shot">
+    {body.visualImage ? (
+      <img src={body.visualImage} alt="" loading="lazy" draggable="false" />
+    ) : (
+      <span class="station-shot-label">{body.visualLabel}</span>
+    )}
+  </div>
+  <div class="station-text">
+    <div class="station-name-row">
+      <h3 class="station-name">
+        <a class="station-link" href={body.ctaHref}>{name}</a>
+      </h3>
+      {ai && <span class="station-badge">AI</span>}
+      {demo && <span class="station-badge station-badge--outline">Live demo</span>}
+    </div>
+    <p class="station-tagline">{tagline}</p>
+    {metric && (
+      <p class="station-metric">
+        <span class="station-metric-num">{metric.num}</span>
+        <span class="station-metric-label">{metric.label}</span>
+      </p>
+    )}
+  </div>
+  {readingMinutes && (
+    <span class="station-time"><span class="visually-hidden">Reading time </span>{readingMinutes} min</span>
+  )}
+</article>
+
+<style>
+  .station {
+    position: relative;
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 20px;
+    padding: 14px 20px 14px 28px;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 1px 2px 8px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .chip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 9px;
+    height: 100%;
+    border-radius: 4px 0 0 4px;
+    background: var(--card-color);
+    transition: width 0.2s ease;
+  }
+
+  .station-shot {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border-radius: 3px;
+    /* Shows if an image fails, so the slot keeps its shape. */
+    background: color-mix(in srgb, var(--color-text) 6%, var(--color-bg));
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+  }
+  .station-shot img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top left;
+  }
+  /* No screenshot yet (Ziggy): its visual label on the OLED black it ships on. */
+  .station-shot:has(.station-shot-label) {
+    background: #000;
+  }
+  .station-shot-label {
+    padding: 8px;
+    font-family: var(--font-condensed);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-align: center;
+    color: white;
+  }
+
+  .station-text {
+    min-width: 0;
+  }
+
+  .station-name-row {
+    margin-bottom: 6px;
+    line-height: 1;
+  }
+
+  /* Inline so a badge follows the last word when a long name wraps. */
+  .station-name {
+    display: inline;
+    font-family: var(--font-condensed);
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.01em;
+    color: var(--color-text);
+  }
+
+  /* Stretched link: the whole card opens the case in one click. */
+  .station-link {
+    color: inherit;
+    text-decoration: none;
+  }
+  .station-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 4px;
+  }
+  .station:hover .station-link {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--card-color);
+  }
+  .station-link:focus-visible {
+    outline: none;
+  }
+  .station-link:focus-visible::after {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+  }
+
+  .station-badge {
+    display: inline-block;
+    margin-left: 8px;
+    vertical-align: 4px;
+    padding: 3px 6px 2px;
+    border-radius: 4px;
+    font-family: var(--font-condensed);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: var(--color-text);
+    color: white;
+  }
+  .station-badge + .station-badge {
+    margin-left: 4px;
+  }
+  .station-badge--outline {
+    background: transparent;
+    color: var(--color-text);
+    box-shadow: inset 0 0 0 1px var(--color-text);
+  }
+
+  .station-tagline {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: var(--color-text);
+  }
+
+  .station-metric {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .station-metric-num {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-family: var(--font-condensed);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text);
+  }
+  .station-metric-label {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.35;
+    color: var(--color-text-soft);
+  }
+
+  .station-time {
+    align-self: start;
+    margin-top: 4px;
+    font-family: var(--font-condensed);
+    font-size: 15px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-soft);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .station:hover {
+    box-shadow: 2px 4px 14px rgba(0, 0, 0, 0.14);
+    transform: translateY(-2px);
+  }
+  .station:hover .chip {
+    width: 14px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .station,
+    .chip {
+      transition: none;
+    }
+    .station:hover {
+      transform: none;
+    }
+  }
+
+  /* Phone: screenshot on top, text below, time beside the name. */
+  @media (max-width: 767px) {
+    .station {
+      grid-template-columns: minmax(0, 1fr) auto;
+      row-gap: 12px;
+      padding: 12px 14px 14px 22px;
+    }
+    .station-shot {
+      grid-column: 1 / -1;
+      aspect-ratio: 16 / 9;
+    }
+    .station-name {
+      font-size: 22px;
+    }
+    .station-tagline {
+      font-size: 14px;
+    }
+  }
+</style>

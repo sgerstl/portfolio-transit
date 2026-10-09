@@ -9,6 +9,7 @@ import Section from '../cases/Section.astro';
 import SectionHeader from '../cases/SectionHeader.astro';
 import Cases from '../cases/Cases.astro';
 import CaseCard from '../cases/CaseCard.astro';
+import StationCard from '../cases/StationCard.astro';
 import Accordion from '../cases/Accordion.astro';
 import Lightbox from '../Lightbox.astro';
 import DemoModal from '../DemoModal.astro';
@@ -36,7 +37,18 @@ import { ui } from '../../lib/ui';
             subtitle={section.subtitle}
           />
           <Cases>
-            {casesForLine(section.line).map((c) => (
+            {casesForLine(section.line).map((c) => c.body ? (
+              <StationCard
+                slug={c.slug}
+                name={c.name}
+                tagline={c.tagline}
+                line={c.line}
+                body={c.body}
+                ai={c.ai}
+                demo={!!c.detail?.demoUrl}
+                readingMinutes={c.readingMinutes}
+              />
+            ) : (
               <CaseCard
                 slug={c.slug}
                 name={c.name}
