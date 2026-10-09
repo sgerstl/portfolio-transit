@@ -14,22 +14,22 @@ const H1 = 'I design software for the people who keep things running, and the AI
 const LEAD = "My thinking starts with the outcome and who it's for, returning measurable outcomes and effective solutions.";
 const QUALIFIERS = ['15 years', 'Led design across 12 products', 'US/German citizen, EU work-authorized'];
 
-type Proof = { href: string; slug: string; name: string; domains: string[]; fig: string; label: string; img: string; w: number; h: number };
+type Proof = { href: string; slug: string; name: string; domains: string[]; img: string; w: number; h: number };
+// Each tile's figure comes from the case data (body.heroMetric), passed in by HomePage, so the phone's station cards
+// and these tiles share one source.
+export type HeroFigures = Record<string, { num: string; label: string }>;
 const PROOF: Proof[] = [
   {
     href: '/work/brightly/', slug: 'brightly', name: 'Brightly',
-    domains: ['Manufacturing', 'Healthcare', 'Education', 'Government'], fig: '$1.575B',
-    label: 'Set the design direction for the Brightly acquisition',
+    domains: ['Manufacturing', 'Healthcare', 'Education', 'Government'],
     img: '/images/cases/brightly/brightly-dashboard.jpeg', w: 2001, h: 1125,
   },
   {
-    href: '/work/pqdr/', slug: 'pqdr', name: 'PQ + DR', domains: ['Energy'], fig: '200+',
-    label: 'Industrial locations running operator tools I designed',
+    href: '/work/pqdr/', slug: 'pqdr', name: 'PQ + DR', domains: ['Energy'],
     img: '/images/cases/pqdr/pq-one-line.png', w: 1440, h: 1024,
   },
   {
-    href: '/work/sim-racing/', slug: 'sim-racing', name: 'Sim Racing Coach', domains: ['Motorsports'], fig: '4',
-    label: 'Driver question types I designed one AI race engineer to answer',
+    href: '/work/sim-racing/', slug: 'sim-racing', name: 'Sim Racing Coach', domains: ['Motorsports'],
     img: '/images/cases/sim-racing/prototype-web-idle.webp', w: 2000, h: 1107,
   },
 ];
@@ -46,7 +46,7 @@ const describe = (slug: string) => {
   return d ? `From ${d.from.toLowerCase()} to ${d.to.toLowerCase()}. ${d.minutes} minute read.` : '';
 };
 
-export default function Hero() {
+export default function Hero({ figures }: { figures: HeroFigures }) {
   const heroRef = useRef<HTMLElement | null>(null);
   const [active, setActive] = useState<string | null>(null);
   // What the board shows at rest: the portrait, or ?idle=ring for the
@@ -173,8 +173,8 @@ export default function Hero() {
                 <img src={p.img} alt="" width={p.w} height={p.h} decoding="async" />
               </span>
               <span className="hvf-kicker">{p.name}</span>
-              <span className="hvf-fig">{p.fig}</span>
-              <span className="hvf-label">{p.label}</span>
+              <span className="hvf-fig">{figures[p.slug]?.num}</span>
+              <span className="hvf-label">{figures[p.slug]?.label}</span>
               <span className="hvf-domains">{p.domains.join(' · ')}</span>
             </a>
             <span id={`hvg-desc-${p.slug}`} className="sr-only">{describe(p.slug)}</span>

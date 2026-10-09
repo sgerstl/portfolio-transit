@@ -34,6 +34,9 @@ export type CaseBody = {
   cardTagline?: string;
   // null shows no figure on the card.
   cardMetric?: number | null;
+  // The figure this case's hero tile shows (home page, 768px and up). Phones
+  // have no tiles, so there the station card shows this one instead.
+  heroMetric?: CaseMetric;
   // Which part of the screenshot the card shows (CSS object-position);
   // defaults to the top left.
   cardShotPosition?: string;
@@ -380,6 +383,7 @@ export const CASES: CaseEntry[] = [
       ],
       claim: 'I translate expert practice into agent behavior.',
       ctaHref: '/work/sim-racing/',
+      heroMetric: { num: '4', label: 'Driver question types I designed one AI race engineer to answer' },
       // The hero tile shows the 4 question types, so the card shows the next fact.
       cardMetric: 1,
     },
@@ -550,6 +554,7 @@ export const CASES: CaseEntry[] = [
       ],
       claim: 'I turn platform strategy into something a customer can click through.',
       ctaHref: '/work/brightly/',
+      heroMetric: { num: '$1.575B', label: 'Set the design direction for the Brightly acquisition' },
       cardTagline: 'One design language and integration model for the whole portfolio.',
       cardMetric: 2,
     },
@@ -815,6 +820,7 @@ export const CASES: CaseEntry[] = [
       ],
       claim: 'I design operator-facing surfaces that turn AI insight into industrial-scale operational decisions.',
       ctaHref: '/work/pqdr/',
+      heroMetric: { num: '200+', label: 'Industrial locations running operator tools I designed' },
       cardTagline: 'AI insight, operator decision.',
       cardMetric: 1,
     },
