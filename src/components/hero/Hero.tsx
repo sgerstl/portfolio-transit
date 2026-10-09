@@ -42,7 +42,7 @@ const F_H1 = 'I design software for the people who keep things running, and the 
 // leadership and the product thinking (chosen 2026-10-09; drafts in the vault
 // copy file).
 const F_LEAD = "My thinking starts with the outcome and who it's for, returning measurable outcomes and effective solutions.";
-const F_QUALIFIERS = ['15 years', 'Built and led a team of 7', 'US/German citizen, EU work-authorized'];
+const F_QUALIFIERS = ['15 years', 'Led design across 12 products', 'US/German citizen, EU work-authorized'];
 const F_CAPTION = "The industries I've designed for, pinned to Berlin places that do the same work.";
 const F_MAP_DESC =
   "Map of Berlin marking six industries I've designed for: manufacturing at Siemensstadt (Brightly), energy at Kraftwerk Klingenberg (PQ + DR), logistics at Westhafen (Fleet), motorsports at the old AVUS circuit (Sim Racing Coach), healthcare at the Charité (Epilog), and cycling at the Velodrom (Cal).";
