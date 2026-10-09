@@ -142,7 +142,12 @@ const RAIL_TOP_Y = 64;
 
       const lastCard = heroCards[heroCards.length - 1];
       let arrowTop = 642;
-      if (lastCard) {
+      // MOCK: hero G has no cards and scrolls with the page, so the arrow
+      // sits under its work tiles, measured in the container's own space.
+      const gWork = document.querySelector<HTMLElement>('.hv--g .hvf-work');
+      if (gWork) {
+        arrowTop = gWork.getBoundingClientRect().bottom - spineContainer.getBoundingClientRect().top + 40;
+      } else if (lastCard) {
         const r = lastCard.getBoundingClientRect();
         arrowTop = r.bottom + 80;
       }
@@ -211,11 +216,88 @@ const RAIL_TOP_Y = 64;
       }
     };
 
+    // MOCK (hero G): the branch lines draw on as you scroll, reaching
+    // toward each section a little ahead of the reader. Vertical travel
+    // costs its full distance and horizontal travel half, so the run into a
+    // section header draws on rather than snapping across. Reduced motion,
+    // or any other hero, gets the lines fully drawn.
+    type Reveal = { path: SVGPathElement; total: number; lens: number[]; costs: number[] };
+    let reveals: Partial<Record<SectionKey, Reveal>> = {};
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const revealOn = () => !!document.querySelector('.hv--g') && !reducedMotion.matches;
+
+    const measureReveals = () => {
+      reveals = {};
+      (['ai', 'ent', 'pers'] as const).forEach((key) => {
+        const path = linePaths[key];
+        if (!path || !path.getAttribute('d')) return;
+        const total = path.getTotalLength();
+        if (!total) return;
+        const lens: number[] = [];
+        const costs: number[] = [];
+        let prev = path.getPointAtLength(0);
+        let cost = prev.y;
+        for (let l = 0; l <= total; l += 6) {
+          const p = path.getPointAtLength(l);
+          cost += Math.max(Math.abs(p.y - prev.y), 0.5 * Math.abs(p.x - prev.x));
+          lens.push(l);
+          costs.push(cost);
+          prev = p;
+        }
+        lens.push(total);
+        costs.push(cost + 1);
+        reveals[key] = { path, total, lens, costs };
+      });
+    };
+
+    const updateReveal = () => {
+      const on = revealOn();
+      const reach = window.innerHeight * 0.72 - spineContainer.getBoundingClientRect().top;
+      (['ai', 'ent', 'pers'] as const).forEach((key) => {
+        const r = reveals[key];
+        const term = lineTerminators[key];
+        const ind = lineIndicators[key];
+        if (!r) return;
+        if (!on) {
+          r.path.style.strokeDasharray = '';
+          r.path.style.strokeDashoffset = '';
+          if (term) term.style.opacity = '';
+          if (ind) ind.style.opacity = '';
+          return;
+        }
+        let drawn = 0;
+        for (let i = 0; i < r.costs.length && r.costs[i] <= reach; i++) drawn = r.lens[i];
+        r.path.style.strokeDasharray = `${r.total} ${r.total}`;
+        r.path.style.strokeDashoffset = String(r.total - drawn);
+        if (term) term.style.opacity = drawn >= r.total - 1 ? '1' : '0';
+        if (ind) {
+          const y = parseFloat(ind.getAttribute('y') ?? '0');
+          ind.style.opacity = reach >= y ? '1' : '0';
+        }
+      });
+    };
+
     const draw = () => {
       sizeSpineSvg();
       placeSpineGeometry();
       regenerateBranchLines();
+      measureReveals();
+      updateReveal();
     };
+
+    let revealTicking = false;
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (revealTicking) return;
+        revealTicking = true;
+        requestAnimationFrame(() => {
+          revealTicking = false;
+          updateReveal();
+        });
+      },
+      { passive: true, signal },
+    );
 
     draw();
 

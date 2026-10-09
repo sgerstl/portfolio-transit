@@ -173,6 +173,7 @@ type Particle = { x: number; y: number; a: number; fx: number; fy: number; fa: n
 export default function DotField({ active, departures }: { active: string | null; departures: Record<string, Departure> }) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const boardRef = useRef<HTMLDivElement | null>(null);
+  const mountRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const api = useRef<{ show: (key: string | null) => void; setPaused: (p: boolean) => void } | null>(null);
   const [paused, setPaused] = useState(false);
@@ -442,6 +443,55 @@ export default function DotField({ active, departures }: { active: string | null
     api.current?.show(active);
   }, [active]);
 
+  // Sway: the board hangs from a pole, so scrolling gives it a small swing
+  // that settles on its own, a damped spring around the top of the pole.
+  // Capped at 3 degrees, runs only while it is moving and on screen, and is
+  // off under reduced motion.
+  useEffect(() => {
+    const mount = mountRef.current;
+    if (!mount) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const K = 52; // stiffness: about 1.1 swings a second
+    const C = 5.5; // damping: settles in roughly a second and a half
+    const GAIN = 0.18; // degrees a second per pixel scrolled
+    const MAX = 3;
+    let theta = 0, omega = 0, last = 0, raf = 0, running = false;
+    let lastY = window.scrollY;
+    const step = (now: number) => {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      omega += (-K * theta - C * omega) * dt;
+      theta = Math.max(-MAX, Math.min(MAX, theta + omega * dt));
+      if (Math.abs(theta) < 0.01 && Math.abs(omega) < 0.05) {
+        theta = 0;
+        omega = 0;
+        mount.style.transform = '';
+        running = false;
+        return;
+      }
+      mount.style.transform = `rotate(${theta.toFixed(3)}deg)`;
+      raf = requestAnimationFrame(step);
+    };
+    const onScroll = () => {
+      const y = window.scrollY;
+      const dy = y - lastY;
+      lastY = y;
+      if (reduced.matches || mount.getBoundingClientRect().bottom < 0) return;
+      omega -= Math.max(-80, Math.min(80, dy)) * GAIN;
+      if (!running) {
+        running = true;
+        last = performance.now();
+        raf = requestAnimationFrame(step);
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      cancelAnimationFrame(raf);
+      mount.style.transform = '';
+    };
+  }, []);
+
   useEffect(() => {
     api.current?.setPaused(paused);
   }, [paused]);
@@ -451,7 +501,7 @@ export default function DotField({ active, departures }: { active: string | null
   // footer strip with the stop. No BVG logo; the site borrows the type of
   // object, not the operator's mark.
   return (
-    <div className="hvg-board-mount">
+    <div className="hvg-board-mount" ref={mountRef}>
       <div className="hvg-side" aria-hidden="true" />
       <div className="hvg-board" ref={boardRef}>
         <div className="hvg-arm" aria-hidden="true" />

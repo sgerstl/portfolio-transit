@@ -871,6 +871,8 @@
      flattens. The vanishing point sits on the right edge, where both pivot. */
   perspective: 1300px;
   perspective-origin: 100% 50%;
+  /* The sway pivots where the pole meets the ceiling, above the page. */
+  transform-origin: calc(62% + 11px) calc(-1 * (var(--hv-pad-top, 124px) + 80px));
 }
 
 .hvg-board {
