@@ -30,9 +30,9 @@ const UNLIT = 0.07;
 
 export type Departure = { line: string; name: string; minutes: number; from: string; to: string };
 // MOCK: what the board shows at rest. 'ring' turns; 'face' is the still
-// low-poly portrait.
+// rooftop portrait.
 export type Idle = 'ring' | 'face';
-const PORTRAIT = '/images/hero/scott-lowpoly.webp';
+const PORTRAIT = '/images/hero/scott-rooftop.webp';
 type Cell = { x: number; y: number; a: number };
 type V3 = [number, number, number, number]; // x (east), y (up), z (north), brightness
 
@@ -170,68 +170,40 @@ function departureCells(d: Departure, cols: number, rows: number): Cell[] {
   return out.filter((c) => c.x >= 0 && c.y >= 0 && c.x < cols && c.y < rows);
 }
 
-// The portrait in LEDs: a low-poly illustration of Scott, already cropped
-// and mirrored to face the content (public/images/hero/scott-lowpoly.webp).
-// Its flat facets survive the board's resolution where photos did not. It
-// fills the display: drawn at the board's full height and centred, and the
-// background carries on to the board's edges as new facets (polygon shards
-// around seeded points), each toned from the portrait's own edge at that
-// height, so the facets continue without stretching the face or repeating
-// it. Levels are stretched, and the darker half (background and shirt) is
-// pushed down so the head carries the light.
-const BG_CUT = 0.5;
-const SHARD = 11; // rough facet size, in LEDs
+// The portrait in LEDs: a low-poly illustration of Scott on a Berlin rooftop
+// (public/images/hero/scott-rooftop.webp), cropped to the board's shape so it
+// fills the display edge to edge. Not mirrored: he already sits right and
+// looks into the frame, and mirroring would flip the skyline. One LED per
+// cell. Brightness is weighted toward warm tones (red over blue), so skin
+// and the autumn trees glow while the bright sky and the blue shirt recede;
+// plain brightness let the sky outshine the face. Levels are stretched
+// between the 1st and 99th percentile, then a 1.3 gamma deepens the shadows.
+const PORTRAIT_WARMTH = 2.2;
 function faceCells(img: HTMLImageElement, cols: number, rows: number): Cell[] {
-  const h = rows;
-  const w = Math.min(cols, Math.round((h * img.naturalWidth) / img.naturalHeight));
   const c = document.createElement('canvas');
-  c.width = w;
-  c.height = h;
+  c.width = cols;
+  c.height = rows;
   const g = c.getContext('2d', { willReadFrequently: true });
   if (!g) return [];
   g.imageSmoothingQuality = 'high';
-  g.drawImage(img, 0, 0, w, h);
-  const d = g.getImageData(0, 0, w, h).data;
-  const lum = new Float32Array(w * h);
-  for (let i = 0; i < w * h; i++) lum[i] = (0.2126 * d[i * 4] + 0.7152 * d[i * 4 + 1] + 0.0722 * d[i * 4 + 2]) / 255;
-  const sorted = Array.from(lum).sort((a, b) => a - b);
-  const lo = sorted[Math.floor(sorted.length * 0.01)], hi = sorted[Math.floor(sorted.length * 0.995)];
-  const ox = Math.floor((cols - w) / 2);
-  // The portrait's edge tone per row, averaged over its outer few columns.
-  const edgeTone = (y: number, left: boolean) => {
-    let sum = 0;
-    for (let k = 0; k < 3; k++) sum += lum[y * w + (left ? k : w - 1 - k)];
-    return sum / 3;
-  };
-  // Seeds for the side facets, jittered on a coarse grid; each gets a tone
-  // near the portrait's edge tone at its height.
-  const r = rng(11);
-  const seeds: { x: number; y: number; tone: number }[] = [];
-  for (let sy = -SHARD / 2; sy < h + SHARD; sy += SHARD) {
-    for (let sx = -SHARD / 2; sx < cols + SHARD; sx += SHARD) {
-      if (sx > ox + SHARD && sx < ox + w - SHARD) continue;
-      const x = sx + (r() - 0.5) * SHARD * 0.9, y = sy + (r() - 0.5) * SHARD * 0.9;
-      const yy = Math.max(0, Math.min(h - 1, Math.round(y)));
-      seeds.push({ x, y, tone: edgeTone(yy, x < cols / 2) * (0.82 + r() * 0.3) });
-    }
+  // Cover the board: scale to fill, centre, crop any excess.
+  const scale = Math.max(cols / img.naturalWidth, rows / img.naturalHeight);
+  const dw = img.naturalWidth * scale, dh = img.naturalHeight * scale;
+  g.drawImage(img, (cols - dw) / 2, (rows - dh) / 2, dw, dh);
+  const d = g.getImageData(0, 0, cols, rows).data;
+  const raw = new Float32Array(cols * rows);
+  for (let i = 0; i < cols * rows; i++) {
+    const r = d[i * 4] / 255, gr = d[i * 4 + 1] / 255, b = d[i * 4 + 2] / 255;
+    const lum = 0.2126 * r + 0.7152 * gr + 0.0722 * b;
+    const warm = Math.max(0, Math.min(1, (r - b) * PORTRAIT_WARMTH + 0.15));
+    raw[i] = lum * (0.2 + 1.2 * warm);
   }
-  const sideTone = (x: number, y: number) => {
-    let best = Infinity, tone = 0;
-    for (const s of seeds) {
-      const dd = (s.x - x) ** 2 + (s.y - y) ** 2;
-      if (dd < best) { best = dd; tone = s.tone; }
-    }
-    return tone;
-  };
+  const sorted = Array.from(raw).sort((a, b) => a - b);
+  const lo = sorted[Math.floor(sorted.length * 0.01)], hi = sorted[Math.floor(sorted.length * 0.99)];
   const out: Cell[] = [];
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < cols; x++) {
-      const raw = x >= ox && x < ox + w ? lum[y * w + (x - ox)] : sideTone(x, y);
-      const n = Math.max(0, Math.min(1, (raw - lo) / (hi - lo || 1)));
-      const lifted = n < BG_CUT ? n * 0.45 : 0.45 * BG_CUT + ((n - BG_CUT) / (1 - BG_CUT)) * (1 - 0.45 * BG_CUT);
-      const v = Math.min(1, lifted) ** 1.1;
-      if (v > 0.06) out.push({ x, y, a: v });
-    }
+  for (let i = 0; i < cols * rows; i++) {
+    const v = Math.max(0, Math.min(1, (raw[i] - lo) / (hi - lo || 1))) ** 1.3;
+    if (v > 0.06) out.push({ x: i % cols, y: Math.floor(i / cols), a: v });
   }
   return out;
 }
