@@ -82,6 +82,53 @@ export default function Hero() {
     };
   }, []);
 
+  // PROTOTYPE, behind ?parallax=1 (2026-10-09): the headline and board scroll
+  // at 0.6x and fade while the work tiles slide over them at full speed.
+  // Only at 1200px and up, only while the hero fits the window (zoomed or
+  // short screens would otherwise lose the hero's lower part under the
+  // tiles), and never under reduced motion.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get('parallax') !== '1') return;
+    const heroEl = heroRef.current;
+    const top = heroEl?.querySelector<HTMLElement>('.hvf-top');
+    if (!heroEl || !top) return;
+    const RATE = 0.4; // how far behind the page the top falls: 0.4 means it moves at 0.6x
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let raf = 0;
+    const on = () => window.innerWidth >= 1200 && heroEl.offsetHeight <= window.innerHeight && !reduced.matches;
+    const apply = () => {
+      raf = 0;
+      if (!on()) {
+        heroEl.classList.remove('hv--parallax');
+        top.style.transform = '';
+        top.style.opacity = '';
+        return;
+      }
+      heroEl.classList.add('hv--parallax');
+      const y = Math.max(0, window.scrollY);
+      const lag = Math.min(y, heroEl.offsetHeight) * RATE;
+      top.style.transform = `translate3d(0, ${lag.toFixed(1)}px, 0)`;
+      // Fades out as the tiles reach it, so nothing shows through the gaps between them
+      top.style.opacity = String(Math.max(0, 1 - Math.max(0, y - 120) / 320));
+    };
+    const queue = () => {
+      if (!raf) raf = requestAnimationFrame(apply);
+    };
+    apply();
+    window.addEventListener('scroll', queue, { passive: true });
+    window.addEventListener('resize', queue);
+    reduced.addEventListener('change', queue);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', queue);
+      window.removeEventListener('resize', queue);
+      reduced.removeEventListener('change', queue);
+      heroEl.classList.remove('hv--parallax');
+      top.style.transform = '';
+      top.style.opacity = '';
+    };
+  }, []);
+
   // Moving between tiles crosses a 32px gap; a short delay before going
   // back to the resting picture stops the board flickering through it.
   const enter = (key: string) => {
