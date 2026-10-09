@@ -29,6 +29,9 @@ const TILT = (64 * Math.PI) / 180; // 0 is straight down onto the map
 const UNLIT = 0.07;
 
 export type Departure = { line: string; name: string; minutes: number; from: string; to: string };
+// MOCK: what the board shows at rest. 'ring' turns; the face options are still.
+export type Idle = 'ring' | 'face' | 'face-inv' | 'face-lines';
+const HEADSHOT = '/images/scott-headshot.png';
 type Cell = { x: number; y: number; a: number };
 type V3 = [number, number, number, number]; // x (east), y (up), z (north), brightness
 
@@ -166,11 +169,68 @@ function departureCells(d: Departure, cols: number, rows: number): Cell[] {
   return out.filter((c) => c.x >= 0 && c.y >= 0 && c.x < cols && c.y < rows);
 }
 
+// The headshot in LEDs, one LED per cell, square and centred, brightness
+// from the photo. The photo is a circle crop, so outside it stays dark, and
+// its levels are stretched between the 4th and 96th percentile so the face
+// uses the board's full range. Three readings to compare:
+//   face        the photo as it is: light skin and wall lit, dark hair dark
+//   face-inv    inverted: hair, beard, glasses and shadow lit, wall dark
+//   face-lines  edges only, like a drawing
+const smooth = (a: number, b: number, x: number) => {
+  const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
+  return t * t * (3 - 2 * t);
+};
+function faceCells(img: HTMLImageElement, style: Idle, cols: number, rows: number): Cell[] {
+  const size = rows - 4;
+  const ox = Math.floor((cols - size) / 2), oy = 2;
+  const c = document.createElement('canvas');
+  c.width = c.height = size;
+  const g = c.getContext('2d', { willReadFrequently: true });
+  if (!g) return [];
+  g.imageSmoothingQuality = 'high';
+  g.drawImage(img, 0, 0, size, size);
+  const d = g.getImageData(0, 0, size, size).data;
+  const lum = new Float32Array(size * size).fill(-1);
+  const vals: number[] = [];
+  for (let i = 0; i < size * size; i++) {
+    if (d[i * 4 + 3] < 160) continue;
+    lum[i] = (0.2126 * d[i * 4] + 0.7152 * d[i * 4 + 1] + 0.0722 * d[i * 4 + 2]) / 255;
+    vals.push(lum[i]);
+  }
+  if (!vals.length) return [];
+  vals.sort((a, b) => a - b);
+  const lo = vals[Math.floor(vals.length * 0.04)], hi = vals[Math.floor(vals.length * 0.96)];
+  const norm = (i: number) => (lum[i] < 0 ? 0 : Math.max(0, Math.min(1, (lum[i] - lo) / (hi - lo || 1))));
+  const out: Cell[] = [];
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const i = y * size + x;
+      if (lum[i] < 0) continue;
+      const r = Math.hypot(x / size - 0.5, y / size - 0.47) / 0.5;
+      const fade = 1 - smooth(0.8, 0.98, r);
+      let v: number;
+      if (style === 'face-lines') {
+        const at = (dx: number, dy: number) => norm(Math.min(size - 1, Math.max(0, y + dy)) * size + Math.min(size - 1, Math.max(0, x + dx)));
+        const gx = at(1, -1) + 2 * at(1, 0) + at(1, 1) - at(-1, -1) - 2 * at(-1, 0) - at(-1, 1);
+        const gy = at(-1, 1) + 2 * at(0, 1) + at(1, 1) - at(-1, -1) - 2 * at(0, -1) - at(1, -1);
+        v = smooth(0.35, 1.4, Math.hypot(gx, gy));
+      } else if (style === 'face-inv') {
+        v = (1 - norm(i)) ** 1.3;
+      } else {
+        v = norm(i) ** 1.6;
+      }
+      v *= fade;
+      if (v > 0.08) out.push({ x: ox + x, y: oy + y, a: Math.min(1, v) });
+    }
+  }
+  return out;
+}
+
 const ease = (t: number) => 1 - (1 - t) ** 3;
 
 type Particle = { x: number; y: number; a: number; fx: number; fy: number; fa: number; sx: number; sy: number; tx: number; ty: number; ta: number };
 
-export default function DotField({ active, departures }: { active: string | null; departures: Record<string, Departure> }) {
+export default function DotField({ active, departures, idle = 'ring' }: { active: string | null; departures: Record<string, Departure>; idle?: Idle }) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const boardRef = useRef<HTMLDivElement | null>(null);
   const mountRef = useRef<HTMLDivElement | null>(null);
@@ -269,8 +329,22 @@ export default function DotField({ active, departures }: { active: string | null
       ctx.globalAlpha = 1;
     };
 
+    // The resting picture: the turning Ring, or the headshot once it loads.
+    const turns = idle === 'ring';
+    const headshot = new Image();
+    let headshotReady = false;
+    let faceCache: { cols: number; rows: number; cells: Cell[] } | null = null;
+    const faceIdle = (): Cell[] => {
+      if (!headshotReady) return [];
+      if (!faceCache || faceCache.cols !== cols || faceCache.rows !== rows) {
+        faceCache = { cols, rows, cells: faceCells(headshot, idle, cols, rows) };
+      }
+      return faceCache.cells;
+    };
     const picture = (key: string | null): Cell[] =>
-      key && departures[key] ? departureCells(departures[key], cols, rows) : ringCells(model, angle, cols, rows);
+      key && departures[key]
+        ? departureCells(departures[key], cols, rows)
+        : turns ? ringCells(model, angle, cols, rows) : faceIdle();
 
     // Start a move from whatever is lit now to the next picture.
     const moveTo = (key: string | null, intro = false) => {
@@ -344,7 +418,7 @@ export default function DotField({ active, departures }: { active: string | null
     // never makes it jump) and redraws only on 15 fps steps.
     const SPEED = (Math.PI * 2) / (TURN_SECONDS * 1000);
     let prevNow = 0, drawnStep = -1;
-    const needed = () => mode === 'move' || (mode === 'ring' && !isPaused);
+    const needed = () => mode === 'move' || (mode === 'ring' && turns && !isPaused);
     const schedule = () => {
       running = true;
       raf = requestAnimationFrame(tick);
@@ -355,7 +429,7 @@ export default function DotField({ active, departures }: { active: string | null
       if (mode === 'move') {
         stepMove(now);
         prevNow = 0;
-      } else if (mode === 'ring' && !isPaused) {
+      } else if (mode === 'ring' && turns && !isPaused) {
         if (prevNow) angle += Math.min(now - prevNow, 200) * SPEED;
         prevNow = now;
         const st = Math.floor(now / STEP_MS);
@@ -418,6 +492,13 @@ export default function DotField({ active, departures }: { active: string | null
     };
 
     build();
+    if (!turns) {
+      headshot.src = HEADSHOT;
+      headshot.decode().then(() => {
+        headshotReady = true;
+        if (!target) moveTo(null, !reducedQuery.matches);
+      }).catch(() => {});
+    }
     let t: ReturnType<typeof setTimeout> | undefined;
     const ro = new ResizeObserver(() => {
       clearTimeout(t);
@@ -437,7 +518,7 @@ export default function DotField({ active, departures }: { active: string | null
       document.removeEventListener('visibilitychange', wake);
       api.current = null;
     };
-  }, [departures]);
+  }, [departures, idle]);
 
   useEffect(() => {
     api.current?.show(active);
@@ -519,8 +600,10 @@ export default function DotField({ active, departures }: { active: string | null
           <div className="hvg-foot">
             <span className="hvg-stop" aria-hidden="true">Berlin</span>
             {/* Where the real board has its operator badge: a plain yellow key
-                that pauses the turn. */}
-            <button
+                that pauses the turn. A still face has nothing to pause, so the
+                key is just the badge then. */}
+            {idle !== 'ring' && <span className="hvg-pause hvg-pause--badge" aria-hidden="true" />}
+            {idle === 'ring' && <button
               type="button"
               className="hvg-pause"
               onClick={() => setPaused((p) => !p)}
@@ -529,7 +612,7 @@ export default function DotField({ active, departures }: { active: string | null
               <svg viewBox="0 0 16 16" aria-hidden="true">
                 {paused ? <path d="M5 3.5v9l7.5-4.5z" /> : <path d="M4.5 3.5h2.5v9H4.5zM9 3.5h2.5v9H9z" />}
               </svg>
-            </button>
+            </button>}
           </div>
         </div>
       </div>

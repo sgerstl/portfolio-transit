@@ -1059,6 +1059,11 @@
 @media (prefers-reduced-motion: reduce) {
   .hvg-pause { transition: none; }
 }
+/* With nothing to pause, the yellow key is just the badge. */
+.hvg-pause--badge {
+  cursor: default;
+  pointer-events: none;
+}
 
 @media (max-width: 1199px) {
   .hvg-board-mount { display: none; }
@@ -1088,10 +1093,9 @@
 }
 
 
-/* MOCK: three hover/focus indicators for G's work tiles, ?hover=wash|rule|frame
-   (wash by default). Each covers hover and keyboard focus alike, sits outside
-   the tile's box so nothing shifts, and uses the CS1 line orange, the line
-   these three cases ride on. They replace F's image lift. */
+/* Hover and keyboard focus on G's work tiles: a muted wash of the CS1 line
+   orange behind the image and text (14% orange in oklab). It sits outside
+   the tile's box, so nothing shifts, and replaces F's image lift. */
 .hv--g .hvf-work a {
   position: relative;
   isolation: isolate;
@@ -1100,9 +1104,15 @@
   content: '';
   position: absolute;
   z-index: -1;
-  pointer-events: none;
+  inset: -14px;
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--color-line-ai) 14%, var(--color-bg));
   opacity: 0;
-  transition: opacity 150ms ease-out, transform 150ms ease-out;
+  pointer-events: none;
+  transition: opacity 150ms ease-out;
+}
+.hv--g .hvf-work a:is(:hover, :focus-visible)::before {
+  opacity: 1;
 }
 .hv--g .hvf-work a:hover .hvf-shot {
   transform: none;
@@ -1112,61 +1122,12 @@
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
 }
-
-/* Wash: a muted orange panel behind the image and the text. */
-.hv--hover-wash .hvf-work a::before {
-  inset: -14px;
-  border-radius: 10px;
-  background: color-mix(in oklab, var(--color-line-ai) 9%, var(--color-bg));
-}
-.hv--hover-wash .hvf-work a:is(:hover, :focus-visible)::before {
-  opacity: 1;
-}
-.hv--hover-wash .hvf-work a:focus-visible {
+.hv--g .hvf-work a:focus-visible {
   outline-offset: 14px;
   border-radius: 10px;
 }
-
-/* Rule: the line colour draws down the tile's left edge, like the case
-   cards below. */
-.hv--hover-rule .hvf-work a::before {
-  top: 0;
-  bottom: 0;
-  left: -14px;
-  width: 4px;
-  border-radius: 2px;
-  background: var(--color-line-ai);
-  transform: scaleY(0.4);
-  transform-origin: 50% 0;
-}
-.hv--hover-rule .hvf-work a:is(:hover, :focus-visible)::before {
-  opacity: 1;
-  transform: scaleY(1);
-}
-
-/* Frame: an orange ring around the screenshot, the image easing in a touch. */
-.hv--hover-frame .hvf-shot {
-  outline: 2px solid transparent;
-  outline-offset: 3px;
-  transition: outline-color 150ms ease-out, box-shadow 150ms ease-out;
-}
-.hv--hover-frame .hvf-shot img {
-  transition: transform 200ms ease-out;
-}
-.hv--hover-frame .hvf-work a:is(:hover, :focus-visible) .hvf-shot {
-  outline-color: var(--color-line-ai);
-}
-.hv--hover-frame .hvf-work a:is(:hover, :focus-visible) .hvf-shot img {
-  transform: scale(1.03);
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .hv--g .hvf-work a::before,
-  .hv--hover-frame .hvf-shot,
-  .hv--hover-frame .hvf-shot img {
+  .hv--g .hvf-work a::before {
     transition: none;
-  }
-  .hv--hover-frame .hvf-work a:is(:hover, :focus-visible) .hvf-shot img {
-    transform: none;
   }
 }

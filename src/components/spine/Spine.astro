@@ -143,12 +143,12 @@ const RAIL_TOP_Y = 64;
       const lastCard = heroCards[heroCards.length - 1];
       let arrowTop = 642;
       // MOCK: hero G has no cards and scrolls with the page. The rail ends
-      // in view, at a transfer station level with the middle of the work
-      // screenshots, measured in the container's own space.
-      const gShot = document.querySelector<HTMLElement>('.hv--g .hvf-shot');
-      if (gShot) {
-        const r = gShot.getBoundingClientRect();
-        arrowTop = r.top + r.height / 2 - ARROW_H / 2 - spineContainer.getBoundingClientRect().top;
+      // at a transfer station level with the bottom of the headline, which
+      // leaves the branch lines a long run down past the work tiles.
+      // Measured in the container's own space.
+      const gTitle = document.querySelector<HTMLElement>('.hv--g .hvf-h1');
+      if (gTitle) {
+        arrowTop = gTitle.getBoundingClientRect().bottom - ARROW_H - spineContainer.getBoundingClientRect().top;
       } else if (lastCard) {
         const r = lastCard.getBoundingClientRect();
         arrowTop = r.bottom + 80;

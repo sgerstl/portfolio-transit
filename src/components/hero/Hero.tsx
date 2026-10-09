@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './hero-variants.css';
 import RingObject from './RingObject';
-import DotField, { type Departure } from './DotField';
+import DotField, { type Departure, type Idle } from './DotField';
 import { smoothScrollTo } from '../../lib/scroll';
 import { ui } from '../../lib/ui';
 
@@ -163,15 +163,15 @@ export default function Hero() {
   const cardsRef = useRef<HTMLLIElement[]>([]);
   const [variant, setVariant] = useState<Variant>('current');
   const [fActive, setFActive] = useState<string | null>(null);
-  // MOCK: which hover indicator G's tiles use, ?hover=wash|rule|frame.
-  const [gHover, setGHover] = useState<'wash' | 'rule' | 'frame'>('wash');
+  // MOCK: what G's board shows at rest, ?idle=ring|face|face-inv|face-lines.
+  const [gIdle, setGIdle] = useState<Idle>('ring');
   const leaveTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
     const v = new URLSearchParams(window.location.search).get('hero');
     if (v === 'a' || v === 'e' || v === 'f' || v === 'g') setVariant(v);
-    const h = new URLSearchParams(window.location.search).get('hover');
-    if (h === 'rule' || h === 'frame') setGHover(h);
+    const idle = new URLSearchParams(window.location.search).get('idle');
+    if (idle === 'face' || idle === 'face-inv' || idle === 'face-lines') setGIdle(idle);
   }, []);
 
   const STAT_CARDS: StatCard[] = [
@@ -383,7 +383,7 @@ export default function Hero() {
     };
     return (
       <>
-        <section className={`hero hv hv--f${g ? ` hv--g hv--hover-${gHover}` : ''}`} aria-label={ui('hero.ariaIntro')} ref={heroRef}>
+        <section className={`hero hv hv--f${g ? ' hv--g' : ''}`} aria-label={ui('hero.ariaIntro')} ref={heroRef}>
           <div className="hvf-top">
             <div className="hvf-text">
               <h1 className="hvf-h1">{F_H1}</h1>
@@ -398,7 +398,7 @@ export default function Hero() {
                 ))}
               </p>
             </div>
-            {g ? <DotField active={fActive} departures={G_DEPARTURES} /> : <BerlinMap active={fActive} />}
+            {g ? <DotField active={fActive} departures={G_DEPARTURES} idle={gIdle} /> : <BerlinMap active={fActive} />}
           </div>
           <ul className="hvf-work" aria-label="Selected work">
             {F_PROOF.map((p) => {
