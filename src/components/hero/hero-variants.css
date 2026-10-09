@@ -876,8 +876,9 @@
 }
 
 .hvg-board {
-  --hvg-bezel: 10px;
-  --hvg-bar: 14px;
+  /* The grey bars run right out to the rim; no white between them. */
+  --hvg-bezel: 0px;
+  --hvg-bar: 24px;
   position: relative;
   /* Hung on the right and turned in toward the headline and the work: the
      left edge recedes and the face tips slightly down toward the tiles.
