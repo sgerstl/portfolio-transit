@@ -591,13 +591,14 @@ export default function DotField({ active, departures, idle = 'ring' }: { active
             <div className="hvg-field" ref={wrapRef} aria-hidden="true">
               <canvas ref={canvasRef} />
             </div>
+            {/* Where the real board has its operator badge: a plain yellow
+                square at the foot of the right-hand grey bar. */}
+            <span className="hvg-badge" aria-hidden="true" />
           </div>
           <div className="hvg-foot">
             <span className="hvg-stop" aria-hidden="true">Berlin</span>
-            {/* Where the real board has its operator badge: a plain yellow key
-                that pauses the turn. A still face has nothing to pause, so the
-                key is just the badge then. */}
-            {idle !== 'ring' && <span className="hvg-pause hvg-pause--badge" aria-hidden="true" />}
+            {/* The turning Ring runs past five seconds, so it gets a pause key
+                (WCAG 2.2.2); the still portrait has nothing to pause. */}
             {idle === 'ring' && <button
               type="button"
               className="hvg-pause"

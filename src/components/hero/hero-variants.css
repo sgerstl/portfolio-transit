@@ -1059,10 +1059,18 @@
 @media (prefers-reduced-motion: reduce) {
   .hvg-pause { transition: none; }
 }
-/* With nothing to pause, the yellow key is just the badge. */
-.hvg-pause--badge {
-  cursor: default;
-  pointer-events: none;
+/* The badge: a small yellow square centred at the foot of the right-hand
+   grey bar, above the glass sheen. */
+.hvg-badge {
+  position: absolute;
+  z-index: 3;
+  right: calc((var(--hvg-bar) - 13px) / 2);
+  bottom: 6px;
+  width: 13px;
+  height: 13px;
+  border: 1px solid var(--color-board-housing-shade);
+  border-radius: 1px;
+  background: var(--color-board-housing);
 }
 
 @media (max-width: 1199px) {
