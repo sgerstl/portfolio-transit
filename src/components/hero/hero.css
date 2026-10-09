@@ -290,6 +290,43 @@
   transform-origin: 100% 50%;
 }
 
+/* The board's shadow on the wall: lit from the upper left, so it falls 14px right and 22px down. A trapezoid,
+   because the board's left edge recedes. It shares the mount's pivot at the top of the pole; DotField turns it a beat
+   behind the board. The mount's perspective makes it a stacking context, so z-index -1 stays behind the board. */
+.hvg-shadow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  transform-origin: calc(62% + 11px) calc(-1 * (var(--hv-pad-top, 124px) + 80px));
+}
+.hvg-shadow-board {
+  position: absolute;
+  top: 24px;
+  left: calc(12% + 14px);
+  width: 89%;
+  height: 100%;
+  /* Blur here, the shape on the child: a clip-path on the blurred element itself would trim the blur back to a hard
+     edge. */
+  filter: blur(16px);
+}
+.hvg-shadow-board::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(0 5%, 100% 0, 100% 100%, 0 95%);
+  background: rgba(40, 32, 20, 0.22);
+}
+.hvg-shadow-pole {
+  position: absolute;
+  bottom: calc(100% - 22px);
+  left: calc(62% + 14px);
+  width: 22px;
+  height: calc(var(--hv-pad-top, 124px) + 1080px);
+  background: rgba(40, 32, 20, 0.1);
+  filter: blur(5px);
+}
+
 /* The yellow electronics box behind the board, seen as its side: the same
    turn as the board, then a quarter turn back about the shared right edge,
    so a narrow band of yellow shows past the board. */
