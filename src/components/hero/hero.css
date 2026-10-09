@@ -143,7 +143,8 @@
   border-radius: 6px;
   /* Shows if an image fails to load, so the tile keeps its shape. */
   background: color-mix(in srgb, var(--color-text) 6%, var(--color-bg));
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.05);
+  /* A hairline ring first, so a mostly white screenshot (PQ + DR) still has an edge. */
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09), 0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.05);
   transition: box-shadow 150ms ease-out, transform 150ms ease-out;
 }
 
@@ -187,7 +188,7 @@
 
 .hvf-work a:hover .hvf-shot {
   transform: translateY(-2px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), 0 14px 32px rgba(0, 0, 0, 0.09);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09), 0 2px 4px rgba(0, 0, 0, 0.08), 0 14px 32px rgba(0, 0, 0, 0.09);
 }
 .hvf-work a:hover .hvf-label {
   text-decoration: underline;
@@ -543,9 +544,9 @@
 }
 
 
-/* Hover and keyboard focus on the work tiles: a muted wash of the CS1 line
-   orange behind the image and text (14% orange in oklab). It sits outside
-   the tile's box, so nothing shifts, and replaces the base image lift. */
+/* Each work tile sits on a soft grey container that reaches 14px past it, so the screenshots stand off the page and the
+   map stays out from under the text. Hover and keyboard focus turn it to a muted wash of the CS1 line orange (14% in
+   oklab). It sits outside the tile's box, so nothing shifts, and replaces the base image lift. */
 .hv--g .hvf-work a {
   position: relative;
   isolation: isolate;
@@ -556,13 +557,36 @@
   z-index: -1;
   inset: -14px;
   border-radius: 10px;
-  background: color-mix(in oklab, var(--color-line-pro) 14%, var(--color-bg));
-  opacity: 0;
+  background: color-mix(in oklab, var(--color-text) 6%, var(--color-bg));
   pointer-events: none;
-  transition: opacity 150ms ease-out;
+  transition: background-color 150ms ease-out;
 }
 .hv--g .hvf-work a:is(:hover, :focus-visible)::before {
-  opacity: 1;
+  background: color-mix(in oklab, var(--color-line-pro) 14%, var(--color-bg));
+}
+/* Wide enough that the containers keep about 16px of page between them. */
+.hv--g .hvf-work {
+  gap: 44px;
+}
+/* The containers end level even when one tile's domains wrap to an extra line. */
+.hv--g .hvf-work li {
+  display: flex;
+}
+.hv--g .hvf-work li > a {
+  flex: 1;
+}
+@media (max-width: 767px) {
+  .hv--g .hvf-work {
+    gap: 24px;
+  }
+  .hv--g .hvf-work a::before {
+    inset: -8px;
+    border-radius: 8px;
+  }
+  .hero.hv--g .hvf-work a:focus-visible {
+    outline-offset: 8px;
+    border-radius: 8px;
+  }
 }
 .hv--g .hvf-work a:hover .hvf-shot {
   transform: none;
