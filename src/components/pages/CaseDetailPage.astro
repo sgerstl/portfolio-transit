@@ -24,7 +24,7 @@ const backHref = `/#case-${entry.slug}`;
   <Header />
 
   <main class={`case-page ${demoUrl ? 'has-phone' : ''}`} style={`--accent: ${colorVar};`}>
-    <a class="back" href={backHref}>{ui('case.back')}</a>
+    <a class="back" href={backHref} data-back>{ui('case.back')}</a>
 
     {detail ? (
       <div class={`case-grid ${demoUrl ? 'with-phone' : ''}`}>

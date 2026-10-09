@@ -58,6 +58,36 @@ const canonicalUrl = `${site}${canonicalPath ?? Astro.url.pathname}`;
           e.preventDefault();
         }
       });
+
+      // Remember the page before this one, so a back link can tell whether going back in history returns the reader
+      // to the home page.
+      document.addEventListener('astro:page-load', () => {
+        try {
+          const cur = sessionStorage.getItem('nav:cur');
+          if (cur !== location.pathname) {
+            sessionStorage.setItem('nav:prev', cur ?? '');
+            sessionStorage.setItem('nav:cur', location.pathname);
+          }
+        } catch {}
+      });
+
+      // A link marked data-back goes back in history when the reader came from the home page, so the router
+      // crossfades and restores their scroll position, the same as the browser's back button. Landing on a case
+      // directly, or a modified click, follows the link. Capture phase, so it runs before the router's handler.
+      document.addEventListener(
+        'click',
+        (e) => {
+          const a = (e.target as HTMLElement | null)?.closest?.('a[data-back]');
+          if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+          try {
+            if (sessionStorage.getItem('nav:prev') === '/' && history.length > 1) {
+              e.preventDefault();
+              history.back();
+            }
+          } catch {}
+        },
+        true,
+      );
     </script>
   </head>
   <body>

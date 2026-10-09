@@ -184,10 +184,14 @@ const menuCloseLabel = ui('header.menuClose');
     }
 
     // ---- Initial scroll on page load ------------------------------
+    // Arriving with a hash: one instant placement, with scroll-margin-top keeping the target under the header. It used
+    // to snap to the top and glide down, which read as the page jumping around (2026-10-09).
     if (location.hash) {
-      const hash = location.hash;
-      window.scrollTo(0, 0);
-      requestAnimationFrame(() => requestAnimationFrame(() => scrollToHash(hash)));
+      let el: HTMLElement | null = null;
+      try {
+        el = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+      } catch {}
+      el?.scrollIntoView({ block: 'start' });
     }
   }
 

@@ -95,6 +95,12 @@ img:not([data-allow-save]) {
   will-change: opacity;
 }
 
+/* Anchor jumps to a case or section land below the fixed header, in one move. */
+[id^='case-'],
+[id^='section-'] {
+  scroll-margin-top: 80px;
+}
+
 /* ── SPINE CONTAINER + SVG ────────────────────────────── */
 .spine-container {
   /* Spine.astro reads --rail-center-x to position the rail, rings,

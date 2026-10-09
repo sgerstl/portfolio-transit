@@ -26,9 +26,11 @@ const heroFigures = Object.fromEntries(
 
   <main class="page">
     <MapWallpaper />
-    <Hero client:load figures={heroFigures} />
 
     <div class="spine-container" id="cases">
+      {/* In the page's flow, so the cases start in the right place from the first paint. A height measured by script
+          moved them after load, which threw off restored scroll positions coming back from a case. */}
+      <Hero client:load figures={heroFigures} />
       <Spine />
       <MobileSpine />
 
