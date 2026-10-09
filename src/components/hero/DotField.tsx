@@ -24,7 +24,7 @@ const STEP_MS = 1000 / FPS;
 const SCATTER_FRAMES = 2;
 const TRAVEL_FRAMES = 5;
 const INTRO_FRAMES = 12;
-const TURN_SECONDS = 36;
+const TURN_SECONDS = 60;
 const TILT = (64 * Math.PI) / 180; // 0 is straight down onto the map
 const UNLIT = 0.07;
 
@@ -172,6 +172,7 @@ type Particle = { x: number; y: number; a: number; fx: number; fy: number; fa: n
 
 export default function DotField({ active, departures }: { active: string | null; departures: Record<string, Departure> }) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
+  const boardRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const api = useRef<{ show: (key: string | null) => void; setPaused: (p: boolean) => void } | null>(null);
   const [paused, setPaused] = useState(false);
@@ -376,6 +377,10 @@ export default function DotField({ active, departures }: { active: string | null
       pitch = w / COLS;
       cols = COLS;
       rows = Math.floor(h / pitch);
+      // The frame's header labels sit over their LED columns: Linie over the
+      // line, Ziel over the case name, Lesezeit over the minutes.
+      boardRef.current?.style.setProperty('--hvg-pitch', `${pitch}px`);
+      boardRef.current?.style.setProperty('--hvg-ziel', String(4 + textWidth('CS1  ') + 1));
       canvas.width = Math.round(w * dpr);
       canvas.height = Math.round(h * dpr);
       makeSprites();
@@ -433,21 +438,35 @@ export default function DotField({ active, departures }: { active: string | null
     api.current?.setPaused(paused);
   }, [paused]);
 
+  // The housing follows a BVG platform display (U Frankfurter Tor was the
+  // reference): enamel frame, header strip, recessed LED panel behind glass,
+  // footer strip with the stop. No BVG logo; the site borrows the type of
+  // object, not the operator's mark.
   return (
-    <div className="hvg-board">
-      <div className="hvg-field" ref={wrapRef} aria-hidden="true">
-        <canvas ref={canvasRef} />
+    <div className="hvg-board" ref={boardRef}>
+      <div className="hvg-head" aria-hidden="true" lang="de">
+        <span className="hvg-col-line">Linie</span>
+        <span className="hvg-col-ziel">Ziel</span>
+        <span className="hvg-col-time">Lesezeit</span>
       </div>
-      <button
-        type="button"
-        className="hvg-pause"
-        onClick={() => setPaused((p) => !p)}
-        aria-label={paused ? 'Play the map animation' : 'Pause the map animation'}
-      >
-        <svg viewBox="0 0 16 16" aria-hidden="true">
-          {paused ? <path d="M5 3.5v9l7.5-4.5z" /> : <path d="M4.5 3.5h2.5v9H4.5zM9 3.5h2.5v9H9z" />}
-        </svg>
-      </button>
+      <div className="hvg-glass">
+        <div className="hvg-field" ref={wrapRef} aria-hidden="true">
+          <canvas ref={canvasRef} />
+        </div>
+      </div>
+      <div className="hvg-foot">
+        <span className="hvg-stop" aria-hidden="true">Berlin</span>
+        <button
+          type="button"
+          className="hvg-pause"
+          onClick={() => setPaused((p) => !p)}
+          aria-label={paused ? 'Play the map animation' : 'Pause the map animation'}
+        >
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            {paused ? <path d="M5 3.5v9l7.5-4.5z" /> : <path d="M4.5 3.5h2.5v9H4.5zM9 3.5h2.5v9H9z" />}
+          </svg>
+        </button>
+      </div>
     </div>
   );
 }
