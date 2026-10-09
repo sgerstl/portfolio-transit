@@ -29,9 +29,10 @@ const TILT = (64 * Math.PI) / 180; // 0 is straight down onto the map
 const UNLIT = 0.07;
 
 export type Departure = { line: string; name: string; minutes: number; from: string; to: string };
-// MOCK: what the board shows at rest. 'ring' turns; 'face' is still.
+// MOCK: what the board shows at rest. 'ring' turns; 'face' is the still
+// low-poly portrait.
 export type Idle = 'ring' | 'face';
-const HEADSHOT = '/images/scott-headshot.png';
+const PORTRAIT = '/images/hero/scott-lowpoly.webp';
 type Cell = { x: number; y: number; a: number };
 type V3 = [number, number, number, number]; // x (east), y (up), z (north), brightness
 
@@ -169,110 +170,68 @@ function departureCells(d: Departure, cols: number, rows: number): Cell[] {
   return out.filter((c) => c.x >= 0 && c.y >= 0 && c.x < cols && c.y < rows);
 }
 
-// The headshot in LEDs, one LED per cell, square and centred. The photo's
-// light wall would light the whole circle, so it is found and dropped first:
-// a flood fill from the wall near the crop's rim spreads through smooth,
-// light pixels and stops at the edges of hair, beard and face. What is left
-// (the head) is feathered, the sweater is faded out below the chin, and the
-// face is sharpened before it shrinks so the glasses survive. Every lit LED
-// gets a small floor so dark hair and beard still hold the silhouette.
-// Tuned offline against the headshot (scratch prototype, 2026-10-09).
-const WORK = 220; // working resolution for the mask
-const WALL_STEP = 0.022; // largest brightness step the fill crosses
-function boxBlur(src: Float32Array, n: number, r: number): Float32Array {
-  const tmp = new Float32Array(n * n), out = new Float32Array(n * n);
-  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
-    let sum = 0, c = 0;
-    for (let k = -r; k <= r; k++) { const xx = x + k; if (xx >= 0 && xx < n) { sum += src[y * n + xx]; c++; } }
-    tmp[y * n + x] = sum / c;
-  }
-  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
-    let sum = 0, c = 0;
-    for (let k = -r; k <= r; k++) { const yy = y + k; if (yy >= 0 && yy < n) { sum += tmp[yy * n + x]; c++; } }
-    out[y * n + x] = sum / c;
-  }
-  return out;
-}
+// The portrait in LEDs: a low-poly illustration of Scott, already cropped
+// and mirrored to face the content (public/images/hero/scott-lowpoly.webp).
+// Its flat facets survive the board's resolution where photos did not. It
+// fills the display: drawn at the board's full height and centred, and the
+// background carries on to the board's edges as new facets (polygon shards
+// around seeded points), each toned from the portrait's own edge at that
+// height, so the facets continue without stretching the face or repeating
+// it. Levels are stretched, and the darker half (background and shirt) is
+// pushed down so the head carries the light.
+const BG_CUT = 0.5;
+const SHARD = 11; // rough facet size, in LEDs
 function faceCells(img: HTMLImageElement, cols: number, rows: number): Cell[] {
-  const W = WORK;
+  const h = rows;
+  const w = Math.min(cols, Math.round((h * img.naturalWidth) / img.naturalHeight));
   const c = document.createElement('canvas');
-  c.width = c.height = W;
+  c.width = w;
+  c.height = h;
   const g = c.getContext('2d', { willReadFrequently: true });
   if (!g) return [];
   g.imageSmoothingQuality = 'high';
-  g.drawImage(img, 0, 0, W, W);
-  const d = g.getImageData(0, 0, W, W).data;
-  const L = new Float32Array(W * W), solid = new Uint8Array(W * W);
-  for (let i = 0; i < W * W; i++) {
-    L[i] = (0.2126 * d[i * 4] + 0.7152 * d[i * 4 + 1] + 0.0722 * d[i * 4 + 2]) / 255;
-    solid[i] = d[i * 4 + 3] > 160 ? 1 : 0;
-  }
-  // Trim the crop's soft rim (a 7px erosion) so it never lights as an arc.
-  const inside = new Uint8Array(W * W);
-  for (let y = 0; y < W; y++) for (let x = 0; x < W; x++) {
-    let ok = 1;
-    for (let k = -3; k <= 3 && ok; k++) for (let m = -3; m <= 3 && ok; m++) {
-      const yy = y + k, xx = x + m;
-      if (yy < 0 || xx < 0 || yy >= W || xx >= W || !solid[yy * W + xx]) ok = 0;
-    }
-    inside[y * W + x] = ok;
-  }
-  // Flood the wall from light pixels near the rim, upper part only so the
-  // sweater is never a seed.
-  const wall = new Uint8Array(W * W);
-  const queue = new Int32Array(W * W);
-  let head = 0, tail = 0;
-  for (let y = 0; y < W * 0.72; y++) for (let x = 0; x < W; x++) {
-    const i = y * W + x;
-    if (inside[i] && L[i] > 0.6 && Math.hypot(x - W / 2, y - W / 2) / (W / 2) > 0.86) { wall[i] = 1; queue[tail++] = i; }
-  }
-  while (head < tail) {
-    const i = queue[head++], x = i % W, y = (i / W) | 0;
-    const near = [x > 0 ? i - 1 : -1, x < W - 1 ? i + 1 : -1, y > 0 ? i - W : -1, y < W - 1 ? i + W : -1];
-    for (const n of near) {
-      if (n < 0 || wall[n] || !inside[n] || L[n] <= 0.45 || Math.abs(L[n] - L[i]) >= WALL_STEP) continue;
-      wall[n] = 1;
-      queue[tail++] = n;
+  g.drawImage(img, 0, 0, w, h);
+  const d = g.getImageData(0, 0, w, h).data;
+  const lum = new Float32Array(w * h);
+  for (let i = 0; i < w * h; i++) lum[i] = (0.2126 * d[i * 4] + 0.7152 * d[i * 4 + 1] + 0.0722 * d[i * 4 + 2]) / 255;
+  const sorted = Array.from(lum).sort((a, b) => a - b);
+  const lo = sorted[Math.floor(sorted.length * 0.01)], hi = sorted[Math.floor(sorted.length * 0.995)];
+  const ox = Math.floor((cols - w) / 2);
+  // The portrait's edge tone per row, averaged over its outer few columns.
+  const edgeTone = (y: number, left: boolean) => {
+    let sum = 0;
+    for (let k = 0; k < 3; k++) sum += lum[y * w + (left ? k : w - 1 - k)];
+    return sum / 3;
+  };
+  // Seeds for the side facets, jittered on a coarse grid; each gets a tone
+  // near the portrait's edge tone at its height.
+  const r = rng(11);
+  const seeds: { x: number; y: number; tone: number }[] = [];
+  for (let sy = -SHARD / 2; sy < h + SHARD; sy += SHARD) {
+    for (let sx = -SHARD / 2; sx < cols + SHARD; sx += SHARD) {
+      if (sx > ox + SHARD && sx < ox + w - SHARD) continue;
+      const x = sx + (r() - 0.5) * SHARD * 0.9, y = sy + (r() - 0.5) * SHARD * 0.9;
+      const yy = Math.max(0, Math.min(h - 1, Math.round(y)));
+      seeds.push({ x, y, tone: edgeTone(yy, x < cols / 2) * (0.82 + r() * 0.3) });
     }
   }
-  // The head: inside and not wall, feathered, faded out below the chin.
-  let fg = new Float32Array(W * W);
-  for (let i = 0; i < W * W; i++) fg[i] = inside[i] && !wall[i] ? 1 : 0;
-  fg = boxBlur(boxBlur(fg, W, 2), W, 2);
-  for (let y = 0; y < W; y++) {
-    const keep = 1 - Math.max(0, Math.min(1, (y / W - 0.8) / 0.1));
-    for (let x = 0; x < W; x++) fg[y * W + x] *= keep;
-  }
-  // Sharpen (unsharp mask, 1.6x) so thin features survive the shrink.
-  const soft = boxBlur(boxBlur(L, W, 3), W, 3);
-  const sharp = new Float32Array(W * W);
-  for (let i = 0; i < W * W; i++) sharp[i] = Math.max(0, Math.min(1, L[i] + 1.6 * (L[i] - soft[i])));
-  // Shrink to the LED grid by averaging each cell's block.
-  const size = rows - 4;
-  const ox = Math.floor((cols - size) / 2), oy = 2;
-  const cellL = new Float32Array(size * size), cellF = new Float32Array(size * size), cellI = new Float32Array(size * size);
-  for (let cy = 0; cy < size; cy++) for (let cx = 0; cx < size; cx++) {
-    const x0 = Math.floor((cx * W) / size), x1 = Math.floor(((cx + 1) * W) / size);
-    const y0 = Math.floor((cy * W) / size), y1 = Math.floor(((cy + 1) * W) / size);
-    let sl = 0, sf = 0, si = 0, n = 0;
-    for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
-      const i = y * W + x;
-      sl += sharp[i] * inside[i]; sf += fg[i]; si += inside[i]; n++;
+  const sideTone = (x: number, y: number) => {
+    let best = Infinity, tone = 0;
+    for (const s of seeds) {
+      const dd = (s.x - x) ** 2 + (s.y - y) ** 2;
+      if (dd < best) { best = dd; tone = s.tone; }
     }
-    const k = cy * size + cx;
-    cellL[k] = sl / n; cellF[k] = sf / n; cellI[k] = si / n;
-  }
-  const vals: number[] = [];
-  for (let k = 0; k < size * size; k++) if (cellI[k] > 0.6 && cellF[k] > 0.5) vals.push(cellL[k]);
-  if (!vals.length) return [];
-  vals.sort((a, b) => a - b);
-  const lo = vals[Math.floor(vals.length * 0.04)], hi = vals[Math.floor(vals.length * 0.96)];
+    return tone;
+  };
   const out: Cell[] = [];
-  for (let cy = 0; cy < size; cy++) for (let cx = 0; cx < size; cx++) {
-    const k = cy * size + cx;
-    const n = Math.max(0, Math.min(1, (cellL[k] - lo) / (hi - lo || 1)));
-    const v = (0.12 + 0.88 * n ** 1.5) * Math.max(0, Math.min(1, (cellF[k] - 0.15) / 0.7));
-    if (v > 0.08) out.push({ x: ox + cx, y: oy + cy, a: Math.min(1, v) });
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < cols; x++) {
+      const raw = x >= ox && x < ox + w ? lum[y * w + (x - ox)] : sideTone(x, y);
+      const n = Math.max(0, Math.min(1, (raw - lo) / (hi - lo || 1)));
+      const lifted = n < BG_CUT ? n * 0.45 : 0.45 * BG_CUT + ((n - BG_CUT) / (1 - BG_CUT)) * (1 - 0.45 * BG_CUT);
+      const v = Math.min(1, lifted) ** 1.1;
+      if (v > 0.06) out.push({ x, y, a: v });
+    }
   }
   return out;
 }
@@ -380,15 +339,15 @@ export default function DotField({ active, departures, idle = 'ring' }: { active
       ctx.globalAlpha = 1;
     };
 
-    // The resting picture: the turning Ring, or the headshot once it loads.
+    // The resting picture: the turning Ring, or the portrait once it loads.
     const turns = idle === 'ring';
-    const headshot = new Image();
-    let headshotReady = false;
+    const portrait = new Image();
+    let portraitReady = false;
     let faceCache: { cols: number; rows: number; cells: Cell[] } | null = null;
     const faceIdle = (): Cell[] => {
-      if (!headshotReady) return [];
+      if (!portraitReady) return [];
       if (!faceCache || faceCache.cols !== cols || faceCache.rows !== rows) {
-        faceCache = { cols, rows, cells: faceCells(headshot, cols, rows) };
+        faceCache = { cols, rows, cells: faceCells(portrait, cols, rows) };
       }
       return faceCache.cells;
     };
@@ -544,9 +503,9 @@ export default function DotField({ active, departures, idle = 'ring' }: { active
 
     build();
     if (!turns) {
-      headshot.src = HEADSHOT;
-      headshot.decode().then(() => {
-        headshotReady = true;
+      portrait.src = PORTRAIT;
+      portrait.decode().then(() => {
+        portraitReady = true;
         if (!target) moveTo(null, !reducedQuery.matches);
       }).catch(() => {});
     }
