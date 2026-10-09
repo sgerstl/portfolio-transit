@@ -142,11 +142,13 @@ const RAIL_TOP_Y = 64;
 
       const lastCard = heroCards[heroCards.length - 1];
       let arrowTop = 642;
-      // MOCK: hero G has no cards and scrolls with the page, so the arrow
-      // sits under its work tiles, measured in the container's own space.
-      const gWork = document.querySelector<HTMLElement>('.hv--g .hvf-work');
-      if (gWork) {
-        arrowTop = gWork.getBoundingClientRect().bottom - spineContainer.getBoundingClientRect().top + 40;
+      // MOCK: hero G has no cards and scrolls with the page. The rail ends
+      // in view, at a transfer station level with the middle of the work
+      // screenshots, measured in the container's own space.
+      const gShot = document.querySelector<HTMLElement>('.hv--g .hvf-shot');
+      if (gShot) {
+        const r = gShot.getBoundingClientRect();
+        arrowTop = r.top + r.height / 2 - ARROW_H / 2 - spineContainer.getBoundingClientRect().top;
       } else if (lastCard) {
         const r = lastCard.getBoundingClientRect();
         arrowTop = r.bottom + 80;
@@ -216,12 +218,15 @@ const RAIL_TOP_Y = 64;
       }
     };
 
-    // MOCK (hero G): the branch lines draw on as you scroll, reaching
-    // toward each section a little ahead of the reader. Vertical travel
+    // MOCK (hero G): at rest the rail ends at the transfer station. The
+    // branch lines leave it the moment you scroll and grow 1.5px per pixel
+    // scrolled, so they run ahead of the reader and reach each section by
+    // the time it is on screen. Vertical travel
     // costs its full distance and horizontal travel half, so the run into a
     // section header draws on rather than snapping across. Reduced motion,
     // or any other hero, gets the lines fully drawn.
     type Reveal = { path: SVGPathElement; total: number; lens: number[]; costs: number[] };
+    const LEAD = 1.5; // line growth per pixel scrolled, so it leads the page
     let reveals: Partial<Record<SectionKey, Reveal>> = {};
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const revealOn = () => !!document.querySelector('.hv--g') && !reducedMotion.matches;
@@ -252,7 +257,7 @@ const RAIL_TOP_Y = 64;
 
     const updateReveal = () => {
       const on = revealOn();
-      const reach = window.innerHeight * 0.72 - spineContainer.getBoundingClientRect().top;
+      const scrolled = Math.max(0, -spineContainer.getBoundingClientRect().top);
       (['ai', 'ent', 'pers'] as const).forEach((key) => {
         const r = reveals[key];
         const term = lineTerminators[key];
@@ -265,6 +270,7 @@ const RAIL_TOP_Y = 64;
           if (ind) ind.style.opacity = '';
           return;
         }
+        const reach = r.costs[0] + scrolled * LEAD;
         let drawn = 0;
         for (let i = 0; i < r.costs.length && r.costs[i] <= reach; i++) drawn = r.lens[i];
         r.path.style.strokeDasharray = `${r.total} ${r.total}`;
@@ -272,7 +278,7 @@ const RAIL_TOP_Y = 64;
         if (term) term.style.opacity = drawn >= r.total - 1 ? '1' : '0';
         if (ind) {
           const y = parseFloat(ind.getAttribute('y') ?? '0');
-          ind.style.opacity = reach >= y ? '1' : '0';
+          ind.style.opacity = r.path.getPointAtLength(drawn).y >= y ? '1' : '0';
         }
       });
     };

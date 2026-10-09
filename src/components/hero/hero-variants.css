@@ -891,8 +891,8 @@
    so a narrow band of yellow shows past the board. */
 .hvg-side {
   position: absolute;
-  top: 8%;
-  bottom: 8%;
+  top: 3%;
+  bottom: 3%;
   right: 0;
   width: 36px;
   background: linear-gradient(90deg, var(--color-board-housing-shade), var(--color-board-housing) 70%);
