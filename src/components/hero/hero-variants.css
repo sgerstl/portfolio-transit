@@ -861,48 +861,61 @@
   height: clamp(104px, 19vh, 210px);
 }
 
-.hvg-board {
-  --hvg-bezel: 10px;
-  --hvg-bar: 14px;
+.hvg-board-mount {
   position: relative;
   justify-self: end;
   width: 100%;
   max-width: min(560px, 62vh);
+  /* One shared perspective for the board and its yellow side. Each child
+     takes a single 3D transform; nothing nests 3D inside 3D, which Firefox
+     flattens. The vanishing point sits on the right edge, where both pivot. */
+  perspective: 1300px;
+  perspective-origin: 100% 50%;
+}
+
+.hvg-board {
+  --hvg-bezel: 10px;
+  --hvg-bar: 14px;
+  position: relative;
   /* Hung on the right and turned in toward the headline and the work: the
      left edge recedes and the face tips slightly down toward the tiles.
      Static, so it is not motion; the pause key still hit-tests. */
-  transform: perspective(1300px) rotateY(-16deg) rotateX(-4deg);
+  transform: rotateY(-16deg) rotateX(-4deg);
   transform-origin: 100% 50%;
 }
 
-/* The box-section arm the board hangs from, rising to the top of the page
-   and passing behind the fixed header. A lit front face and a shaded side
-   make the section read as square tube. Flat on purpose: Firefox flattens
-   nested 3D, so depth pieces (an electronics box, the housing edge) only
-   rendered in Chrome and were removed. */
+/* The yellow electronics box behind the board, seen as its side: the same
+   turn as the board, then a quarter turn back about the shared right edge,
+   so a narrow band of yellow shows past the board. */
+.hvg-side {
+  position: absolute;
+  top: 8%;
+  bottom: 8%;
+  right: 0;
+  width: 36px;
+  background: linear-gradient(90deg, var(--color-board-housing-shade), var(--color-board-housing) 70%);
+  transform: rotateY(-16deg) rotateX(-4deg) rotateY(-90deg);
+  transform-origin: 100% 50%;
+}
+
+/* The pole the board hangs from, rising to the top of the page and passing
+   behind the fixed header. Shaded across its width so it reads as round:
+   dark rim, a highlight a third of the way in, falling off to the far side.
+   No bracket; the mounting hardware is assumed to be behind the display. */
 .hvg-arm {
   position: absolute;
   bottom: 100%;
   left: 62%;
-  width: 26px;
+  width: 22px;
   height: calc(var(--hv-pad-top, 124px) + 80px);
   background: linear-gradient(90deg,
-    color-mix(in srgb, var(--color-board-rim) 45%, white) 0%,
-    color-mix(in srgb, var(--color-board-rim) 75%, white) 58%,
-    color-mix(in srgb, var(--color-board-rim) 80%, black) 59%,
-    var(--color-board-rim) 100%);
-  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.6);
-}
-/* Mounting plate where the arm meets the housing. */
-.hvg-arm::after {
-  content: '';
-  position: absolute;
-  left: -12px;
-  right: -12px;
-  bottom: -2px;
-  height: 9px;
-  border-radius: 2px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--color-board-rim) 55%, white), color-mix(in srgb, var(--color-board-rim) 85%, black));
+    color-mix(in srgb, var(--color-board-rim) 70%, black) 0%,
+    var(--color-board-rim) 14%,
+    color-mix(in srgb, var(--color-board-rim) 35%, white) 34%,
+    color-mix(in srgb, var(--color-board-rim) 60%, white) 44%,
+    var(--color-board-rim) 66%,
+    color-mix(in srgb, var(--color-board-rim) 72%, black) 90%,
+    color-mix(in srgb, var(--color-board-rim) 60%, black) 100%);
 }
 
 /* The face: a narrow rim around white enamel, lit from above. */
@@ -1044,7 +1057,7 @@
 }
 
 @media (max-width: 1199px) {
-  .hvg-board { display: none; }
+  .hvg-board-mount { display: none; }
 }
 
 @media (max-width: 767px) {
