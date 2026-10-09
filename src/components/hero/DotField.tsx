@@ -522,8 +522,9 @@ export default function DotField({ active, departures, idle = 'ring' }: { active
     api.current?.show(active);
   }, [active]);
 
-  // Sway: the board hangs from a pole, so scrolling gives it a small swing
-  // that settles on its own, a damped spring around the top of the pole.
+  // Sway: the board hangs from a pole, so scrolling back up gives it a small
+  // swing that settles on its own, a damped spring around the top of the
+  // pole. Scrolling down leaves it still (Scott, 2026-10-09: calmer).
   // Capped at 3 degrees, runs only while it is moving and on screen, and is
   // off under reduced motion.
   useEffect(() => {
@@ -565,7 +566,7 @@ export default function DotField({ active, departures, idle = 'ring' }: { active
       const y = window.scrollY;
       const dy = y - lastY;
       lastY = y;
-      if (reduced.matches || mount.getBoundingClientRect().bottom < 0) return;
+      if (dy >= 0 || reduced.matches || mount.getBoundingClientRect().bottom < 0) return;
       omega -= Math.max(-80, Math.min(80, dy)) * GAIN;
       if (!running) {
         running = true;
