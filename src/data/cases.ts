@@ -1007,12 +1007,12 @@ export const CASES: CaseEntry[] = [
                 caption: "The plan's headline",
               },
               {
-                src: "/images/cases/ziggy/ziggy-blue-lion-printing.jpg",
+                src: "/images/cases/ziggy/ziggy-deep-printing.jpg",
                 alt: "Ask screen showing a question sent for a deep answer, with a progress bar",
                 caption: "The hand-off, shown",
               },
               {
-                src: "/images/cases/ziggy/ziggy-blue-lion-answer.jpg",
+                src: "/images/cases/ziggy/ziggy-deep-answer.jpg",
                 alt: "The printed answer about an interview, with a card linking the prep note",
                 caption: "The answer, with its source",
               },
