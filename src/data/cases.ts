@@ -639,7 +639,7 @@ export const CASES: CaseEntry[] = [
         'Industrial',
         'Cold Chain',
       ],
-      outcome: '0→1 industrial fleet operations product. Sole UX designer from initial research through shipped pilot. Consolidated three software tools and two paper forms into a single workflow. Gloves, dust, time pressure.',
+      outcome: '0→1 industrial fleet operations product. Sole UX designer from initial research through shipped pilot. Consolidated three software tools and two paper forms into a single workflow, on a tablet used out in the yard.',
       visualLabel: 'FLEET · WORKFLOW BEFORE & AFTER',
       visualImage: '/images/cases/fleet/fleet-yard-map.jpeg',
       visualImageAlt: 'Fleet yard management view with aerial map of dock and yard spots',
@@ -664,7 +664,7 @@ export const CASES: CaseEntry[] = [
       chips: ['Industrial', 'Logistics', '0→1', 'Sole UX'],
       hook: [
         'Sole UX lead on a 0→1 yard-management product at Ndustrial. The shipped pilot consolidated three software tools and two paper forms into a single yard-management interface, deployed at a cold-storage third-party-logistics facility tracking hybrid electric trailers.',
-        "Industrial conditions don't tolerate friction. Gloves on. Dust on the screen. Twelve trucks waiting on dock assignments. Every design decision was answerable to whether it survived the dock, not whether it looked clean in design review.",
+        "Industrial conditions don't tolerate friction. The tool ran on a tablet in an open trailer yard in the summer heat. Twelve trucks waiting on dock assignments. Every design decision was answerable to whether it survived the dock, not whether it looked clean in design review.",
       ],
       sections: [
         {
@@ -722,7 +722,7 @@ export const CASES: CaseEntry[] = [
           subtitle: 'What it took to design end-to-end for an industrial pilot',
           paragraphs: [
             "Sole UX at Ndustrial meant being the only UX resource at the company, not just on this project. Yard management was running in parallel with the Power Quality and Demand Response work for industrial customers, plus whatever else needed design judgment that week. Research, workflow design, visual design, prototypes, hand-off to engineering, pilot support: the work either happened or it didn't get done, across whichever project was loudest at the moment.",
-            'Research happened on the dock. The product was not designed in a conference room and shipped to operators to use. It was shaped by watching yard managers work, watching drivers wait, watching paperwork accumulate. The constraints (gloves, dust, time pressure) were not assumptions. They were observations from the people who were going to use the thing.',
+            'Research happened on the dock. The product was not designed in a conference room and shipped to operators to use. It was shaped by watching yard managers work, watching drivers wait, watching paperwork accumulate. The constraints (an open yard, summer heat, time pressure) were not assumptions. They were observations from the people who were going to use the thing.',
             'Industrial conditions shaped every design decision. Every minute spent in the interface was a minute not spent moving a truck, so cognitive load had to come down. The interface had to compete with paper, radios, and walking the dock, and lose less often than it won.',
             "The pilot deployed at one facility. Not an enterprise rollout, not a category-wide product, not a broad-scale launch. One real customer site, with real yard managers running their actual dock through it. That is what 'shipped' meant in this case, and what made the work credible: the interface worked under the actual conditions where it would have to work.",
           ],
