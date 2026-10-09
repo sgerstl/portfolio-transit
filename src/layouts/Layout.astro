@@ -49,6 +49,17 @@ const canonicalUrl = `${site}${canonicalPath ?? Astro.url.pathname}`;
     <meta name="twitter:image" content={`${site}/og-image.png`} />
     <meta name="twitter:title" content={ogTitle} />
     <meta name="twitter:description" content={ogDesc} />
+    {/* Registered before the router's own popstate listener (inline scripts run while the head is parsed, module
+        scripts after), so the gallery viewer can claim a back step and stop it before the router turns it into a page
+        navigation. Lightbox.astro sets window.__lightboxPop. */}
+    <script is:inline>
+      if (!window.__lightboxPopWired) {
+        window.__lightboxPopWired = true;
+        window.addEventListener('popstate', function (e) {
+          if (typeof window.__lightboxPop === 'function') window.__lightboxPop(e);
+        });
+      }
+    </script>
     <ClientRouter />
     <Analytics />
     <script>

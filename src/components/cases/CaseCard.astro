@@ -107,7 +107,7 @@ const isPersonal = !!personal;
   )}
 
   {personal && (
-    <div class="personal-body">
+    <div class="personal-body" data-lightbox-group>
       {personal.paragraphs?.map((p) => <p>{p}</p>)}
       {personal.gallery && (
         <>
