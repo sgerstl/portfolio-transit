@@ -37,7 +37,7 @@ const KICKER = 'Scott Gerstl · Design leader · Berlin';
 // Berlin as the one visual object. The map is a picture, not a control: the
 // proof rows are the links, and hovering or focusing one lights its stop.
 // Copy source: vault Projects/Dev/Portfolio Site/hero-f-copy-2026-10-09.md.
-const F_H1 = 'I design enterprise software and the AI inside it.';
+const F_H1 = 'I design software for the people who keep things running, and the AI inside it.';
 // The headline names the work; the lead and the qualifier line carry the
 // leadership and the product thinking (chosen 2026-10-09; drafts in the vault
 // copy file).
