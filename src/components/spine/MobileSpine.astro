@@ -37,7 +37,9 @@
     .mobile-rail-blue {
       position: absolute;
       left: 16px;
-      top: 0;
+      /* Runs up past the top of the page so an overscroll bounce never
+         shows its end. */
+      top: -1000px;
       bottom: 28px;
       width: 9px;
       background: var(--color-rail-blue);

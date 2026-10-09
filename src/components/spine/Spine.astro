@@ -2,7 +2,9 @@
 const RAIL_CENTER_X = 126;
 const ARROW_W = 25;
 const ARROW_H = 24;
-const RAIL_TOP_Y = 64;
+// Starts well above the page, so an overscroll bounce at the top never
+// shows the end of the rail. Nothing above the page can be scrolled to.
+const RAIL_TOP_Y = -1000;
 ---
 
 <svg class="spine-svg" id="spine" aria-hidden="true">
@@ -36,7 +38,7 @@ const RAIL_TOP_Y = 64;
   const DEFAULT_RAIL_CENTER_X = 126;
   const ARROW_W = 25;
   const ARROW_H = 24;
-  const RAIL_TOP_Y = 64;
+  const RAIL_TOP_Y = -1000;
 
   type SectionKey = 'pro' | 'indie' | 'pers';
 

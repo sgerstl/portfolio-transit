@@ -308,7 +308,9 @@
   bottom: 100%;
   left: 62%;
   width: 22px;
-  height: calc(var(--hv-pad-top, 124px) + 80px);
+  /* Reaches 80px past the top of the page, plus 1000px more so an overscroll
+     bounce never shows the pole's end. The sway still pivots at 80px. */
+  height: calc(var(--hv-pad-top, 124px) + 1080px);
   background: linear-gradient(90deg,
     color-mix(in srgb, var(--color-board-rim) 70%, black) 0%,
     var(--color-board-rim) 14%,
