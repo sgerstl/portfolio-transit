@@ -219,13 +219,13 @@ const RAIL_TOP_Y = 64;
     };
 
     // MOCK (hero G): at rest the rail ends at the transfer station. The
-    // branch lines leave it the moment you scroll and grow 1.5px per pixel
+    // branch lines, each led by its end cap as a train, leave it the moment you scroll and grow 1.5px per pixel
     // scrolled, so they run ahead of the reader and reach each section by
     // the time it is on screen. Vertical travel
     // costs its full distance and horizontal travel half, so the run into a
     // section header draws on rather than snapping across. Reduced motion,
     // or any other hero, gets the lines fully drawn.
-    type Reveal = { path: SVGPathElement; total: number; lens: number[]; costs: number[] };
+    type Reveal = { path: SVGPathElement; total: number; lens: number[]; costs: number[]; dockX: number; dockY: number };
     const LEAD = 1.5; // line growth per pixel scrolled, so it leads the page
     let reveals: Partial<Record<SectionKey, Reveal>> = {};
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -251,7 +251,11 @@ const RAIL_TOP_Y = 64;
         }
         lens.push(total);
         costs.push(cost + 1);
-        reveals[key] = { path, total, lens, costs };
+        // Where the end cap docks, as regenerateBranchLines placed it.
+        const term = lineTerminators[key];
+        const dockX = parseFloat(term?.getAttribute('x') ?? '0');
+        const dockY = parseFloat(term?.getAttribute('y') ?? '0');
+        reveals[key] = { path, total, lens, costs, dockX, dockY };
       });
     };
 
@@ -266,7 +270,12 @@ const RAIL_TOP_Y = 64;
         if (!on) {
           r.path.style.strokeDasharray = '';
           r.path.style.strokeDashoffset = '';
-          if (term) term.style.opacity = '';
+          if (term) {
+            term.style.opacity = '';
+            term.removeAttribute('transform');
+            term.setAttribute('x', String(r.dockX));
+            term.setAttribute('y', String(r.dockY));
+          }
           if (ind) ind.style.opacity = '';
           return;
         }
@@ -275,7 +284,26 @@ const RAIL_TOP_Y = 64;
         for (let i = 0; i < r.costs.length && r.costs[i] <= reach; i++) drawn = r.lens[i];
         r.path.style.strokeDasharray = `${r.total} ${r.total}`;
         r.path.style.strokeDashoffset = String(r.total - drawn);
-        if (term) term.style.opacity = drawn >= r.total - 1 ? '1' : '0';
+        // The end cap is the train: it leaves once the line starts, rides the
+        // tip turned along the track, and docks where it always sat.
+        if (term) {
+          if (drawn <= 0) {
+            term.style.opacity = '0';
+          } else if (drawn >= r.total - 1) {
+            term.style.opacity = '1';
+            term.removeAttribute('transform');
+            term.setAttribute('x', String(r.dockX));
+            term.setAttribute('y', String(r.dockY));
+          } else {
+            const tip = r.path.getPointAtLength(drawn);
+            const back = r.path.getPointAtLength(Math.max(0, drawn - 3));
+            const angle = (Math.atan2(tip.y - back.y, tip.x - back.x) * 180) / Math.PI;
+            term.style.opacity = '1';
+            term.setAttribute('x', String(tip.x - 7));
+            term.setAttribute('y', String(tip.y - 4));
+            term.setAttribute('transform', `rotate(${angle.toFixed(1)} ${tip.x.toFixed(1)} ${tip.y.toFixed(1)})`);
+          }
+        }
         if (ind) {
           const y = parseFloat(ind.getAttribute('y') ?? '0');
           ind.style.opacity = r.path.getPointAtLength(drawn).y >= y ? '1' : '0';
