@@ -39,7 +39,7 @@ const PROOF: Proof[] = [
 const DEPARTURES: Record<string, Departure> = {
   brightly: { line: 'CS1', name: 'Brightly', minutes: 6, from: '12 siloed products', to: 'One platform vision' },
   pqdr: { line: 'CS1', name: 'PQ + DR', minutes: 5, from: 'AI insight', to: 'Operator decision' },
-  'sim-racing': { line: 'CS1', name: 'Sim Racing', minutes: 6, from: 'Data and a chat window', to: 'A race engineer' },
+  'sim-racing': { line: 'CS1', name: 'Sim Racing', minutes: 7, from: 'Data and a chat window', to: 'A race engineer' },
 };
 const describe = (slug: string) => {
   const d = DEPARTURES[slug];

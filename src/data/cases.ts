@@ -352,7 +352,7 @@ export const CASES: CaseEntry[] = [
     name: 'Sim Racing Coach',
     tagline: 'Race-engineer practice, designed into an AI product.',
     line: 'pro',
-    readingMinutes: 6,
+    readingMinutes: 7,
     ai: true,
     body: {
       domains: [
@@ -360,22 +360,22 @@ export const CASES: CaseEntry[] = [
         'AI Products',
         'Domain Depth',
       ],
-      outcome: "Design consulting on an AI sim-racing telemetry tool. Reframed the analysis app as the AI agent's workspace, not a chat panel beside it. Designed a race engineer pattern that translates expert practice into UX for sim-racers who don't have an engineer. Four worked archetypes shipped against the product's telemetry schemas.",
+      outcome: 'Client work for a sim-racing telemetry startup. I designed how its AI race engineer behaves and how telemetry gets drawn for a driver, then checked every idea against the live product before handing it over.',
       visualLabel: 'SIM RACING COACH · TELEMETRY VIEW',
       visualImage: '/images/cases/sim-racing/prototype-web-idle.webp',
       visualImageAlt: 'Sim Racing Coach web prototype, idle state with agent rail',
       metrics: [
         {
-          num: 'Domain',
-          label: 'Race-engineer perspective brought to AI tooling for sim-racers',
+          num: '4',
+          label: "Driver question types, prototyped on the product's own telemetry schemas",
         },
         {
-          num: 'Reframe',
-          label: 'Analysis surface reframed as the agent\'s workspace',
+          num: '1',
+          label: 'Interface for new and expert drivers, in place of two modes',
         },
         {
-          num: '4 archetypes',
-          label: "Worked patterns shipped against the product's telemetry schemas",
+          num: 'Code',
+          label: 'Design tokens shipped with the developer handoff',
         },
       ],
       claim: 'I translate expert practice into agent behavior.',
@@ -384,56 +384,35 @@ export const CASES: CaseEntry[] = [
     detail: {
       chips: ['Consulting', 'AI', 'Agent UX', 'Sim-Racing'],
       hook: [
-        'A founder shipping an AI sim-racing telemetry product asked for a design pass. The product had real telemetry data, a chat agent, and a polished analysis surface. The three pieces worked, but they lived in different containers.',
-        'The user got data, an algorithmic score, and a chat window that could run queries. What they did not get was the experience of being walked through their own session by someone who knew what to look for.',
+        "Between April and July I designed for a sim-racing startup whose product records a driver's telemetry and lets an AI answer questions about it. The data was real and the analysis view was dense and accurate. What the product couldn't give a driver yet was what a race engineer gives you after a session, which is someone who has already been through your laps and can tell you where the time went.",
+        'Building that engineer became the thread through all of it. Most of the work was deciding how the AI should behave before drawing the screens around it, and checking every idea against the product the team actually ships.',
       ],
       sections: [
         {
-          title: 'The agent and the workspace',
-          subtitle: 'What the product already had, and what it was missing',
+          title: 'Designing the engineer',
+          subtitle: 'How the AI behaves, and where it sits',
           paragraphs: [
-            'The web app already had an AI surface: ten dimensions scored, each with a short coaching tip, all inside a modal. The desktop capture tool had a chat agent that ran corner queries and returned annotated track visualizations. The analysis surface was accurate and dense.',
-            'The team had even shipped the right intent in one agentic feature: click a low-scoring dimension and dots appear on the track marking where the issue occurs. The execution stops halfway. The dots are not labeled. The view does not zoom. The user is left to manually find the corner and read it back to themselves.',
-            'The agent had the data. The workspace had no agent thinking with the user inside it. Each surface was doing one piece of the job a real race engineer does in a single conversation.',
+            "When I started, the AI lived in two places. The web app scored ten driving dimensions in a modal, each with a short tip, and the desktop recorder had a chat agent that could answer questions about a corner. A driver trying to understand a slow lap had to carry the chat's answer back to the analysis view and find the corner on the map themselves.",
+            "I made the analysis view the workspace the agent operates in, with the agent in a rail beside it, so that when it talks about Turn 4 the map zooms to Turn 4 and labels what it's describing. I'd assumed the chat would move entirely to the web app. The founder wanted the desktop and web apps kept separate for now, so I redrew the plan to extend both.",
+            "I wrote the agent's behavior around a race engineer's job. Coaching is part of that job, alongside setup and strategy, and naming the larger role left room for where the product was headed. The rules came from how engineers debrief a driver. Diagnose before you prescribe, give one main correction at a time, mark the evidence on the track, and always leave the driver a next question.",
+            'The founder wanted a standard mode for new drivers and a pro mode for experienced ones. I argued against it, because two modes means designing and maintaining two interfaces, and I was upfront that the alternative was harder to design. I proposed one interface with three independent controls. Clicking a corner pins it as the subject, the tabs choose the lens, and a posture setting decides whether the product opens by walking you through the session or by handing you the controls.',
+            "Then I went back into the live product with a full lap comparison loaded and opened every tab. Much of what I'd been drawing as new already existed, so I cut my proposal down to two additions. One is the pinned subject. The other reorders their existing coaching tab so it names the root cause of a slow corner first and treats the other faults as its consequences.",
           ],
           decisions: [
             {
-              title: 'Algorithmic scoring stops at the conclusion.',
-              body: 'A number on a dimension hides the analysis that produced it. The analysis is the part a self-coached racer needs to see.',
+              title: 'The rail shifts on its own.',
+              body: 'I considered separate modes for guided and self-directed analysis inside a session, and dropped them because modes make the driver work out which one they need. The rail has the floor when a session opens and steps back once the driver starts exploring on their own.',
             },
             {
-              title: 'A chat agent in a separate window is architecturally severed from the workspace.',
-              body: 'The chat is functional but the user has to carry insights back into their own analysis context by hand. The agent and the work it is supposed to help with are in different rooms.',
+              title: 'Validation first.',
+              body: "My first version of the consistency analysis went straight to the problem sector. I rebuilt it as a debrief. The agent starts by confirming the corners that are fine and telling the driver to leave them alone, then names the two worth working on and lets the driver choose which one to open. It costs one extra step, and it's how an engineer earns the right to criticize.",
             },
             {
-              title: 'An agentic feature that stops halfway is worse than none.',
-              body: "A few dots on a map without labels or framing tells the user the agent saw something and then declined to explain it. The user does the rest of the agent's job for it.",
+              title: 'Root cause first.',
+              body: 'When the coaching tab found several faults in one corner, it listed them with equal weight, though often one caused the rest. At one Imola corner, braking about ten meters early cost roughly 35 km/h at the apex, and the slow apex followed from the brake point. Ordering faults by cause tells the driver which single fix makes the others go away.',
             },
           ],
-          italicOutro: 'The product had every ingredient. They were architected as if they belonged to different products.',
-        },
-        {
-          title: 'Agent-as-workspace',
-          subtitle: 'One structural move that reframed the whole product',
-          paragraphs: [
-            'The reframe was a single architectural commitment. The web app becomes an AI agent surface, and the analysis view becomes the workspace the agent operates inside.',
-            'The rail has three states rather than three modes. Idle, when the user opens a session and the agent has the floor. Investigating, when the agent narrates while the workspace annotates. Exploring, when the agent recedes and the user drives.',
-            'Under that architecture sits the behavioral spec, which models a race engineer. Diagnose before prescribe. One primary correction per cycle. Specificity over generality. Annotate the workspace instead of only describing it. Suggest a follow-up so the conversation has somewhere to go.',
-          ],
-          decisions: [
-            {
-              title: 'Race engineer, not coach.',
-              body: 'Coaching is one of the modes a race engineer operates in. Setup work, strategy, tire management are others. Naming the pattern at the role level keeps the door open wherever the product roadmap goes next, instead of pinning it to one of the modes.',
-            },
-            {
-              title: 'Three states the agent moves between.',
-              body: "States shift the agent's prominence based on what the user is doing. Modes would have made the user choose. With states, the agent owns the transitions.",
-            },
-            {
-              title: 'Diagnose before prescribe.',
-              body: 'Tell the user what is wrong before suggesting anything different. The same restraint a real engineer applies, and the restraint that earns trust from a self-coached racer with strong opinions about their own driving.',
-            },
-          ],
+          italicOutro: 'Going back into the live product made my proposal smaller, and every idea that turned out to exist already made the rest easier for the team to trust.',
           screenshots: {
             columns: 2,
             images: [
@@ -451,31 +430,25 @@ export const CASES: CaseEntry[] = [
           },
         },
         {
-          title: 'Four worked archetypes',
-          subtitle: 'Proving the pattern across question shapes',
+          title: 'Designing what the driver sees',
+          subtitle: 'Visualizations that stay true to the data',
           paragraphs: [
-            'The pattern is generalizable, but generalizability needs proof. Four archetypes shipped, each handling a different shape of question, all running inside the same shell.',
-            'Spatial questions: where on the track is this happening? The agent zooms the canvas, labels the moments through a corner, walks through what it sees, suggests the next thread to pull.',
-            'Temporal questions: where in the session did something change, and why? It runs in the same architecture with the same investigative pattern, on a different canvas with different supporting data.',
-            'Distributional questions: how consistent is the driver across the session, and where should they look closer? The agent walks the lap, points out what is working before flagging what is not, then hands the depth navigation to the user.',
-            'State-along-line questions: what was the car doing as it moved through that moment? The visualization changes shape, and the conversational shell around it stays the same.',
-            'Four archetypes were enough to prove it. The architecture can carry the kind of question the product roadmap implies but does not yet have a surface for.',
+            "To show the pattern held up, I built it four times inside the same shell, once for each kind of question a driver asks. Where on the track is this happening? When in the session did something change? How consistent am I? What was the car doing through that corner? Every version used field names from the product's own telemetry schemas, so the team could see it was buildable from data they already capture.",
+            "The fourth came out of an argument on a call. The founder had two ideas he wanted visualized, per-wheel data and a racing line colored by whether the car was understeering or oversteering, and as he kept adding views I asked what story we were trying to tell the driver. We could show them anything. What mattered was what they'd do with it, and the race engineer was there to interpret.",
+            "That evening I realized his two ideas were one idea. He'd sent over his own driving-style pyramid, a diagram that grades a car's handling with white for neutral and red for past the limit, and it worked as the legend for both. I drew all four wheel paths through the corner and let the shape carry the diagnosis. When the rear-left steps out, its line drifts visibly wide of the other three, and the color only confirms what the geometry already shows.",
+            'Getting the picture right meant getting the data right first. The product stores the time gap to the reference lap as a running total. Color a racing line by that number and, once a driver is three tenths down, the rest of the lap turns one solid color, so I specified the line by how fast the gap is changing and put the warning in bold in the developer handoff. The running total is already sitting in the data layer, which makes it the easy one to build.',
+            "The same care caught a mistake of my own. I'd built a coaching walkthrough on a corner that showed four separate faults, then found that the comparison lap underneath it was invalid, a lap where the driver had cut the track. Against a valid lap, the same corner had one or two real faults. I rebuilt the example on the real numbers and asked for the product to warn whenever someone benchmarks against an invalid lap.",
           ],
           decisions: [
             {
-              title: 'Each archetype is a shape of question.',
-              body: 'Spatial, temporal, distributional, state-along-line. Four examples show the architecture can take whatever question comes next.',
+              title: 'The map leads, and the list stays.',
+              body: "The founder kept reaching for the track map, so I made it the main object of the overview, on one condition. The ranked list of where time was lost stays on screen, because a map seen in 3D perspective can't compare corners honestly and the list can.",
             },
             {
-              title: 'Depth navigation lives inside an archetype.',
-              body: 'An overview view and a drill-down view are two states of the same investigation. The pattern handles the transition without leaving the conversation.',
-            },
-            {
-              title: "Designed against the product's existing data.",
-              body: 'Each archetype shaped to what the capture layer already produces. The design extends what the team has already built rather than asking for new infrastructure to land first.',
+              title: 'Hue changes meaning at three laps.',
+              body: "The product compares up to eight laps at once, which would break a palette that gives every data channel its own color. With one or two laps on screen, hue means channel, and with three or more it means lap. I shipped the rule with design tokens as code, a CSS file and a Tailwind theme that read the same variables so the two can't drift, and left the choice of documentation tool to the developers who'd maintain it.",
             },
           ],
-          italicOutro: 'One shell held all four question shapes without changing.',
           screenshots: {
             columns: 2,
             images: [
@@ -502,12 +475,45 @@ export const CASES: CaseEntry[] = [
             ],
           },
         },
+        {
+          title: 'Getting drivers to their first lap',
+          subtitle: 'Onboarding, designed from the analytics',
+          paragraphs: [
+            'None of this matters to a driver who never records a lap. The product analytics showed where people left, and nearly all of the loss came before a first lap. A new driver went through four separate sign-in steps before seeing their own data, the last one a second login inside the desktop recorder. Once drivers got the recorder running, most went on to complete a lap.',
+            'I treated it as onboarding and retention together. Getting a driver in is half the problem, and the analysis view is what brings them back. For the first half I designed one-click sign-up, a verification link that signs you straight in, recorder pairing with no second password, and a demo session that hands a new driver their first question for the AI.',
+          ],
+          decisions: [
+            {
+              title: 'Settle the technical question before the screens.',
+              body: 'Before designing the onboarding I asked for a call with their engineer about technical constraints. The open question was whether the desktop recorder could inherit the web session, and the answer decides which screens exist at all. Nobody owned it yet, so the handoff put it first, as the question to settle before building.',
+            },
+            {
+              title: 'Instrument before you redesign.',
+              body: "The analytics had no event for downloading the recorder and none for verifying an email, so two of the steps I was redesigning couldn't be measured. I wrote both into the handoff as work to do before shipping anything, so the team could tell whether the new flow worked.",
+            },
+          ],
+          screenshots: {
+            columns: 2,
+            images: [
+              {
+                src: '/images/cases/sim-racing/onboarding-sign-up.webp',
+                alt: 'Onboarding prototype sign-up card with Discord and Google one-click buttons',
+                caption: 'Sign-up: one click',
+              },
+              {
+                src: '/images/cases/sim-racing/onboarding-recorder-connected.webp',
+                alt: 'Onboarding prototype showing the desktop recorder paired without a second login',
+                caption: 'Recorder paired, waiting for a first lap',
+              },
+            ],
+          },
+        },
       ],
       outcomeBeat: {
-        title: 'What the engagement delivered',
+        title: 'What I handed over',
         paragraphs: [
-          "The work produced a conceptual diagnostic carrying the architectural argument, a working web prototype with the four archetypes, and a desktop role redefinition from chat host to capture-and-trailer surface. All of it was designed against the product's existing data layer and aligned with the long-term direction the founder was building toward.",
-          'The 20-hour timebox held, and the handoff ended with a clean list of open questions for the next round.',
+          'I handed over a written diagnostic, a web prototype covering the four question types, a clickable onboarding flow, the analysis concept, developer handoff documents with every screen linked to its spec, and design tokens as code.',
+          "The work ended before the team decided what to build, so I can't point to shipped screens.",
         ],
       },
     },
