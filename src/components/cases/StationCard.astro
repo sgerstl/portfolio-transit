@@ -297,5 +297,20 @@ const cardLine = body.cardTagline ?? tagline;
     .station-tagline {
       font-size: 14px;
     }
+    /* The text takes the full width; time and pills share one row under it, pills left, time right. */
+    .station-text {
+      grid-column: 1 / -1;
+    }
+    .station-meta {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      align-items: center;
+    }
+    .station-tags {
+      order: -1;
+    }
+    .station-time {
+      margin-left: auto;
+    }
   }
 </style>

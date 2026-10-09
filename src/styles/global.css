@@ -215,6 +215,12 @@ img:not([data-allow-save]) {
     display: none;
   }
 
+  /* The hero scrolls with the page, so the phone's blue rail runs its full height and its arrow lands just above the
+     first section (Hero.tsx writes --hero-h). */
+  .page:has(.hero) .mobile-spine {
+    height: calc(var(--hero-h, 100vh) + 30px);
+  }
+
   .spine-container {
     /* Push first case section below the fold; rail and arrow
        terminator descend through the viewport before AI begins. */

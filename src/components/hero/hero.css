@@ -218,8 +218,10 @@
 
 /* Phone: the tiles become rows, thumbnail left. */
 @media (max-width: 767px) {
-  .hv--f { padding-top: 80px; padding-right: 16px; }
-  .hv--f::before { width: 100%; }
+  /* The blue rail runs down the left edge (16 to 25px), as it runs beside the hero on desktop, so the content starts
+     right of it and the scrim leaves it showing. */
+  .hero.hv--f { padding-top: 80px; padding-right: 16px; padding-left: 40px; }
+  .hv--f::before { left: 28px; width: calc(100% - 28px); }
   .hvf-h1 { font-size: 40px; }
   .hvf-lead { font-size: 16px; margin-top: 14px; }
   .hvf-meta { font-size: 13px; margin-top: 14px; }
@@ -254,8 +256,12 @@
 /* ── Departure board ────────────────────────────────────
    An amber LED board: the portrait at rest (or the turning Ring with
    ?idle=ring), and a hovered tile puts its departure up. */
-.hv--g .hvf-shot {
-  height: clamp(104px, 19vh, 210px);
+/* Tablet and up only: at phone width the tiles are rows with 64px thumbnails, and this rule's extra class would
+   otherwise win over that one. */
+@media (min-width: 768px) {
+  .hv--g .hvf-shot {
+    height: clamp(104px, 19vh, 210px);
+  }
 }
 
 .hvg-board-mount {
@@ -543,9 +549,6 @@
    (container units), not from the viewport, so it sets in three lines on
    any desktop window: viewport sizing let it reach 74px on taller screens
    and wrap to four. Still capped by height so the tiles stay on screen. */
-.hv--g .hvf-h1 {
-  font-size: min(clamp(48px, 5vw, 74px), 8.4vh);
-}
 @media (min-width: 1200px) {
   .hv--g .hvf-text {
     container-type: inline-size;
@@ -554,8 +557,12 @@
     font-size: min(10.2cqi, 74px, 8.4vh);
   }
 }
-.hv--g .hvf-top {
-  grid-template-columns: minmax(0, 1fr) minmax(0, 500px);
+/* Two columns only where the board shows. Below 1200 the board is hidden, and its column must go with it, or the
+   headline is left a sliver (it was 0px wide on a phone). */
+@media (min-width: 1200px) {
+  .hv--g .hvf-top {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 500px);
+  }
 }
 .hv--g .hvg-board-mount {
   max-width: min(500px, 62vh);

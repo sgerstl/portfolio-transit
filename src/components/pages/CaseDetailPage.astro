@@ -301,7 +301,9 @@ const backHref = `/#case-${entry.slug}`;
     letter-spacing: 0.04em;
     text-transform: uppercase;
     color: white;
-    background: var(--accent);
+    /* The line colour darkened a quarter, so white text clears 4.5:1 (green 4.8, orange 6.3; the plain line colours
+       were 2.9 and 3.9). */
+    background: color-mix(in srgb, var(--accent) 75%, black);
     text-decoration: none;
     padding: 12px 22px;
     border-radius: 4px;
@@ -572,7 +574,11 @@ const backHref = `/#case-${entry.slug}`;
       padding-top: 116px;
     }
 
+    /* Fixed, it floated over the body text on a phone. Here it sits at the top and scrolls away; the menu still leads
+       home. */
     .back {
+      position: absolute;
+      top: 72px;
       left: 16px;
     }
 
