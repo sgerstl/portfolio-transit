@@ -987,7 +987,7 @@ export const CASES: CaseEntry[] = [
             },
             {
               title: "The slow path is visible.",
-              body: "A router answers quick questions from data already on the phone. Questions that need all of my notes go to Claude, which reads my whole context vault, and Ziggy shows that hand-off while it works. If it hid that, I wouldn't know which answers to double-check.",
+              body: "A router answers quick questions from data already on the phone. Questions that need all of my notes go to Claude for a deep answer, and Ziggy shows that hand-off while it works. If it hid that, I wouldn't know which answers to double-check.",
             },
             {
               title: "It says when it doesn't know.",
@@ -995,7 +995,7 @@ export const CASES: CaseEntry[] = [
             },
           ],
           tryIts: [
-            "Press the orange ziggy key and ask \"What's my plan for Saltfern?\" The hand-off to the context vault shows while it works, and the answer prints with a card that opens the prep note.",
+            "Press the orange ziggy key and ask \"What's my plan for Saltfern?\" The screen shows it going out for a deep answer, and the answer prints with a card that opens the prep note.",
             "On Today, tap a line and press DONE. Nothing reaches the notes without that tap.",
           ],
           italicOutro: "A lot of designing for AI is deciding which parts of the screen it gets to touch.",
@@ -1009,7 +1009,7 @@ export const CASES: CaseEntry[] = [
               },
               {
                 src: "/images/cases/ziggy/ziggy-blue-lion-printing.jpg",
-                alt: "Ask screen showing a question handed to the context vault, with a progress bar",
+                alt: "Ask screen showing a question sent for a deep answer, with a progress bar",
                 caption: "The hand-off, shown",
               },
               {
