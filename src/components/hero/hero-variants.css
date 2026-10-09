@@ -1140,11 +1140,21 @@
   }
 }
 
-/* G's headline a step under F's (72px at 1440), and the board 60px
-   narrower than F's map column, so the headline has a 683px column and
-   sets in three lines with the work tiles on the first screen. */
+/* G's board is 60px narrower than F's map column, so the headline gets a
+   683px column at 1440. Above 1200 the headline is sized from that column
+   (container units), not from the viewport, so it sets in three lines on
+   any desktop window: viewport sizing let it reach 74px on taller screens
+   and wrap to four. Still capped by height so the tiles stay on screen. */
 .hv--g .hvf-h1 {
   font-size: min(clamp(48px, 5vw, 74px), 8.4vh);
+}
+@media (min-width: 1200px) {
+  .hv--g .hvf-text {
+    container-type: inline-size;
+  }
+  .hv--g .hvf-h1 {
+    font-size: min(10.2cqi, 74px, 8.4vh);
+  }
 }
 .hv--g .hvf-top {
   grid-template-columns: minmax(0, 1fr) minmax(0, 500px);
