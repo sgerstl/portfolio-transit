@@ -35,19 +35,15 @@ const cardLine = body.cardTagline ?? tagline;
   <div class="chip"></div>
   <div class="station-shot">
     {body.visualImage ? (
-      <img src={body.visualImage} alt="" loading="lazy" draggable="false" />
+      <img src={body.visualImage} alt="" loading="lazy" draggable="false" style={body.cardShotPosition ? `object-position: ${body.cardShotPosition}` : undefined} />
     ) : (
       <span class="station-shot-label">{body.visualLabel}</span>
     )}
   </div>
   <div class="station-text">
-    <div class="station-name-row">
-      <h3 class="station-name">
-        <a class="station-link" href={body.ctaHref}>{name}</a>
-      </h3>
-      {ai && <span class="station-badge">AI</span>}
-      {demo && <span class="station-badge station-badge--outline">Live demo</span>}
-    </div>
+    <h3 class="station-name">
+      <a class="station-link" href={body.ctaHref}>{name}</a>
+    </h3>
     <p class="station-tagline">{cardLine}</p>
     {metric && (
       <p class="station-metric">
@@ -56,9 +52,19 @@ const cardLine = body.cardTagline ?? tagline;
       </p>
     )}
   </div>
-  {readingMinutes && (
-    <span class="station-time"><span class="visually-hidden">Reading time </span>{readingMinutes} min</span>
-  )}
+  {/* Reading time top right; the case's tags as pills bottom right, like
+      the line pills on a station sign. */}
+  <div class="station-meta">
+    {readingMinutes && (
+      <span class="station-time"><span class="visually-hidden">Reading time </span>{readingMinutes} min</span>
+    )}
+    {(ai || demo) && (
+      <span class="station-tags">
+        {ai && <span class="station-badge">AI</span>}
+        {demo && <span class="station-badge station-badge--outline">Live demo</span>}
+      </span>
+    )}
+  </div>
 </article>
 
 <style>
@@ -96,7 +102,15 @@ const cardLine = body.cardTagline ?? tagline;
     background: color-mix(in srgb, var(--color-text) 6%, var(--color-bg));
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
   }
+  /* Absolutely placed so the image fills the 16:10 slot exactly and
+     object-position decides the crop. In the centring grid, height: 100%
+     never resolved and the image kept its own proportions. */
+  .station-shot {
+    position: relative;
+  }
   .station-shot img {
+    position: absolute;
+    inset: 0;
     display: block;
     width: 100%;
     height: 100%;
@@ -121,14 +135,8 @@ const cardLine = body.cardTagline ?? tagline;
     min-width: 0;
   }
 
-  .station-name-row {
-    margin-bottom: 6px;
-    line-height: 1;
-  }
-
-  /* Inline so a badge follows the last word when a long name wraps. */
   .station-name {
-    display: inline;
+    margin-bottom: 6px;
     font-family: var(--font-condensed);
     font-size: 26px;
     font-weight: 700;
@@ -162,23 +170,36 @@ const cardLine = body.cardTagline ?? tagline;
     outline-offset: 2px;
   }
 
+  .station-meta {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .station-tags {
+    display: flex;
+    gap: 6px;
+  }
+
+  /* Pills: fully rounded, like S-Bahn line pills. */
   .station-badge {
-    display: inline-block;
-    margin-left: 8px;
-    vertical-align: 4px;
-    padding: 3px 6px 2px;
-    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 10px;
+    border-radius: 999px;
     font-family: var(--font-condensed);
     font-size: 13px;
     font-weight: 700;
     line-height: 1;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
+    white-space: nowrap;
     background: var(--color-text);
     color: white;
-  }
-  .station-badge + .station-badge {
-    margin-left: 4px;
   }
   .station-badge--outline {
     background: transparent;
@@ -219,7 +240,6 @@ const cardLine = body.cardTagline ?? tagline;
   }
 
   .station-time {
-    align-self: start;
     margin-top: 4px;
     font-family: var(--font-condensed);
     font-size: 15px;

@@ -34,6 +34,9 @@ export type CaseBody = {
   cardTagline?: string;
   // null shows no figure on the card.
   cardMetric?: number | null;
+  // Which part of the screenshot the card shows (CSS object-position);
+  // defaults to the top left.
+  cardShotPosition?: string;
 };
 
 export type CaseDecision = { title: string; body: string };
@@ -927,6 +930,7 @@ export const CASES: CaseEntry[] = [
       claim: "I design agent interfaces that can't make up a number.",
       ctaHref: '/work/ziggy',
       cardMetric: 2,
+      cardShotPosition: 'center bottom',
     },
   },
   {
