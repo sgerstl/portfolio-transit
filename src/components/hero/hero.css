@@ -531,16 +531,17 @@
    fixed hero's reflow failure at 200% zoom. Hero.tsx writes the hero's
    measured height to --hero-h so the cases start right after it. */
 .hero.hv--g {
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
+  top: auto;
+  left: auto;
   width: 100%;
   height: auto;
   min-height: 0;
   padding-bottom: 24px;
+  margin-bottom: 56px;
 }
 .page:has(.hv--g) .spine-container {
-  padding-top: calc(var(--hero-h, 100vh) + 56px);
+  padding-top: 0;
 }
 
 
