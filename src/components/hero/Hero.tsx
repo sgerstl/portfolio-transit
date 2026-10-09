@@ -41,7 +41,7 @@ const F_H1 = 'I design software for the people who keep things running, and the 
 // The headline names the work; the lead and the qualifier line carry the
 // leadership and the product thinking (chosen 2026-10-09; drafts in the vault
 // copy file).
-const F_LEAD = 'My craft is design. My thinking has always been about the product and the people who use it.';
+const F_LEAD = "Design is my favorite tool. My thinking has always started with the product and who it's for.";
 const F_QUALIFIERS = ['15 years', 'Built and led a team of 7', 'US/German citizen, EU work-authorized'];
 const F_CAPTION = "The industries I've designed for, pinned to Berlin places that do the same work.";
 const F_MAP_DESC =

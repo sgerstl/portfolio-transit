@@ -1140,8 +1140,15 @@
   }
 }
 
-/* G's headline a step under F's (72px at 1440): it keeps the headline at
-   three lines and the work tiles on the first screen. */
+/* G's headline a step under F's (72px at 1440), and the board 60px
+   narrower than F's map column, so the headline has a 683px column and
+   sets in three lines with the work tiles on the first screen. */
 .hv--g .hvf-h1 {
   font-size: min(clamp(48px, 5vw, 74px), 8.4vh);
+}
+.hv--g .hvf-top {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 500px);
+}
+.hv--g .hvg-board-mount {
+  max-width: min(500px, 62vh);
 }
