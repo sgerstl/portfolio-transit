@@ -13,8 +13,12 @@ import StationCard from '../cases/StationCard.astro';
 import Accordion from '../cases/Accordion.astro';
 import Lightbox from '../Lightbox.astro';
 import DemoModal from '../DemoModal.astro';
-import { SECTIONS, casesForLine } from '../../data/cases';
+import { CASES, SECTIONS, casesForLine } from '../../data/cases';
 import { ui } from '../../lib/ui';
+
+const heroFigures = Object.fromEntries(
+  CASES.filter((c) => c.body?.heroMetric).map((c) => [c.slug, c.body!.heroMetric!]),
+);
 ---
 
 <Layout title={ui('siteTitle')} canonicalPath="/">
@@ -22,7 +26,7 @@ import { ui } from '../../lib/ui';
 
   <main class="page">
     <MapWallpaper />
-    <Hero client:load />
+    <Hero client:load figures={heroFigures} />
 
     <div class="spine-container" id="cases">
       <Spine />

@@ -576,8 +576,10 @@
   flex: 1;
 }
 @media (max-width: 767px) {
+  /* Phones skip the tiles and go straight to the case studies; the station cards for these three cases carry the
+     tiles' figures instead (StationCard, heroMetric). */
   .hv--g .hvf-work {
-    gap: 24px;
+    display: none;
   }
   .hv--g .hvf-work a::before {
     inset: -8px;

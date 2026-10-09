@@ -46,9 +46,16 @@ const cardLine = body.cardTagline ?? tagline;
     </h3>
     <p class="station-tagline">{cardLine}</p>
     {metric && (
-      <p class="station-metric">
+      <p class:list={['station-metric', { 'station-metric--wide': body.heroMetric }]}>
         <span class="station-metric-num">{metric.num}</span>
         <span class="station-metric-label">{metric.label}</span>
+      </p>
+    )}
+    {/* Phones have no hero tiles, so a case the hero features shows the tile's figure here instead. */}
+    {body.heroMetric && (
+      <p class="station-metric station-metric--phone">
+        <span class="station-metric-num">{body.heroMetric.num}</span>
+        <span class="station-metric-label">{body.heroMetric.label}</span>
       </p>
     )}
   </div>
@@ -281,7 +288,17 @@ const cardLine = body.cardTagline ?? tagline;
   }
 
   /* Phone: screenshot on top, text below, time beside the name. */
+  .station-metric--phone {
+    display: none;
+  }
+
   @media (max-width: 767px) {
+    .station-metric--wide {
+      display: none;
+    }
+    .station-metric--phone {
+      display: flex;
+    }
     .station {
       grid-template-columns: minmax(0, 1fr) auto;
       row-gap: 12px;
