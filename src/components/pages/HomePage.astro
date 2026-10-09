@@ -45,7 +45,7 @@ import { ui } from '../../lib/ui';
                 line={c.line}
                 body={c.body}
                 ai={c.ai}
-                demo={!!c.detail?.demoUrl}
+                demo={!!(c.detail?.demoUrl || c.body?.demoUrl)}
                 readingMinutes={c.readingMinutes}
               />
             ) : (
@@ -57,7 +57,7 @@ import { ui } from '../../lib/ui';
                 body={c.body}
                 personal={c.personal}
                 ai={c.ai}
-                demo={!!c.detail?.demoUrl}
+                demo={!!(c.detail?.demoUrl || c.body?.demoUrl)}
                 readingMinutes={c.readingMinutes}
               />
             ))}

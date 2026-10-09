@@ -198,8 +198,10 @@ const cardLine = body.cardTagline ?? tagline;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     white-space: nowrap;
-    background: var(--color-text);
-    color: white;
+    /* A light tint, not the dark fill: the tag is a property of the stop,
+       and a solid dark pill pulled the eye away from the case itself. */
+    background: color-mix(in srgb, var(--color-text) 10%, white);
+    color: var(--color-text);
   }
   .station-badge--outline {
     background: transparent;

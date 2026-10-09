@@ -37,6 +37,9 @@ export type CaseBody = {
   // Which part of the screenshot the card shows (CSS object-position);
   // defaults to the top left.
   cardShotPosition?: string;
+  // Live demo for a case whose full case page isn't built yet (Ziggy).
+  // Moves to detail.demoUrl once the case has a detail block.
+  demoUrl?: string;
 };
 
 export type CaseDecision = { title: string; body: string };
@@ -931,6 +934,7 @@ export const CASES: CaseEntry[] = [
       ctaHref: '/work/ziggy',
       cardMetric: 2,
       cardShotPosition: 'center bottom',
+      demoUrl: 'https://ziggy-demo.scottgerstl.com',
     },
   },
   {
