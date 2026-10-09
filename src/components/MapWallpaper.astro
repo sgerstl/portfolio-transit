@@ -1,7 +1,7 @@
 ---
 ---
 
-<img class="map-background" src="/map-wallpaper.svg" alt="" aria-hidden="true" />
+<img class="map-background" src="/map-wallpaper-muted.svg" alt="" aria-hidden="true" />
 
 <style>
   .map-background {
@@ -20,18 +20,10 @@
     pointer-events: none;
     user-select: none;
     -webkit-user-drag: none;
-    filter: saturate(0.30) opacity(0.45);
-  }
-
-  /* Mobile: drop the saturate() filter and use the plain opacity property
-     instead. CSS filters force per-pixel compositing on every scroll frame
-     and Firefox Android is particularly bad at it; opacity composites on
-     the GPU for free. The map looks slightly more colorful on mobile than
-     desktop, but at 45% over a light bg the difference is minor. */
-  @media (max-width: 767px) {
-    .map-background {
-      filter: none;
-      opacity: 0.45;
-    }
+    /* The 30% saturation is baked into map-wallpaper-muted.svg (the CSS saturate() matrix applied to each colour), so
+       only opacity is left here. A CSS filter on this fixed layer made Firefox redraw it on every scroll frame: 17 of
+       61 frames ran slow at 1440 wide, 4 without it (2026-10-10). Opacity composites on the GPU for free. The source
+       colours stay in map-wallpaper.svg. */
+    opacity: 0.45;
   }
 </style>
