@@ -100,7 +100,7 @@ const href = '/#case-contact';
             location.href = '/#case-contact';
             return;
           }
-          history.replaceState(null, '', '/#case-contact');
+          history.replaceState(history.state, '', '/#case-contact');
           const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
           const r = target.getBoundingClientRect();
           const y = window.scrollY + r.top - 80;
