@@ -384,7 +384,7 @@ export const CASES: CaseEntry[] = [
     detail: {
       chips: ['Consulting', 'AI', 'Agent UX', 'Sim-Racing'],
       hook: [
-        'A founder shipping an AI sim-racing telemetry product asked for a design pass. The product had real telemetry data, a chat agent, and a polished analysis surface. Three working pieces, living in different containers.',
+        'A founder shipping an AI sim-racing telemetry product asked for a design pass. The product had real telemetry data, a chat agent, and a polished analysis surface. The three pieces worked, but they lived in different containers.',
         'The user got data, an algorithmic score, and a chat window that could run queries. What they did not get was the experience of being walked through their own session by someone who knew what to look for.',
       ],
       sections: [
@@ -392,14 +392,14 @@ export const CASES: CaseEntry[] = [
           title: 'The agent and the workspace',
           subtitle: 'What the product already had, and what it was missing',
           paragraphs: [
-            'The web app already had an AI surface: ten dimensions scored, each with a short coaching tip, all inside a modal. The desktop capture tool had a chat agent that ran corner queries and returned annotated track visualizations. The analysis surface was dense, accurate, demanding.',
+            'The web app already had an AI surface: ten dimensions scored, each with a short coaching tip, all inside a modal. The desktop capture tool had a chat agent that ran corner queries and returned annotated track visualizations. The analysis surface was accurate and dense.',
             'The team had even shipped the right intent in one agentic feature: click a low-scoring dimension and dots appear on the track marking where the issue occurs. The execution stops halfway. The dots are not labeled. The view does not zoom. The user is left to manually find the corner and read it back to themselves.',
             'The agent had the data. The workspace had no agent thinking with the user inside it. Each surface was doing one piece of the job a real race engineer does in a single conversation.',
           ],
           decisions: [
             {
               title: 'Algorithmic scoring returns a conclusion, not an investigation.',
-              body: 'A number on a dimension hides the analysis that produced it. The analysis is the part a self-coached racer needs to see, not the score.',
+              body: 'A number on a dimension hides the analysis that produced it. The analysis is the part a self-coached racer needs to see.',
             },
             {
               title: 'A chat agent in a separate window is architecturally severed from the workspace.',
@@ -416,9 +416,9 @@ export const CASES: CaseEntry[] = [
           title: 'Agent-as-workspace',
           subtitle: 'One structural move that reframed the whole product',
           paragraphs: [
-            'The reframe was a single architectural commitment. The web app stops being an analysis tool with a chat panel. It becomes an AI agent surface, with the analysis view as the workspace the agent operates inside.',
+            'The reframe was a single architectural commitment. The web app becomes an AI agent surface, and the analysis view becomes the workspace the agent operates inside.',
             'The rail has three states rather than three modes. Idle, when the user opens a session and the agent has the floor. Investigating, when the agent narrates while the workspace annotates. Exploring, when the agent recedes and the user drives.',
-            'Under that architecture sits the behavioral spec. A race engineer pattern, not a chat persona. Diagnose before prescribe. One primary correction per cycle. Specificity over generality. Annotate the workspace, do not just describe it. Suggest a follow-up so the conversation has somewhere to go.',
+            'Under that architecture sits the behavioral spec, which models a race engineer. Diagnose before prescribe. One primary correction per cycle. Specificity over generality. Annotate the workspace instead of only describing it. Suggest a follow-up so the conversation has somewhere to go.',
           ],
           decisions: [
             {
@@ -427,14 +427,13 @@ export const CASES: CaseEntry[] = [
             },
             {
               title: 'Three states, not three modes.',
-              body: "States shift the agent's prominence based on what the user is doing. Modes would have made the user choose. The transitions are the agent's responsibility, not the user's.",
+              body: "States shift the agent's prominence based on what the user is doing. Modes would have made the user choose. With states, the agent owns the transitions.",
             },
             {
               title: 'Diagnose before prescribe.',
               body: 'Tell the user what is wrong before suggesting anything different. The same restraint a real engineer applies, and the restraint that earns trust from a self-coached racer with strong opinions about their own driving.',
             },
           ],
-          italicOutro: 'The user never chooses a mode. The agent\'s prominence shifts with what the user is doing.',
           screenshots: {
             columns: 2,
             images: [
@@ -457,19 +456,19 @@ export const CASES: CaseEntry[] = [
           paragraphs: [
             'The pattern is generalizable, but generalizability needs proof. Four archetypes shipped, each handling a different shape of question, all running inside the same shell.',
             'Spatial questions: where on the track is this happening? The agent zooms the canvas, labels the moments through a corner, walks through what it sees, suggests the next thread to pull.',
-            'Temporal questions: where in the session did something change, and why? Same architecture, different canvas, different supporting data, same investigative pattern around it.',
+            'Temporal questions: where in the session did something change, and why? It runs in the same architecture with the same investigative pattern, on a different canvas with different supporting data.',
             'Distributional questions: how consistent is the driver across the session, and where should they look closer? The agent walks the lap, points out what is working before flagging what is not, then hands the depth navigation to the user.',
-            'State-along-line questions: what was the car doing as it moved through that moment? A different visualization shape, the same conversational shell around it.',
+            'State-along-line questions: what was the car doing as it moved through that moment? The visualization changes shape, and the conversational shell around it stays the same.',
             'Four archetypes were enough to prove it. The architecture can carry the kind of question the product roadmap implies but does not yet have a surface for.',
           ],
           decisions: [
             {
               title: 'Each archetype is a question shape, not a screen.',
-              body: 'Spatial, temporal, distributional, state-along-line. Four examples prove the architecture handles whatever question comes next, not that there are four views to ship.',
+              body: 'Spatial, temporal, distributional, state-along-line. Four examples show the architecture can take whatever question comes next.',
             },
             {
               title: 'Depth navigation lives inside an archetype.',
-              body: 'An overview view and a drill-down view are two states of the same investigation, not two separate ones. The pattern handles the transition without leaving the conversation.',
+              body: 'An overview view and a drill-down view are two states of the same investigation. The pattern handles the transition without leaving the conversation.',
             },
             {
               title: "Designed against the product's existing data.",
@@ -507,8 +506,8 @@ export const CASES: CaseEntry[] = [
       outcomeBeat: {
         title: 'What the engagement delivered',
         paragraphs: [
-          "A conceptual diagnostic carrying the architectural argument. A working web prototype with the four archetypes. A desktop role redefinition from chat host to capture-and-trailer surface. All designed against the product's existing data layer. All aligned with the long-term direction the founder was building toward.",
-          'The 20-hour timebox held. The handoff carried the architectural commitment, the worked archetypes, and a clean list of open questions for the next round.',
+          "The work produced a conceptual diagnostic carrying the architectural argument, a working web prototype with the four archetypes, and a desktop role redefinition from chat host to capture-and-trailer surface. All of it was designed against the product's existing data layer and aligned with the long-term direction the founder was building toward.",
+          'The 20-hour timebox held, and the handoff ended with a clean list of open questions for the next round.',
         ],
       },
     },
@@ -710,7 +709,7 @@ export const CASES: CaseEntry[] = [
             },
             {
               title: 'Detail alongside the map, not a page away from it.',
-              body: "The trailer detail opens as a side panel, not as a navigation. The map stays visible the whole time. That decision keeps the yard manager oriented to the whole facility while drilling into one trailer, which matters because the next decision almost always depends on how that trailer fits into the dock assignment, the waitlist, and the eight other trailers waiting their turn.",
+              body: "The trailer detail opens as a side panel. The map stays visible the whole time. That decision keeps the yard manager oriented to the whole facility while drilling into one trailer, which matters because the next decision almost always depends on how that trailer fits into the dock assignment, the waitlist, and the eight other trailers waiting their turn.",
             },
           ],
           screenshots: {
@@ -825,7 +824,7 @@ export const CASES: CaseEntry[] = [
             'One AI analysis layer. Two operator-facing surfaces. The decision to split the operator view rather than the AI was structural: the AI did the same kind of analysis in both cases, but the human work it triggered was fundamentally different in shape.',
             'Power Quality was the diagnostic surface. The AI analyzed power quality data across the facility and the dashboard surfaced which equipment was most likely causing efficiency losses. Facility managers could see, at a glance, where their power was being wasted and which assets to investigate first.',
             'Demand Response was the time-sensitive surface. When the utility signaled an impending peak-demand event, the alert surface notified facility or regional managers in time to curtail operations and comply with the program. The penalty for non-compliance with peak-shaving events can run into six figures annually for an industrial site. The interface was designed to make the curtailment decision fast and accountable.',
-            "Treating these as two operator views on one AI system, rather than one combined screen or two separate products, was the move. The AI's job was the same in both cases: analyze the data, surface what mattered. The operator's job was different. Diagnostic decisions take minutes or hours. Demand-response decisions take seconds. The two surfaces let each decision happen at its own speed.",
+            "Treating these as two operator views on one AI system, rather than one combined screen or two separate products, was the move. It let each decision happen at its own speed.",
           ],
           decisions: [
             {
@@ -841,7 +840,6 @@ export const CASES: CaseEntry[] = [
               body: 'Demand Response had a fixed clock. The utility signal arrived, the curtailment window opened, the penalty avoidance depended on action within that window. The surface had to make the decision visible, the consequences clear, and the action trivial to execute. Anything else competed with the window.',
             },
           ],
-          italicOutro: "The same AI feeds both surfaces. The operator's clock is what differs, minutes on one and seconds on the other.",
           screenshots: {
             columns: 2,
             images: [
@@ -865,12 +863,11 @@ export const CASES: CaseEntry[] = [
             "Designing operator-facing surfaces for AI output is a different competency than designing AI features. The AI engineer's question is whether the model produces correct output. The operator UX designer's question is whether the human downstream can recognize the output, trust it, and act on it within the time the situation allows.",
             "Power Quality and Demand Response were the same answer to two versions of that question. Both surfaces gave the operator a view onto AI-generated analysis. Neither gave the operator the AI itself. The design move in both cases was to find the place where the operator's decision actually happens, then to surface the AI's contribution at that exact place.",
             'Deployed across 200+ industrial locations of one customer, the system met operators where their decisions happened. Facility managers at the site for the diagnostic work. Facility or regional managers in the curtailment window for time-sensitive response. The operator was always the actor. The AI was always the analyst.',
-            'The value claim stays structural. Penalty avoidance built into the operator decision flow, at industrial scale. Site-level savings depended on operational data I never saw after deployment, so this case names what it can show.',
           ],
           decisions: [
             {
               title: 'Designing for AI output, not designing the AI.',
-              body: "Different problem than designing the model. The AI's correctness is one question. Whether the operator can act on what the AI surfaces in the time the situation allows is a different one. Operator UX for AI insight is its own design competency.",
+              body: "Operator UX for AI insight is its own design competency, separate from designing the model.",
             },
             {
               title: 'The operator is the actor. The AI is the analyst.',
@@ -878,10 +875,9 @@ export const CASES: CaseEntry[] = [
             },
             {
               title: 'Structural value, not measured savings.',
-              body: 'The product was designed to help facilities avoid utility penalties that can run into six figures annually per industrial site. That is the structural framing. Measured savings at a specific site depended on conditions I never saw after deployment, so the value this case claims is structural.',
+              body: 'Penalty avoidance is built into the operator decision flow, at industrial scale. That structure is the value this case claims.',
             },
           ],
-          italicOutro: "What is provable is in the design itself. The dollar outcomes sat in operational data I never saw after rollout.",
           screenshots: {
             columns: 2,
             images: [
@@ -902,7 +898,7 @@ export const CASES: CaseEntry[] = [
       outcomeBeat: {
         title: 'What the system was for',
         paragraphs: [
-          'Deployed across more than 200 industrial locations of a single large customer at Ndustrial. Two operator surfaces, Power Quality and Demand Response, running on one AI analysis layer underneath. Designed to help facilities avoid utility penalties that can run into six figures annually for non-compliance with peak-shaving events.',
+          'Deployed across more than 200 industrial locations of a single large customer at Ndustrial.',
           'Post-deployment performance data is not mine to claim. I designed the system; I did not personally see how each of the 200+ sites used it after rollout. This case shows what shipped and what it was structured to enable.',
         ],
         highlight: "The AI can be right and the design can still fail, if the operator cannot act on what it surfaces in the time the situation allows.",
