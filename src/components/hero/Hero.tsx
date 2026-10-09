@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './hero-variants.css';
 import RingObject from './RingObject';
+import DotField from './DotField';
 import { smoothScrollTo } from '../../lib/scroll';
 import { ui } from '../../lib/ui';
 
@@ -14,7 +15,7 @@ type StatCard = {
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 
 // MOCK: three hero directions behind ?hero=a|b|c, for comparison only.
-type Variant = 'current' | 'a' | 'b' | 'c' | 'd' | 'e' | 'f';
+type Variant = 'current' | 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g';
 const VARIANTS: { key: Variant; label: string }[] = [
   { key: 'current', label: 'Live' },
   { key: 'a', label: 'A · Refine' },
@@ -23,6 +24,7 @@ const VARIANTS: { key: Variant; label: string }[] = [
   { key: 'd', label: 'D · Lit map' },
   { key: 'e', label: 'E · Ring' },
   { key: 'f', label: 'F · Map + work' },
+  { key: 'g', label: 'G · Dot field' },
 ];
 
 // Proof points matched to the 2026-10-08 resume screen pass: paid work only.
@@ -134,24 +136,31 @@ const F_CAPTION = "The industries I've designed for, pinned to Berlin places tha
 const F_MAP_DESC =
   "Map of Berlin marking six industries I've designed for: manufacturing at Siemensstadt (Brightly), energy at Kraftwerk Klingenberg (PQ + DR), logistics at Westhafen (Fleet), motorsports at the old AVUS circuit (Sim Racing Coach), healthcare at the Charité (Epilog), and cycling at the Velodrom (Cal).";
 
-type FProof = { href: string; stop: string; kicker: string; fig: string; label: string; img: string; w: number; h: number };
+type FProof = { href: string; slug: string; stop: string; name: string; domains: string[]; fig: string; label: string; img: string; w: number; h: number };
 const F_PROOF: FProof[] = [
   {
-    href: '/work/brightly/', stop: 'siemensstadt', kicker: 'Manufacturing · Brightly', fig: '$1.575B',
+    href: '/work/brightly/', slug: 'brightly', stop: 'siemensstadt', name: 'Brightly',
+    domains: ['Manufacturing', 'Healthcare', 'Education', 'Government'], fig: '$1.575B',
     label: 'Set the design direction for the Brightly acquisition',
     img: '/images/cases/brightly/brightly-dashboard.jpeg', w: 2001, h: 1125,
   },
   {
-    href: '/work/pqdr/', stop: 'klingenberg', kicker: 'Energy · PQ + DR', fig: '200+',
+    href: '/work/pqdr/', slug: 'pqdr', stop: 'klingenberg', name: 'PQ + DR', domains: ['Energy'], fig: '200+',
     label: 'Industrial locations running operator tools I designed',
     img: '/images/cases/pqdr/pq-one-line.png', w: 1440, h: 1024,
   },
   {
-    href: '/work/sim-racing/', stop: 'avus', kicker: 'Motorsports · Sim Racing Coach', fig: '2',
+    href: '/work/sim-racing/', slug: 'sim-racing', stop: 'avus', name: 'Sim Racing Coach', domains: ['Motorsports'], fig: '2',
     label: 'Paid AI-agent engagements since 2025',
     img: '/images/cases/sim-racing/prototype-web-idle.png', w: 3356, h: 1858,
   },
 ];
+
+// G: what the dot field spells for each case. Same words as each tile's
+// domains line, so the field only ever repeats what the page already says.
+const G_STATES: Record<string, string[]> = Object.fromEntries(
+  F_PROOF.map((p) => [p.slug, p.domains.map((d) => d.toUpperCase())]),
+);
 
 // Flat projection of the Ring mock's coordinates (same ±100–300 m caveat:
 // replace with OSM or VBB geometry before shipping). Projected into 600 × 381,
@@ -241,10 +250,14 @@ export default function Hero() {
   const cardsRef = useRef<HTMLLIElement[]>([]);
   const [variant, setVariant] = useState<Variant>('current');
   const [fActive, setFActive] = useState<string | null>(null);
+  const [gPanel, setGPanel] = useState(false);
+  const leaveTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
     const v = new URLSearchParams(window.location.search).get('hero');
-    if (v === 'a' || v === 'b' || v === 'c' || v === 'd' || v === 'e' || v === 'f') setVariant(v);
+    if (v === 'a' || v === 'b' || v === 'c' || v === 'd' || v === 'e' || v === 'f' || v === 'g') setVariant(v);
+    // MOCK: ?panel=1 puts G's dots on the navy sign panel instead of the page.
+    setGPanel(new URLSearchParams(window.location.search).get('panel') === '1');
   }, []);
 
   const STAT_CARDS: StatCard[] = [
@@ -323,7 +336,7 @@ export default function Hero() {
       // F has no slide-out: the whole hero fades before the first case
       // scrolls under it, and hides once gone so its links leave the tab
       // order and stop catching clicks meant for the page beneath.
-      if (variant === 'f') {
+      if (variant === 'f' || variant === 'g') {
         const op = 1 - clamp01(y / (window.innerHeight * 0.55));
         heroEl.style.opacity = String(op);
         heroEl.style.visibility = op < 0.02 ? 'hidden' : 'visible';
@@ -424,11 +437,21 @@ export default function Hero() {
   );
   const qualifiers = <p className="hv-meta">{ui('hero.qualifiers')}</p>;
 
-  if (variant === 'f') {
-    const clear = () => setFActive(null);
+  if (variant === 'f' || variant === 'g') {
+    const g = variant === 'g';
+    // Moving between tiles crosses a 32px gap; a short delay before going
+    // back to the map stops the picture flickering through it.
+    const enter = (key: string) => {
+      clearTimeout(leaveTimer.current);
+      setFActive(key);
+    };
+    const clear = () => {
+      clearTimeout(leaveTimer.current);
+      leaveTimer.current = setTimeout(() => setFActive(null), 180);
+    };
     return (
       <>
-        <section className="hero hv hv--f" aria-label={ui('hero.ariaIntro')} ref={heroRef}>
+        <section className={`hero hv hv--f${g ? ' hv--g' : ''}`} aria-label={ui('hero.ariaIntro')} ref={heroRef}>
           <div className="hvf-top">
             <div className="hvf-text">
               <h1 className="hvf-h1">{F_H1}</h1>
@@ -443,27 +466,31 @@ export default function Hero() {
                 ))}
               </p>
             </div>
-            <BerlinMap active={fActive} />
+            {g ? <DotField active={fActive} states={G_STATES} panel={gPanel} /> : <BerlinMap active={fActive} />}
           </div>
           <ul className="hvf-work" aria-label="Selected work">
-            {F_PROOF.map((p) => (
+            {F_PROOF.map((p) => {
+              const key = g ? p.slug : p.stop;
+              return (
               <li key={p.href}>
                 <a
                   href={p.href}
-                  onMouseEnter={() => setFActive(p.stop)}
+                  onMouseEnter={() => enter(key)}
                   onMouseLeave={clear}
-                  onFocus={() => setFActive(p.stop)}
+                  onFocus={() => enter(key)}
                   onBlur={clear}
                 >
                   <span className="hvf-shot">
                     <img src={p.img} alt="" width={p.w} height={p.h} decoding="async" />
                   </span>
-                  <span className="hvf-kicker">{p.kicker}</span>
+                  <span className="hvf-kicker">{p.name}</span>
                   <span className="hvf-fig">{p.fig}</span>
                   <span className="hvf-label">{p.label}</span>
+                  <span className="hvf-domains">{p.domains.join(' · ')}</span>
                 </a>
               </li>
-            ))}
+              );
+            })}
           </ul>
         </section>
         {switcher}

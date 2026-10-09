@@ -1230,3 +1230,51 @@
   .hvf-fig { margin-top: 2px; font-size: 24px; }
   .hvf-label { margin-top: 2px; font-size: 14px; }
 }
+
+/* Domains under each tile, F and G. Real text, because G's dot field only
+   repeats it. */
+.hvf-domains {
+  margin-top: 4px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--color-text-soft);
+}
+
+/* ── G · Dot field ──────────────────────────────────────
+   F with the map replaced by a canvas of display dots in Ziggy's OLED
+   material. Sized like F's map so the two compare directly. */
+.hv--g .hvf-shot {
+  height: clamp(104px, 19vh, 210px);
+}
+
+.hvg-field {
+  justify-self: end;
+  width: 100%;
+  max-width: min(560px, 62vh);
+  aspect-ratio: 600 / 340;
+}
+
+.hvg-field canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* MOCK: the panel option uses the site's navy sign token, so the dots read
+   as a lit display rather than ink on the page. */
+.hvg-field--panel {
+  border-radius: 10px;
+  background: var(--color-sign-navy);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 10px 28px rgba(0, 0, 0, 0.10);
+}
+
+@media (max-width: 1199px) {
+  .hvg-field { display: none; }
+}
+
+@media (max-width: 767px) {
+  .hvf-domains { font-size: 12px; margin-top: 2px; }
+  .hvf-shot { grid-row: 1 / span 4; }
+}
