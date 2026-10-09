@@ -540,7 +540,8 @@
    vh to keep the whole thing on one screen down to about 1366 × 768.
    Type: Barlow Condensed 600 for display, Inter 400 for text. */
 .hv--f {
-  padding-top: clamp(88px, 12.5vh, 124px);
+  --hv-pad-top: clamp(88px, 12.5vh, 124px);
+  padding-top: var(--hv-pad-top);
   padding-right: 56px;
 }
 
@@ -863,7 +864,7 @@
 .hvg-board {
   --hvg-bezel: 10px;
   --hvg-bar: 14px;
-  --hvg-depth: 44px;
+  --hvg-depth: 72px;
   position: relative;
   justify-self: end;
   width: 100%;
@@ -871,7 +872,7 @@
   /* Hung on the right and turned in toward the headline and the work: the
      left edge recedes and the face tips slightly down toward the tiles.
      Static, so it is not motion; the pause key still hit-tests. */
-  transform: perspective(1300px) rotateY(-16deg) rotateX(-4deg);
+  transform: perspective(1300px) rotateY(-20deg) rotateX(-4deg);
   transform-origin: 100% 50%;
   transform-style: preserve-3d;
 }
@@ -881,10 +882,10 @@
    a band of yellow shows past the right edge as it does on the real one. */
 .hvg-box {
   position: absolute;
-  top: 9%;
-  bottom: 9%;
-  right: 1%;
-  width: 58%;
+  top: 6%;
+  bottom: 6%;
+  right: 0;
+  width: 64%;
   background: var(--color-board-housing);
   transform: translateZ(calc(var(--hvg-depth) * -1));
   transform-style: preserve-3d;
@@ -907,11 +908,41 @@
   top: 0;
   right: 0;
   bottom: 0;
-  width: 12px;
+  width: 18px;
   border-radius: 0 6px 6px 0;
   background: linear-gradient(90deg, var(--color-board-rim), color-mix(in srgb, var(--color-board-rim) 70%, black));
   transform-origin: 100% 50%;
   transform: rotateY(-90deg);
+}
+
+/* The box-section arm the board hangs from, rising to the top of the page
+   and passing behind the fixed header. It sits on the electronics box, set
+   back from the face. A lit front face and a shaded side make the section
+   read as square tube. */
+.hvg-arm {
+  position: absolute;
+  bottom: 100%;
+  left: 62%;
+  width: 26px;
+  height: calc(var(--hv-pad-top, 124px) + 80px);
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--color-board-rim) 45%, white) 0%,
+    color-mix(in srgb, var(--color-board-rim) 75%, white) 58%,
+    color-mix(in srgb, var(--color-board-rim) 80%, black) 59%,
+    var(--color-board-rim) 100%);
+  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.6);
+  transform: translateZ(calc(var(--hvg-depth) * -0.45));
+}
+/* Mounting plate where the arm meets the housing. */
+.hvg-arm::after {
+  content: '';
+  position: absolute;
+  left: -12px;
+  right: -12px;
+  bottom: -2px;
+  height: 9px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--color-board-rim) 55%, white), color-mix(in srgb, var(--color-board-rim) 85%, black));
 }
 
 /* The face: a narrow rim around white enamel, lit from above. */
@@ -978,20 +1009,6 @@
     inset 0 2px 5px rgba(0, 0, 0, 0.55),
     0 0 0 1px rgba(0, 0, 0, 0.5),
     0 1px 0 1px rgba(255, 255, 255, 0.55);
-}
-
-/* Scratches and dust on the glass. Scratches run steep, never along a
-   text row, so none of them reads as a line struck through a departure. */
-.hvg-glass::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 340' preserveAspectRatio='none'><g fill='none' stroke='white' stroke-linecap='round'><path d='M44 18 L92 74' stroke-width='1.1' opacity='0.4'/><path d='M58 26 L74 47' stroke-width='0.7' opacity='0.28'/><path d='M402 96 L436 150' stroke-width='1.2' opacity='0.38'/><path d='M486 22 C508 44 530 72 546 104' stroke-width='0.9' opacity='0.3'/><path d='M120 210 L152 262' stroke-width='1' opacity='0.3'/><path d='M300 300 L356 326' stroke-width='1.1' opacity='0.32'/><path d='M228 8 L246 40' stroke-width='0.8' opacity='0.34'/><path d='M560 180 L586 236' stroke-width='0.9' opacity='0.3'/><path d='M16 150 L30 196' stroke-width='0.7' opacity='0.26'/><path d='M352 210 L366 232 M370 238 L380 256' stroke-width='0.9' opacity='0.32'/><path d='M206 120 L224 158' stroke-width='0.6' opacity='0.22'/><path d='M470 300 L520 334' stroke-width='1' opacity='0.28'/></g></svg>"), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='d'><feTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='1' seed='4'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 9 -7.2'/></filter><rect width='100%' height='100%' filter='url(%23d)'/></svg>");
-  background-size: 100% 100%, 220px 220px;
-  mix-blend-mode: screen;
-  opacity: 0.9;
-  pointer-events: none;
 }
 
 /* Sheen: a soft diagonal reflection across the upper glass. */
@@ -1073,4 +1090,22 @@
 @media (max-width: 767px) {
   .hvf-domains { font-size: 12px; margin-top: 2px; }
   .hvf-shot { grid-row: 1 / span 4; }
+}
+
+
+/* G scrolls with the page: the board hangs from the top of the page on its
+   arm, so it leaves with the content instead of fading. This also ends the
+   fixed hero's reflow failure at 200% zoom. Hero.tsx writes the hero's
+   measured height to --hero-h so the cases start right after it. */
+.hero.hv--g {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  padding-bottom: 24px;
+}
+.page:has(.hv--g) .spine-container {
+  padding-top: calc(var(--hero-h, 100vh) + 56px);
 }

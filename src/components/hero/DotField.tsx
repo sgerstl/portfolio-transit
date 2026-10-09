@@ -208,8 +208,15 @@ export default function DotField({ active, departures }: { active: string | null
     let sprite: HTMLCanvasElement | null = null;
     const rand = rng(7);
 
+    // The hero scrolls with the page now, so also stop once the board is off screen.
+    let onScreen = true;
+    const io = new IntersectionObserver(([e]) => {
+      onScreen = e.isIntersecting;
+      kick();
+    });
+    io.observe(wrap);
     const visible = () =>
-      !document.hidden && (wrap.checkVisibility ? wrap.checkVisibility({ opacityProperty: true, visibilityProperty: true }) : true);
+      onScreen && !document.hidden && (wrap.checkVisibility ? wrap.checkVisibility({ opacityProperty: true, visibilityProperty: true }) : true);
 
     const makeSprites = () => {
       const size = Math.max(2, Math.round(pitch * dpr));
@@ -422,6 +429,7 @@ export default function DotField({ active, departures }: { active: string | null
     document.addEventListener('visibilitychange', wake);
     return () => {
       ro.disconnect();
+      io.disconnect();
       clearTimeout(t);
       cancelAnimationFrame(raf);
       window.removeEventListener('scroll', wake);
@@ -446,6 +454,7 @@ export default function DotField({ active, departures }: { active: string | null
     <div className="hvg-board" ref={boardRef}>
       {/* Depth: the yellow electronics box the board is mounted on, and the
           housing's own edge. Both sit behind the face in 3D. */}
+      <div className="hvg-arm" aria-hidden="true" />
       <div className="hvg-box" aria-hidden="true" />
       <div className="hvg-edge" aria-hidden="true" />
       <div className="hvg-face">

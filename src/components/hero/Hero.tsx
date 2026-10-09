@@ -246,7 +246,8 @@ export default function Hero() {
       // F has no slide-out: the whole hero fades before the first case
       // scrolls under it, and hides once gone so its links leave the tab
       // order and stop catching clicks meant for the page beneath.
-      if (variant === 'f' || variant === 'g') {
+      if (variant === 'g') return;
+      if (variant === 'f') {
         const op = 1 - clamp01(y / (window.innerHeight * 0.55));
         heroEl.style.opacity = String(op);
         heroEl.style.visibility = op < 0.02 ? 'hidden' : 'visible';
@@ -262,6 +263,21 @@ export default function Hero() {
     };
 
     updateHero();
+
+    // G scrolls with the page: tell the case list how tall the hero is so it
+    // starts right after it, and redraw the rail when that changes.
+    let heroRo: ResizeObserver | undefined;
+    const page = heroEl.closest<HTMLElement>('.page');
+    if (variant === 'g' && page) {
+      const setHeight = () => {
+        page.style.setProperty('--hero-h', `${heroEl.offsetHeight}px`);
+        window.dispatchEvent(new Event('spine:redraw'));
+      };
+      setHeight();
+      document.fonts?.ready.then(setHeight);
+      heroRo = new ResizeObserver(setHeight);
+      heroRo.observe(heroEl);
+    }
 
     let ticking = false;
     const onScroll = () => {
@@ -316,6 +332,8 @@ export default function Hero() {
     });
 
     return () => {
+      heroRo?.disconnect();
+      page?.style.removeProperty('--hero-h');
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
       clickHandlers.forEach(([card, fn]) => card.removeEventListener('click', fn));
