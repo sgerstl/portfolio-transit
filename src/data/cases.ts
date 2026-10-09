@@ -380,6 +380,8 @@ export const CASES: CaseEntry[] = [
       ],
       claim: 'I translate expert practice into agent behavior.',
       ctaHref: '/work/sim-racing/',
+      // The hero tile shows the 4 question types, so the card shows the next fact.
+      cardMetric: 1,
     },
     detail: {
       chips: ['Consulting', 'AI', 'Agent UX', 'Sim-Racing'],

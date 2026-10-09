@@ -28,8 +28,8 @@ const PROOF: Proof[] = [
     img: '/images/cases/pqdr/pq-one-line.png', w: 1440, h: 1024,
   },
   {
-    href: '/work/sim-racing/', slug: 'sim-racing', name: 'Sim Racing Coach', domains: ['Motorsports'], fig: '2',
-    label: 'Paid AI-agent engagements since 2025',
+    href: '/work/sim-racing/', slug: 'sim-racing', name: 'Sim Racing Coach', domains: ['Motorsports'], fig: '4',
+    label: 'Driver question types I designed one AI race engineer to answer',
     img: '/images/cases/sim-racing/prototype-web-idle.webp', w: 2000, h: 1107,
   },
 ];
