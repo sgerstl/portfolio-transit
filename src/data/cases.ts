@@ -32,7 +32,8 @@ export type CaseBody = {
   // for cases the hero already features: the card says something the hero
   // tile doesn't, instead of repeating its number.
   cardTagline?: string;
-  cardMetric?: number;
+  // null shows no figure on the card.
+  cardMetric?: number | null;
 };
 
 export type CaseDecision = { title: string; body: string };
@@ -127,6 +128,7 @@ export const CASES: CaseEntry[] = [
       ],
       claim: 'I design AI features that produce clinical-grade outcomes. Surfacing patterns a clinician verifies and acts on.',
       ctaHref: '/work/epilog',
+      cardMetric: null,
     },
     detail: {
       demoUrl: 'https://epilog-demo.scottgerstl.com',
@@ -244,6 +246,8 @@ export const CASES: CaseEntry[] = [
       ],
       claim: 'I am AI-fluent at every layer of design. Research, analysis, building, shipping.',
       ctaHref: '/work/cal',
+      cardTagline: 'An AI workout planner, built for my own training and used by three people.',
+      cardMetric: 1,
     },
     detail: {
       demoUrl: 'https://cal-demo.scottgerstl.com',
@@ -912,6 +916,8 @@ export const CASES: CaseEntry[] = [
       domains: ['Personal AI', 'Agent design', 'Android'],
       outcome: 'A phone app I use every morning. It pulls my calendar, health data, messages and to-dos onto one screen, and an AI agent decides what goes first and why. The agent can only point at real things in my notes, and the app fills in every number and date itself.',
       visualLabel: 'ZIGGY · TODAY ON THE OLED DISPLAY',
+      visualImage: '/images/cases/ziggy/ziggy-today-oled.jpg',
+      visualImageAlt: 'Ziggy Today screen on the OLED material, from the demo build with an invented person',
       visualLayout: 'full',
       metrics: [
         { num: '5 days', label: 'Sketch to an installed Android app' },
@@ -920,6 +926,7 @@ export const CASES: CaseEntry[] = [
       ],
       claim: "I design agent interfaces that can't make up a number.",
       ctaHref: '/work/ziggy',
+      cardMetric: 2,
     },
   },
   {

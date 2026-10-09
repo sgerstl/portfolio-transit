@@ -23,9 +23,11 @@ const colorVar = `var(--color-line-${line})`;
 // case the hero features names its own (cardMetric) so the card doesn't
 // repeat the hero tile's number.
 const metric =
-  body.cardMetric !== undefined
-    ? body.metrics[body.cardMetric]
-    : body.metrics.find((m) => /^[\d$~]/.test(m.num));
+  body.cardMetric === null
+    ? undefined
+    : body.cardMetric !== undefined
+      ? body.metrics[body.cardMetric]
+      : body.metrics.find((m) => /^[\d$~]/.test(m.num));
 const cardLine = body.cardTagline ?? tagline;
 ---
 
