@@ -218,6 +218,7 @@ export default function DotField({ active, departures, idle = 'ring' }: { active
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const boardRef = useRef<HTMLDivElement | null>(null);
   const mountRef = useRef<HTMLDivElement | null>(null);
+  const shadowRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const api = useRef<{ show: (key: string | null) => void; setPaused: (p: boolean) => void } | null>(null);
   const [paused, setPaused] = useState(false);
@@ -533,21 +534,31 @@ export default function DotField({ active, departures, idle = 'ring' }: { active
     const C = 5.5; // damping: settles in roughly a second and a half
     const GAIN = 0.18; // degrees a second per pixel scrolled
     const MAX = 3;
-    let theta = 0, omega = 0, last = 0, raf = 0, running = false;
+    const shadow = shadowRef.current;
+    const LAG = 7; // how fast the shadow catches up, per second: a beat behind the board
+    const WIDER = 1.15; // the wall is farther from the pivot, so its swing reads a little wider
+    let theta = 0, omega = 0, thetaS = 0, last = 0, raf = 0, running = false;
+    // The shadow sits inside the mount, so it already turns with the board; it adds only the difference.
+    const place = () => {
+      mount.style.transform = theta ? `rotate(${theta.toFixed(3)}deg)` : '';
+      if (shadow) shadow.style.transform = theta || thetaS ? `rotate(${(thetaS * WIDER - theta).toFixed(3)}deg)` : '';
+    };
     let lastY = window.scrollY;
     const step = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       omega += (-K * theta - C * omega) * dt;
       theta = Math.max(-MAX, Math.min(MAX, theta + omega * dt));
-      if (Math.abs(theta) < 0.01 && Math.abs(omega) < 0.05) {
+      thetaS += (theta - thetaS) * Math.min(1, LAG * dt);
+      if (Math.abs(theta) < 0.01 && Math.abs(omega) < 0.05 && Math.abs(thetaS) < 0.01) {
         theta = 0;
         omega = 0;
-        mount.style.transform = '';
+        thetaS = 0;
+        place();
         running = false;
         return;
       }
-      mount.style.transform = `rotate(${theta.toFixed(3)}deg)`;
+      place();
       raf = requestAnimationFrame(step);
     };
     const onScroll = () => {
@@ -567,6 +578,7 @@ export default function DotField({ active, departures, idle = 'ring' }: { active
       window.removeEventListener('scroll', onScroll);
       cancelAnimationFrame(raf);
       mount.style.transform = '';
+      if (shadow) shadow.style.transform = '';
     };
   }, []);
 
@@ -580,6 +592,11 @@ export default function DotField({ active, departures, idle = 'ring' }: { active
   // object, not the operator's mark.
   return (
     <div className="hvg-board-mount" ref={mountRef}>
+      {/* The board's shadow on the wall behind it: swings with the board, a beat behind and a little wider */}
+      <div className="hvg-shadow" ref={shadowRef} aria-hidden="true">
+        <span className="hvg-shadow-pole" />
+        <span className="hvg-shadow-board" />
+      </div>
       <div className="hvg-side" aria-hidden="true" />
       <div className="hvg-board" ref={boardRef}>
         <div className="hvg-arm" aria-hidden="true" />
