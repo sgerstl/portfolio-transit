@@ -163,7 +163,7 @@ export default function Hero() {
   const cardsRef = useRef<HTMLLIElement[]>([]);
   const [variant, setVariant] = useState<Variant>('current');
   const [fActive, setFActive] = useState<string | null>(null);
-  // MOCK: what G's board shows at rest, ?idle=ring|face|face-inv|face-lines.
+  // MOCK: what G's board shows at rest, ?idle=ring|face.
   const [gIdle, setGIdle] = useState<Idle>('ring');
   const leaveTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
@@ -171,7 +171,7 @@ export default function Hero() {
     const v = new URLSearchParams(window.location.search).get('hero');
     if (v === 'a' || v === 'e' || v === 'f' || v === 'g') setVariant(v);
     const idle = new URLSearchParams(window.location.search).get('idle');
-    if (idle === 'face' || idle === 'face-inv' || idle === 'face-lines') setGIdle(idle);
+    if (idle === 'face') setGIdle(idle);
   }, []);
 
   const STAT_CARDS: StatCard[] = [

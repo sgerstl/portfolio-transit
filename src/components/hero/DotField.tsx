@@ -29,8 +29,8 @@ const TILT = (64 * Math.PI) / 180; // 0 is straight down onto the map
 const UNLIT = 0.07;
 
 export type Departure = { line: string; name: string; minutes: number; from: string; to: string };
-// MOCK: what the board shows at rest. 'ring' turns; the face options are still.
-export type Idle = 'ring' | 'face' | 'face-inv' | 'face-lines';
+// MOCK: what the board shows at rest. 'ring' turns; 'face' is still.
+export type Idle = 'ring' | 'face';
 const HEADSHOT = '/images/scott-headshot.png';
 type Cell = { x: number; y: number; a: number };
 type V3 = [number, number, number, number]; // x (east), y (up), z (north), brightness
@@ -169,59 +169,110 @@ function departureCells(d: Departure, cols: number, rows: number): Cell[] {
   return out.filter((c) => c.x >= 0 && c.y >= 0 && c.x < cols && c.y < rows);
 }
 
-// The headshot in LEDs, one LED per cell, square and centred, brightness
-// from the photo. The photo is a circle crop, so outside it stays dark, and
-// its levels are stretched between the 4th and 96th percentile so the face
-// uses the board's full range. Three readings to compare:
-//   face        the photo as it is: light skin and wall lit, dark hair dark
-//   face-inv    inverted: hair, beard, glasses and shadow lit, wall dark
-//   face-lines  edges only, like a drawing
-const smooth = (a: number, b: number, x: number) => {
-  const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
-  return t * t * (3 - 2 * t);
-};
-function faceCells(img: HTMLImageElement, style: Idle, cols: number, rows: number): Cell[] {
-  const size = rows - 4;
-  const ox = Math.floor((cols - size) / 2), oy = 2;
+// The headshot in LEDs, one LED per cell, square and centred. The photo's
+// light wall would light the whole circle, so it is found and dropped first:
+// a flood fill from the wall near the crop's rim spreads through smooth,
+// light pixels and stops at the edges of hair, beard and face. What is left
+// (the head) is feathered, the sweater is faded out below the chin, and the
+// face is sharpened before it shrinks so the glasses survive. Every lit LED
+// gets a small floor so dark hair and beard still hold the silhouette.
+// Tuned offline against the headshot (scratch prototype, 2026-10-09).
+const WORK = 220; // working resolution for the mask
+const WALL_STEP = 0.022; // largest brightness step the fill crosses
+function boxBlur(src: Float32Array, n: number, r: number): Float32Array {
+  const tmp = new Float32Array(n * n), out = new Float32Array(n * n);
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+    let sum = 0, c = 0;
+    for (let k = -r; k <= r; k++) { const xx = x + k; if (xx >= 0 && xx < n) { sum += src[y * n + xx]; c++; } }
+    tmp[y * n + x] = sum / c;
+  }
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+    let sum = 0, c = 0;
+    for (let k = -r; k <= r; k++) { const yy = y + k; if (yy >= 0 && yy < n) { sum += tmp[yy * n + x]; c++; } }
+    out[y * n + x] = sum / c;
+  }
+  return out;
+}
+function faceCells(img: HTMLImageElement, cols: number, rows: number): Cell[] {
+  const W = WORK;
   const c = document.createElement('canvas');
-  c.width = c.height = size;
+  c.width = c.height = W;
   const g = c.getContext('2d', { willReadFrequently: true });
   if (!g) return [];
   g.imageSmoothingQuality = 'high';
-  g.drawImage(img, 0, 0, size, size);
-  const d = g.getImageData(0, 0, size, size).data;
-  const lum = new Float32Array(size * size).fill(-1);
-  const vals: number[] = [];
-  for (let i = 0; i < size * size; i++) {
-    if (d[i * 4 + 3] < 160) continue;
-    lum[i] = (0.2126 * d[i * 4] + 0.7152 * d[i * 4 + 1] + 0.0722 * d[i * 4 + 2]) / 255;
-    vals.push(lum[i]);
+  g.drawImage(img, 0, 0, W, W);
+  const d = g.getImageData(0, 0, W, W).data;
+  const L = new Float32Array(W * W), solid = new Uint8Array(W * W);
+  for (let i = 0; i < W * W; i++) {
+    L[i] = (0.2126 * d[i * 4] + 0.7152 * d[i * 4 + 1] + 0.0722 * d[i * 4 + 2]) / 255;
+    solid[i] = d[i * 4 + 3] > 160 ? 1 : 0;
   }
+  // Trim the crop's soft rim (a 7px erosion) so it never lights as an arc.
+  const inside = new Uint8Array(W * W);
+  for (let y = 0; y < W; y++) for (let x = 0; x < W; x++) {
+    let ok = 1;
+    for (let k = -3; k <= 3 && ok; k++) for (let m = -3; m <= 3 && ok; m++) {
+      const yy = y + k, xx = x + m;
+      if (yy < 0 || xx < 0 || yy >= W || xx >= W || !solid[yy * W + xx]) ok = 0;
+    }
+    inside[y * W + x] = ok;
+  }
+  // Flood the wall from light pixels near the rim, upper part only so the
+  // sweater is never a seed.
+  const wall = new Uint8Array(W * W);
+  const queue = new Int32Array(W * W);
+  let head = 0, tail = 0;
+  for (let y = 0; y < W * 0.72; y++) for (let x = 0; x < W; x++) {
+    const i = y * W + x;
+    if (inside[i] && L[i] > 0.6 && Math.hypot(x - W / 2, y - W / 2) / (W / 2) > 0.86) { wall[i] = 1; queue[tail++] = i; }
+  }
+  while (head < tail) {
+    const i = queue[head++], x = i % W, y = (i / W) | 0;
+    const near = [x > 0 ? i - 1 : -1, x < W - 1 ? i + 1 : -1, y > 0 ? i - W : -1, y < W - 1 ? i + W : -1];
+    for (const n of near) {
+      if (n < 0 || wall[n] || !inside[n] || L[n] <= 0.45 || Math.abs(L[n] - L[i]) >= WALL_STEP) continue;
+      wall[n] = 1;
+      queue[tail++] = n;
+    }
+  }
+  // The head: inside and not wall, feathered, faded out below the chin.
+  let fg = new Float32Array(W * W);
+  for (let i = 0; i < W * W; i++) fg[i] = inside[i] && !wall[i] ? 1 : 0;
+  fg = boxBlur(boxBlur(fg, W, 2), W, 2);
+  for (let y = 0; y < W; y++) {
+    const keep = 1 - Math.max(0, Math.min(1, (y / W - 0.8) / 0.1));
+    for (let x = 0; x < W; x++) fg[y * W + x] *= keep;
+  }
+  // Sharpen (unsharp mask, 1.6x) so thin features survive the shrink.
+  const soft = boxBlur(boxBlur(L, W, 3), W, 3);
+  const sharp = new Float32Array(W * W);
+  for (let i = 0; i < W * W; i++) sharp[i] = Math.max(0, Math.min(1, L[i] + 1.6 * (L[i] - soft[i])));
+  // Shrink to the LED grid by averaging each cell's block.
+  const size = rows - 4;
+  const ox = Math.floor((cols - size) / 2), oy = 2;
+  const cellL = new Float32Array(size * size), cellF = new Float32Array(size * size), cellI = new Float32Array(size * size);
+  for (let cy = 0; cy < size; cy++) for (let cx = 0; cx < size; cx++) {
+    const x0 = Math.floor((cx * W) / size), x1 = Math.floor(((cx + 1) * W) / size);
+    const y0 = Math.floor((cy * W) / size), y1 = Math.floor(((cy + 1) * W) / size);
+    let sl = 0, sf = 0, si = 0, n = 0;
+    for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
+      const i = y * W + x;
+      sl += sharp[i] * inside[i]; sf += fg[i]; si += inside[i]; n++;
+    }
+    const k = cy * size + cx;
+    cellL[k] = sl / n; cellF[k] = sf / n; cellI[k] = si / n;
+  }
+  const vals: number[] = [];
+  for (let k = 0; k < size * size; k++) if (cellI[k] > 0.6 && cellF[k] > 0.5) vals.push(cellL[k]);
   if (!vals.length) return [];
   vals.sort((a, b) => a - b);
   const lo = vals[Math.floor(vals.length * 0.04)], hi = vals[Math.floor(vals.length * 0.96)];
-  const norm = (i: number) => (lum[i] < 0 ? 0 : Math.max(0, Math.min(1, (lum[i] - lo) / (hi - lo || 1))));
   const out: Cell[] = [];
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      const i = y * size + x;
-      if (lum[i] < 0) continue;
-      const r = Math.hypot(x / size - 0.5, y / size - 0.47) / 0.5;
-      const fade = 1 - smooth(0.8, 0.98, r);
-      let v: number;
-      if (style === 'face-lines') {
-        const at = (dx: number, dy: number) => norm(Math.min(size - 1, Math.max(0, y + dy)) * size + Math.min(size - 1, Math.max(0, x + dx)));
-        const gx = at(1, -1) + 2 * at(1, 0) + at(1, 1) - at(-1, -1) - 2 * at(-1, 0) - at(-1, 1);
-        const gy = at(-1, 1) + 2 * at(0, 1) + at(1, 1) - at(-1, -1) - 2 * at(0, -1) - at(1, -1);
-        v = smooth(0.35, 1.4, Math.hypot(gx, gy));
-      } else if (style === 'face-inv') {
-        v = (1 - norm(i)) ** 1.3;
-      } else {
-        v = norm(i) ** 1.6;
-      }
-      v *= fade;
-      if (v > 0.08) out.push({ x: ox + x, y: oy + y, a: Math.min(1, v) });
-    }
+  for (let cy = 0; cy < size; cy++) for (let cx = 0; cx < size; cx++) {
+    const k = cy * size + cx;
+    const n = Math.max(0, Math.min(1, (cellL[k] - lo) / (hi - lo || 1)));
+    const v = (0.12 + 0.88 * n ** 1.5) * Math.max(0, Math.min(1, (cellF[k] - 0.15) / 0.7));
+    if (v > 0.08) out.push({ x: ox + cx, y: oy + cy, a: Math.min(1, v) });
   }
   return out;
 }
@@ -337,7 +388,7 @@ export default function DotField({ active, departures, idle = 'ring' }: { active
     const faceIdle = (): Cell[] => {
       if (!headshotReady) return [];
       if (!faceCache || faceCache.cols !== cols || faceCache.rows !== rows) {
-        faceCache = { cols, rows, cells: faceCells(headshot, idle, cols, rows) };
+        faceCache = { cols, rows, cells: faceCells(headshot, cols, rows) };
       }
       return faceCache.cells;
     };
