@@ -236,7 +236,11 @@ export default function DotField({ active, departures, idle = 'ring' }: { active
     const reducedQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     const model = buildModel();
 
-    let cols = COLS, rows = 0, pitch = 4, dpr = 1;
+    // pDev is the LED pitch in device pixels, always a whole number, so every
+    // LED sits the same distance from the next. A fractional pitch rounded
+    // each LED to the nearest pixel, alternating 8px and 9px gaps, and the
+    // eye read that as LEDs clumping into pairs. gx/gy centre the grid.
+    let cols = COLS, rows = 0, pitch = 4, dpr = 1, pDev = 8, gx = 0, gy = 0;
     let angle = -0.5;
     let isPaused = reducedQuery.matches;
     let mode: 'ring' | 'text' | 'move' = 'ring';
@@ -262,7 +266,7 @@ export default function DotField({ active, departures, idle = 'ring' }: { active
       onScreen && !document.hidden && (wrap.checkVisibility ? wrap.checkVisibility({ opacityProperty: true, visibilityProperty: true }) : true);
 
     const makeSprites = () => {
-      const size = Math.max(2, Math.round(pitch * dpr));
+      const size = pDev;
       const r = size * 0.38;
       const dot = (alpha: number, glow: boolean) => {
         const c = document.createElement('canvas');
@@ -276,11 +280,15 @@ export default function DotField({ active, departures, idle = 'ring' }: { active
           g.fillStyle = grad;
           g.fillRect(0, 0, size, size);
         } else {
+          // Soft-edged too: the board's 3D tilt resamples the grid, and hard
+          // dot edges shimmer into bands when that happens.
+          const grad = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, r * 1.25);
+          grad.addColorStop(0, amber);
+          grad.addColorStop(0.6, amber);
+          grad.addColorStop(1, 'transparent');
           g.globalAlpha = alpha;
-          g.fillStyle = amber;
-          g.beginPath();
-          g.arc(size / 2, size / 2, r, 0, Math.PI * 2);
-          g.fill();
+          g.fillStyle = grad;
+          g.fillRect(0, 0, size, size);
         }
         return c;
       };
@@ -290,7 +298,7 @@ export default function DotField({ active, departures, idle = 'ring' }: { active
       unlit.width = canvas.width;
       unlit.height = canvas.height;
       const u = unlit.getContext('2d')!;
-      for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) u.drawImage(one, Math.round(x * pitch * dpr), Math.round(y * pitch * dpr));
+      for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) u.drawImage(one, gx + x * pDev, gy + y * pDev);
     };
 
     const draw = (cells: { x: number; y: number; a: number }[]) => {
@@ -303,10 +311,9 @@ export default function DotField({ active, departures, idle = 'ring' }: { active
         const b = Math.min(10, Math.round(c.a * 10));
         (buckets.get(b) ?? buckets.set(b, []).get(b)!).push(c);
       }
-      const p = pitch * dpr;
       for (const [b, list] of buckets) {
         ctx.globalAlpha = b / 10;
-        for (const c of list) ctx.drawImage(sprite, Math.round(Math.round(c.x) * p), Math.round(Math.round(c.y) * p));
+        for (const c of list) ctx.drawImage(sprite, gx + Math.round(c.x) * pDev, gy + Math.round(c.y) * pDev);
       }
       ctx.globalAlpha = 1;
     };
@@ -438,9 +445,15 @@ export default function DotField({ active, departures, idle = 'ring' }: { active
       cancelAnimationFrame(raf);
       running = false;
       dpr = Math.min(window.devicePixelRatio || 1, 2);
-      pitch = w / COLS;
-      cols = COLS;
-      rows = Math.floor(h / pitch);
+      // At least COLS LEDs across (the departure lines need about 130), on a
+      // whole-pixel pitch; the count flexes a little with the board's width.
+      pDev = Math.max(3, Math.floor((w * dpr) / COLS));
+      pitch = pDev / dpr;
+      cols = Math.floor((w * dpr) / pDev);
+      rows = Math.floor((h * dpr) / pDev);
+      gx = Math.floor((Math.round(w * dpr) - cols * pDev) / 2);
+      gy = Math.floor((Math.round(h * dpr) - rows * pDev) / 2);
+      boardRef.current?.style.setProperty('--hvg-grid-x', `${gx / dpr}px`);
       // The frame's header labels sit over their LED columns: Linie over the
       // line, Ziel over the case name, Lesezeit over the minutes.
       boardRef.current?.style.setProperty('--hvg-pitch', `${pitch}px`);

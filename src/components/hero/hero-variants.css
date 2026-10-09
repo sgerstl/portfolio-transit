@@ -969,9 +969,9 @@
   position: absolute;
   bottom: 7px;
 }
-.hvg-col-line { left: calc(var(--hvg-bezel) + var(--hvg-bar) + 4 * var(--hvg-pitch, 4px)); }
-.hvg-col-ziel { left: calc(var(--hvg-bezel) + var(--hvg-bar) + var(--hvg-ziel, 26) * var(--hvg-pitch, 4px)); }
-.hvg-col-time { right: calc(var(--hvg-bezel) + var(--hvg-bar) + 4 * var(--hvg-pitch, 4px)); }
+.hvg-col-line { left: calc(var(--hvg-bezel) + var(--hvg-bar) + var(--hvg-grid-x, 0px) + 4 * var(--hvg-pitch, 4px)); }
+.hvg-col-ziel { left: calc(var(--hvg-bezel) + var(--hvg-bar) + var(--hvg-grid-x, 0px) + var(--hvg-ziel, 26) * var(--hvg-pitch, 4px)); }
+.hvg-col-time { right: calc(var(--hvg-bezel) + var(--hvg-bar) + var(--hvg-grid-x, 0px) + 4 * var(--hvg-pitch, 4px)); }
 
 /* The display window: grey bars either side of the black LED panel, all
    behind one pane of glass. */
