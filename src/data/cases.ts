@@ -293,7 +293,7 @@ export const CASES: CaseEntry[] = [
           ],
           decisions: [
             {
-              title: 'Persona in two sentences, not two paragraphs.',
+              title: 'A persona in two sentences.',
               body: '"Be direct, technical, and motivational. Avoid mechanical metaphors." That second sentence came from v1 output that read like an instruction manual. One exclusion changed the entire tone.',
             },
             {
@@ -318,7 +318,7 @@ export const CASES: CaseEntry[] = [
         },
         {
           title: 'What the voice taught me',
-          subtitle: 'Why the hardest UX problems are physical, not digital',
+          subtitle: 'Why the hardest UX problems were physical',
           paragraphs: [
             "The voice control system is the feature I'm most honest about. It works. It's also the roughest part of the app, and the reasons why are instructive.",
             'The architecture is sound: two-tier parsing with local regex handling ~90% of commands instantly (no network round-trip) and Claude Haiku as a fallback for edge cases. ElevenLabs TTS for synthesized coaching cues, with IndexedDB caching to avoid re-fetching repeated phrases.',
@@ -371,7 +371,7 @@ export const CASES: CaseEntry[] = [
         },
         {
           num: 'Reframe',
-          label: 'Analysis surface as agent workspace, not chat panel',
+          label: 'Analysis surface reframed as the agent\'s workspace',
         },
         {
           num: '4 archetypes',
@@ -398,7 +398,7 @@ export const CASES: CaseEntry[] = [
           ],
           decisions: [
             {
-              title: 'Algorithmic scoring returns a conclusion, not an investigation.',
+              title: 'Algorithmic scoring stops at the conclusion.',
               body: 'A number on a dimension hides the analysis that produced it. The analysis is the part a self-coached racer needs to see.',
             },
             {
@@ -426,7 +426,7 @@ export const CASES: CaseEntry[] = [
               body: 'Coaching is one of the modes a race engineer operates in. Setup work, strategy, tire management are others. Naming the pattern at the role level keeps the door open wherever the product roadmap goes next, instead of pinning it to one of the modes.',
             },
             {
-              title: 'Three states, not three modes.',
+              title: 'Three states the agent moves between.',
               body: "States shift the agent's prominence based on what the user is doing. Modes would have made the user choose. With states, the agent owns the transitions.",
             },
             {
@@ -463,7 +463,7 @@ export const CASES: CaseEntry[] = [
           ],
           decisions: [
             {
-              title: 'Each archetype is a question shape, not a screen.',
+              title: 'Each archetype is a shape of question.',
               body: 'Spatial, temporal, distributional, state-along-line. Four examples show the architecture can take whatever question comes next.',
             },
             {
@@ -608,7 +608,7 @@ export const CASES: CaseEntry[] = [
           ],
           decisions: [
             {
-              title: 'Tie the vision to two business events, not one.',
+              title: 'Tie the vision to two business events.',
               body: 'The rebrand gave the design language permission to break with the past. The client conference gave the prototypes a real deadline and a real audience. Anchoring the vision to both gave the work business justification on two axes.',
             },
             {
@@ -616,7 +616,7 @@ export const CASES: CaseEntry[] = [
               body: 'Managing a distributed seven-person design team while running the structural and presentation work meant getting clear on what I owned and what others owned. I led the architecture, the systems thinking, and the case to executives. A senior designer led the visual execution. Both halves had to be excellent for the work to be defensible.',
             },
             {
-              title: 'A transition plan, not just a destination.',
+              title: 'Ship a transition plan with the vision.',
               body: 'Vision design is easy to dismiss as aspirational. Pairing the North star designs with a transition plan from current products to platform made the work answerable to engineering: here is what we propose, here is how the existing portfolio gets there from where it is.',
             },
           ],
@@ -700,15 +700,15 @@ export const CASES: CaseEntry[] = [
           ],
           decisions: [
             {
-              title: 'Consolidation, not aggregation.',
-              body: 'The three software tools and two paper forms were consolidated by deciding which jobs each had been doing, which jobs the new interface had to do, and which ones could disappear entirely because they had been workarounds in the first place.',
+              title: 'Consolidate by job.',
+              body: 'Consolidating meant deciding which jobs the old tools and forms had been doing, which ones the new interface had to do, and which could disappear because they had been workarounds in the first place.',
             },
             {
-              title: 'Driver comms as text, not radio.',
+              title: 'Driver comms move to text.',
               body: 'Radio works for one person speaking to one driver at a time, in real time, in their general direction. Text works for a yard manager handling twelve trucks in parallel. The change was about which job comms was supposed to do in this product.',
             },
             {
-              title: 'Detail alongside the map, not a page away from it.',
+              title: 'Keep the map in view.',
               body: "The trailer detail opens as a side panel. The map stays visible the whole time. That decision keeps the yard manager oriented to the whole facility while drilling into one trailer, which matters because the next decision almost always depends on how that trailer fits into the dock assignment, the waitlist, and the eight other trailers waiting their turn.",
             },
           ],
@@ -767,7 +767,7 @@ export const CASES: CaseEntry[] = [
       outcomeBeat: {
         title: 'What shipped',
         paragraphs: [
-          'The pilot shipped during my tenure at Ndustrial. Yard managers at a cold-storage third-party-logistics facility ran their dock through it instead of jumping between three software tools and two paper forms. The broader Ndustrial program (including shore-power infrastructure for the hybrid electric trailers) continued after I was laid off in mid-2025.',
+          'The pilot shipped during my tenure at Ndustrial. Yard managers at a cold-storage third-party-logistics facility ran their dock through it instead of jumping between tools and paper. The broader Ndustrial program (including shore-power infrastructure for the hybrid electric trailers) continued after I was laid off in mid-2025.',
           'The case is about whether an industrial product designed by one person, at one company, for one pilot site, can hold up in real industrial conditions. This one did.',
         ],
         highlight: "One designer carried it from research through ship, and the interface survived the dock.",
@@ -832,11 +832,11 @@ export const CASES: CaseEntry[] = [
               body: 'The AI analysis is shared. The decisions it triggers are not. Power Quality is a diagnostic decision (which equipment to investigate next) measured in minutes or hours. Demand Response is a time-sensitive decision (curtail now or pay the penalty) measured in seconds. Pretending one surface could serve both would have made both worse.',
             },
             {
-              title: 'Diagnostic surface: surface what matters, not all the data.',
+              title: 'Point the diagnostic surface at what matters.',
               body: "The Power Quality dashboard's job was to point at the equipment most likely causing efficiency losses. Facility managers were already drowning in data. The AI's job was to filter; the design's job was to make the filter trustworthy.",
             },
             {
-              title: 'Time-sensitive surface: design for the window, not the user.',
+              title: 'Design the alert surface around the curtailment window.',
               body: 'Demand Response had a fixed clock. The utility signal arrived, the curtailment window opened, the penalty avoidance depended on action within that window. The surface had to make the decision visible, the consequences clear, and the action trivial to execute. Anything else competed with the window.',
             },
           ],
@@ -866,7 +866,7 @@ export const CASES: CaseEntry[] = [
           ],
           decisions: [
             {
-              title: 'Designing for AI output, not designing the AI.',
+              title: 'Design for the AI\'s output.',
               body: "Operator UX for AI insight is its own design competency, separate from designing the model.",
             },
             {
@@ -874,7 +874,7 @@ export const CASES: CaseEntry[] = [
               body: "The system was designed to make the operator's judgment faster and better informed, and the operator still made the call. Every surface decision followed from that division of labor.",
             },
             {
-              title: 'Structural value, not measured savings.',
+              title: 'Claim what the design can show.',
               body: 'Penalty avoidance is built into the operator decision flow, at industrial scale. That structure is the value this case claims.',
             },
           ],
