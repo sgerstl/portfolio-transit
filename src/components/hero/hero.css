@@ -1,0 +1,560 @@
+/* The home page hero: the positioning headline, three proof tiles, and the
+   departure board hung from a pole off the top of the page. The class names
+   keep their prototype prefixes: hv (shared), hvf (text and tiles), hvg
+   (board). Type: Barlow Condensed 600 for display, Inter 400 for text. */
+
+/* A scrim quiets the wallpaper map behind the copy. It starts right of the
+   rail so the rail and its rings stay visible. */
+
+.hv {
+  padding-top: 128px;
+}
+
+.hv::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 140px;
+  width: 1000px;
+  max-width: calc(100% - 140px);
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-bg) 94%, transparent) 0%,
+    color-mix(in srgb, var(--color-bg) 94%, transparent) 72%,
+    color-mix(in srgb, var(--color-bg) 0%, transparent) 100%
+  );
+  mask-image: linear-gradient(180deg, #000 0%, #000 72%, transparent 92%);
+  pointer-events: none;
+}
+
+
+.hv a {
+  pointer-events: auto;
+  color: inherit;
+  text-decoration: none;
+}
+
+.hv a:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+
+@media (max-width: 767px) {
+  .hv::before { left: 0; max-width: 100%; }
+}
+
+/* ── Text and tiles ─────────────────────────────────────
+   Positioning sentence first and largest, the qualifier line promoted, and
+   the three proof cases as unboxed tiles with real product imagery. Vertical
+   sizes are capped by vh so the headline and tiles share the first screen
+   down to about 1366 × 768. */
+.hv--f {
+  --hv-pad-top: clamp(88px, 12.5vh, 124px);
+  padding-top: var(--hv-pad-top);
+  padding-right: 56px;
+}
+
+/* The board is the transit object here, so the wallpaper map behind the
+   hero is quieted across the full width rather than only behind the text. */
+.hv--f::before {
+  width: calc(100% - 140px);
+  max-width: none;
+  background: color-mix(in srgb, var(--color-bg) 97%, transparent);
+  mask-image: linear-gradient(180deg, #000 0%, #000 88%, transparent 100%);
+}
+
+.hvf-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 560px);
+  column-gap: 48px;
+  align-items: start;
+}
+
+.hvf-h1 {
+  font-family: var(--font-condensed);
+  font-size: min(clamp(52px, 5.6vw, 84px), 9.2vh);
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: -0.015em;
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.hvf-lead {
+  margin-top: clamp(16px, 2.6vh, 24px);
+  max-width: 52ch;
+  font-family: var(--font-sans);
+  font-size: 19px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-text-soft);
+}
+
+.hvf-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: clamp(14px, 2.2vh, 20px);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+.hvf-sep {
+  margin: 0 10px;
+  color: var(--color-text-soft);
+}
+
+/* The face lives on the board; it moves into this line only when the board
+   is hidden, so the human detail survives at every width. */
+.hvf-face {
+  display: none;
+  width: 28px;
+  height: 28px;
+  margin-right: 12px;
+  border-radius: 50%;
+}
+
+
+.hvf-work {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+  margin-top: clamp(24px, 4.5vh, 48px);
+  padding: 0;
+  list-style: none;
+}
+
+.hvf-work a {
+  display: flex;
+  flex-direction: column;
+}
+
+.hvf-shot {
+  display: block;
+  height: clamp(112px, 21vh, 220px);
+  overflow: hidden;
+  border-radius: 6px;
+  /* Shows if an image fails to load, so the tile keeps its shape. */
+  background: color-mix(in srgb, var(--color-text) 6%, var(--color-bg));
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 150ms ease-out, transform 150ms ease-out;
+}
+
+.hvf-shot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+}
+
+.hvf-kicker {
+  margin-top: 14px;
+  font-family: var(--font-condensed);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+}
+
+.hvf-fig {
+  margin-top: 6px;
+  font-family: var(--font-condensed);
+  font-size: clamp(30px, 4.4vh, 40px);
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+}
+
+.hvf-label {
+  margin-top: 6px;
+  max-width: 36ch;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--color-text);
+}
+
+.hvf-work a:hover .hvf-shot {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), 0 14px 32px rgba(0, 0, 0, 0.09);
+}
+.hvf-work a:hover .hvf-label {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.hvf-work a:active .hvf-shot {
+  transform: none;
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .hvf-shot {
+    transition: none;
+  }
+  .hvf-work a:hover .hvf-shot {
+    transform: none;
+  }
+}
+
+/* Below 1200 the board gives way and the face moves into the qualifier
+   line. */
+@media (max-width: 1199px) {
+  .hvf-top { grid-template-columns: minmax(0, 1fr); }
+  .hvf-face { display: block; }
+  .hvf-h1 { font-size: min(clamp(44px, 6.4vw, 64px), 9vh); }
+}
+
+/* Phone: the tiles become rows, thumbnail left. */
+@media (max-width: 767px) {
+  .hv--f { padding-top: 80px; padding-right: 16px; }
+  .hv--f::before { width: 100%; }
+  .hvf-h1 { font-size: 40px; }
+  .hvf-lead { font-size: 16px; margin-top: 14px; }
+  .hvf-meta { font-size: 13px; margin-top: 14px; }
+  /* Wrapped lines would start with a dot, so the phone drops the
+     separators and spaces the items instead. */
+  .hvf-meta { column-gap: 12px; row-gap: 2px; }
+  .hvf-sep { display: none; }
+  .hvf-face { width: 24px; height: 24px; margin-right: 8px; }
+  .hvf-work { grid-template-columns: minmax(0, 1fr); gap: 14px; margin-top: 24px; }
+  .hvf-work a {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    column-gap: 12px;
+    align-items: center;
+  }
+  .hvf-shot { grid-row: 1 / span 3; height: 64px; border-radius: 4px; }
+  .hvf-kicker { margin-top: 0; font-size: 12px; }
+  .hvf-fig { margin-top: 2px; font-size: 24px; }
+  .hvf-label { margin-top: 2px; font-size: 14px; }
+}
+
+/* Domains under each tile. Real text, because the board only repeats it. */
+.hvf-domains {
+  margin-top: 4px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--color-text-soft);
+}
+
+/* ── Departure board ────────────────────────────────────
+   An amber LED board: the portrait at rest (or the turning Ring with
+   ?idle=ring), and a hovered tile puts its departure up. */
+.hv--g .hvf-shot {
+  height: clamp(104px, 19vh, 210px);
+}
+
+.hvg-board-mount {
+  position: relative;
+  justify-self: end;
+  width: 100%;
+  max-width: min(560px, 62vh);
+  /* One shared perspective for the board and its yellow side. Each child
+     takes a single 3D transform; nothing nests 3D inside 3D, which Firefox
+     flattens. The vanishing point sits on the right edge, where both pivot. */
+  perspective: 1300px;
+  perspective-origin: 100% 50%;
+  /* The sway pivots where the pole meets the ceiling, above the page. */
+  transform-origin: calc(62% + 11px) calc(-1 * (var(--hv-pad-top, 124px) + 80px));
+}
+
+.hvg-board {
+  /* The grey bars run right out to the rim; no white between them. */
+  --hvg-bezel: 0px;
+  --hvg-bar: 24px;
+  position: relative;
+  /* Hung on the right and turned in toward the headline and the work: the
+     left edge recedes and the face tips slightly down toward the tiles.
+     Static, so it is not motion; the pause key still hit-tests. */
+  transform: rotateY(-16deg) rotateX(-4deg);
+  transform-origin: 100% 50%;
+}
+
+/* The yellow electronics box behind the board, seen as its side: the same
+   turn as the board, then a quarter turn back about the shared right edge,
+   so a narrow band of yellow shows past the board. */
+.hvg-side {
+  position: absolute;
+  top: 3%;
+  bottom: 3%;
+  right: 0;
+  width: 36px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--color-board-housing-shade), var(--color-board-housing) 70%);
+  transform: rotateY(-16deg) rotateX(-4deg) rotateY(-90deg);
+  transform-origin: 100% 50%;
+}
+
+/* The pole the board hangs from, rising to the top of the page and passing
+   behind the fixed header. Shaded across its width so it reads as round:
+   dark rim, a highlight a third of the way in, falling off to the far side.
+   No bracket; the mounting hardware is assumed to be behind the display. */
+.hvg-arm {
+  position: absolute;
+  bottom: 100%;
+  left: 62%;
+  width: 22px;
+  height: calc(var(--hv-pad-top, 124px) + 80px);
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--color-board-rim) 70%, black) 0%,
+    var(--color-board-rim) 14%,
+    color-mix(in srgb, var(--color-board-rim) 35%, white) 34%,
+    color-mix(in srgb, var(--color-board-rim) 60%, white) 44%,
+    var(--color-board-rim) 66%,
+    color-mix(in srgb, var(--color-board-rim) 72%, black) 90%,
+    color-mix(in srgb, var(--color-board-rim) 60%, black) 100%);
+}
+
+/* The face: a narrow rim around white enamel, lit from above. */
+.hvg-face {
+  position: relative;
+  border: 3px solid var(--color-board-rim);
+  border-radius: 6px;
+  background:
+    linear-gradient(0deg, rgba(70, 60, 40, 0.09), transparent 26%),
+    linear-gradient(180deg, var(--color-board-frame) 0%, var(--color-board-frame-shade) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.07),
+    0 0 0 1px rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.12),
+    0 16px 36px rgba(0, 0, 0, 0.16);
+}
+
+/* Patina: a fine grain over the enamel. */
+.hvg-face::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  mix-blend-mode: multiply;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.hvg-head,
+.hvg-foot {
+  position: relative;
+  font-family: var(--font-condensed);
+  font-weight: 600;
+  color: var(--color-board-ink);
+}
+
+/* Header labels sit over their LED columns; DotField sets --hvg-pitch and
+   --hvg-ziel from the grid it draws. Offsets add the bezel and grey bar. */
+.hvg-head {
+  height: 32px;
+  font-size: 18px;
+  line-height: 1;
+}
+.hvg-head span {
+  position: absolute;
+  bottom: 7px;
+}
+.hvg-col-line { left: calc(var(--hvg-bezel) + var(--hvg-bar) + var(--hvg-grid-x, 0px) + 4 * var(--hvg-pitch, 4px)); }
+.hvg-col-ziel { left: calc(var(--hvg-bezel) + var(--hvg-bar) + var(--hvg-grid-x, 0px) + var(--hvg-ziel, 26) * var(--hvg-pitch, 4px)); }
+.hvg-col-time { right: calc(var(--hvg-bezel) + var(--hvg-bar) + var(--hvg-grid-x, 0px) + 4 * var(--hvg-pitch, 4px)); }
+
+/* The display window: grey bars either side of the black LED panel, all
+   behind one pane of glass. */
+.hvg-glass {
+  position: relative;
+  margin: 0 var(--hvg-bezel);
+  padding: 0 var(--hvg-bar);
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--color-board-bezel);
+  box-shadow:
+    inset 0 2px 5px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(0, 0, 0, 0.5),
+    0 1px 0 1px rgba(255, 255, 255, 0.55);
+}
+
+/* Sheen: a soft diagonal reflection across the upper glass. */
+.hvg-glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background:
+    linear-gradient(158deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.045) 34%, transparent 34.4%),
+    radial-gradient(120% 70% at 12% 0%, rgba(255, 255, 255, 0.06), transparent 60%);
+  pointer-events: none;
+}
+
+.hvg-field {
+  aspect-ratio: 600 / 340;
+  background: var(--color-board-bg);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.6);
+}
+
+.hvg-field canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hvg-foot {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  height: 38px;
+  padding: 0 var(--hvg-bezel) 0 calc(var(--hvg-bezel) + var(--hvg-bar) + 4 * var(--hvg-pitch, 4px));
+}
+
+.hvg-stop {
+  margin-top: 9px;
+  font-size: 19px;
+}
+
+/* The yellow key sits where the real board has its badge, tucked against
+   the bottom of the display. It pauses the idle turn (WCAG 2.2.2). */
+.hvg-pause {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--color-board-housing-shade);
+  border-radius: 1px;
+  background: var(--color-board-housing);
+  color: var(--color-board-ink);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: background-color 150ms ease-out;
+}
+.hvg-pause svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+.hvg-pause:hover {
+  background: color-mix(in srgb, var(--color-board-housing) 85%, black);
+}
+.hvg-pause:active {
+  background: color-mix(in srgb, var(--color-board-housing) 72%, black);
+}
+.hvg-pause:focus-visible {
+  outline: 2px solid var(--color-board-ink);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hvg-pause { transition: none; }
+}
+/* The badge: a small yellow square centred at the foot of the right-hand
+   grey bar, above the glass sheen. */
+.hvg-badge {
+  position: absolute;
+  z-index: 3;
+  right: calc((var(--hvg-bar) - 13px) / 2);
+  bottom: 6px;
+  width: 13px;
+  height: 13px;
+  border: 1px solid var(--color-board-housing-shade);
+  border-radius: 1px;
+  background: var(--color-board-housing);
+}
+
+@media (max-width: 1199px) {
+  .hvg-board-mount { display: none; }
+}
+
+@media (max-width: 767px) {
+  .hvf-domains { font-size: 12px; margin-top: 2px; }
+  .hvf-shot { grid-row: 1 / span 4; }
+}
+
+
+/* The hero scrolls with the page: the board hangs from the top of the page on its
+   arm, so it leaves with the content instead of fading. This also ends the
+   fixed hero's reflow failure at 200% zoom. Hero.tsx writes the hero's
+   measured height to --hero-h so the cases start right after it. */
+.hero.hv--g {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  padding-bottom: 24px;
+}
+.page:has(.hv--g) .spine-container {
+  padding-top: calc(var(--hero-h, 100vh) + 56px);
+}
+
+
+/* Hover and keyboard focus on the work tiles: a muted wash of the CS1 line
+   orange behind the image and text (14% orange in oklab). It sits outside
+   the tile's box, so nothing shifts, and replaces the base image lift. */
+.hv--g .hvf-work a {
+  position: relative;
+  isolation: isolate;
+}
+.hv--g .hvf-work a::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -14px;
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--color-line-pro) 14%, var(--color-bg));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease-out;
+}
+.hv--g .hvf-work a:is(:hover, :focus-visible)::before {
+  opacity: 1;
+}
+.hv--g .hvf-work a:hover .hvf-shot {
+  transform: none;
+}
+.hv--g .hvf-work a:is(:hover, :focus-visible) .hvf-label {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.hv--g .hvf-work a:focus-visible {
+  outline-offset: 14px;
+  border-radius: 10px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hv--g .hvf-work a::before {
+    transition: none;
+  }
+}
+
+/* The board column is 500px, so the headline gets a 683px column at 1440. Above 1200 the headline is sized from that column
+   (container units), not from the viewport, so it sets in three lines on
+   any desktop window: viewport sizing let it reach 74px on taller screens
+   and wrap to four. Still capped by height so the tiles stay on screen. */
+.hv--g .hvf-h1 {
+  font-size: min(clamp(48px, 5vw, 74px), 8.4vh);
+}
+@media (min-width: 1200px) {
+  .hv--g .hvf-text {
+    container-type: inline-size;
+  }
+  .hv--g .hvf-h1 {
+    font-size: min(10.2cqi, 74px, 8.4vh);
+  }
+}
+.hv--g .hvf-top {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 500px);
+}
+.hv--g .hvg-board-mount {
+  max-width: min(500px, 62vh);
+}

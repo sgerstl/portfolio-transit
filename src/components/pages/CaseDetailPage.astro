@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../Header.astro';
 import Lightbox from '../Lightbox.astro';
+import PhoneDemo from '../cases/PhoneDemo.astro';
 import type { CaseEntry } from '../../data/cases';
 import { ui } from '../../lib/ui';
 
@@ -12,6 +13,8 @@ interface Props {
 const { entry } = Astro.props;
 const colorVar = `var(--color-line-${entry.line})`;
 const detail = entry.detail;
+// A case without its full page yet (Ziggy) can still carry a live demo.
+const demoUrl = detail?.demoUrl ?? entry.body?.demoUrl;
 
 const pageTitle = ui('siteTitleCase').replace('{name}', entry.name);
 const backHref = `/#case-${entry.slug}`;
@@ -20,11 +23,11 @@ const backHref = `/#case-${entry.slug}`;
 <Layout title={pageTitle} canonicalPath={`/work/${entry.slug}/`}>
   <Header />
 
-  <main class={`case-page ${detail?.demoUrl ? 'has-phone' : ''}`} style={`--accent: ${colorVar};`}>
+  <main class={`case-page ${demoUrl ? 'has-phone' : ''}`} style={`--accent: ${colorVar};`}>
     <a class="back" href={backHref}>{ui('case.back')}</a>
 
     {detail ? (
-      <div class={`case-grid ${detail.demoUrl ? 'with-phone' : ''}`}>
+      <div class={`case-grid ${demoUrl ? 'with-phone' : ''}`}>
       <section class="case-detail">
         <header class="case-page-head">
           {detail.chips && (
@@ -36,9 +39,9 @@ const backHref = `/#case-${entry.slug}`;
           <p class="lede">{entry.tagline}</p>
         </header>
 
-        {detail.demoUrl && (
+        {demoUrl && (
           <div class="demo-cta demo-cta--mobile">
-            <a class="demo-btn" href={detail.demoUrl} target="_blank" rel="noopener noreferrer">
+            <a class="demo-btn" href={demoUrl} target="_blank" rel="noopener noreferrer">
               {ui('case.openDemo')}
             </a>
           </div>
@@ -129,40 +132,33 @@ const backHref = `/#case-${entry.slug}`;
         )}
       </section>
 
-      {detail.demoUrl && (
-        <aside class="phone-col" aria-hidden="false">
-          <div class="phone-sticky">
-            <div class="phone-frame">
-              <div class="phone-screen">
-                <iframe
-                  src={detail.demoUrl}
-                  title={`${entry.name} interactive demo`}
-                  loading="lazy"
-                />
-              </div>
-              <div class="phone-mask"></div>
-              <img class="phone-png" src="/images/iphone-frame.png" alt="" draggable="false" />
-            </div>
-            <p class="phone-caption">{ui('case.demoCaption')}</p>
-          </div>
-        </aside>
-      )}
+      {demoUrl && <PhoneDemo src={demoUrl} name={entry.name} />}
       </div>
     ) : entry.body ? (
-      <>
-        <header class="case-page-head">
-          <h1>{entry.name}</h1>
-          <p class="lede">{entry.tagline}</p>
-        </header>
-        <section class="case-page-body">
-          <div class="domains">
-            {entry.body.domains.map((d) => <span>{d}</span>)}
-          </div>
-          <p class="outcome">{entry.body.outcome}</p>
-          <p class="claim">{entry.body.claim}</p>
-          <p class="placeholder">{ui('case.placeholder')}</p>
-        </section>
-      </>
+      <div class={`case-grid ${demoUrl ? 'with-phone' : ''}`}>
+        <div>
+          <header class="case-page-head">
+            <h1>{entry.name}</h1>
+            <p class="lede">{entry.tagline}</p>
+          </header>
+          {demoUrl && (
+            <div class="demo-cta demo-cta--mobile">
+              <a class="demo-btn" href={demoUrl} target="_blank" rel="noopener noreferrer">
+                {ui('case.openDemo')}
+              </a>
+            </div>
+          )}
+          <section class="case-page-body">
+            <div class="domains">
+              {entry.body.domains.map((d) => <span>{d}</span>)}
+            </div>
+            <p class="outcome">{entry.body.outcome}</p>
+            <p class="claim">{entry.body.claim}</p>
+            <p class="placeholder">{ui('case.placeholder')}</p>
+          </section>
+        </div>
+        {demoUrl && <PhoneDemo src={demoUrl} name={entry.name} />}
+      </div>
     ) : null}
   </main>
 
@@ -192,68 +188,6 @@ const backHref = `/#case-${entry.slug}`;
     margin-top: 40px;
   }
 
-  .phone-col {
-    align-self: stretch;
-  }
-
-  .phone-sticky {
-    position: sticky;
-    top: 80px;
-  }
-
-  .phone-frame {
-    position: relative;
-    width: 316px;
-    height: 636px;
-  }
-
-  .phone-screen {
-    position: absolute;
-    overflow: hidden;
-    top: 22px;
-    left: 17px;
-    width: 281px;
-    height: 591px;
-  }
-
-  .phone-screen iframe {
-    width: 430px;
-    height: 904px;
-    transform: scale(0.6535);
-    transform-origin: top left;
-    border: 0;
-    display: block;
-  }
-
-  .phone-mask {
-    position: absolute;
-    pointer-events: none;
-    top: 2px;
-    left: -3px;
-    width: 321px;
-    height: 631px;
-    border-radius: 44px;
-    border: 16px solid var(--color-bg, #f6f6f6);
-    box-sizing: border-box;
-  }
-
-  .phone-png {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    user-select: none;
-  }
-
-  .phone-caption {
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    color: var(--color-text-soft);
-    text-align: center;
-    margin-top: 14px;
-  }
-
   .demo-cta--mobile { display: none; }
 
   @media (min-width: 1024px) {
@@ -271,9 +205,6 @@ const backHref = `/#case-${entry.slug}`;
     }
     .case-grid.with-phone .case-page-head {
       margin-top: 0;
-    }
-    .phone-col {
-      display: none;
     }
     .demo-cta--mobile {
       display: block;
@@ -745,8 +676,7 @@ const backHref = `/#case-${entry.slug}`;
     }
 
     /* Hide page chrome */
-    .back,
-    .phone-col {
+    .back {
       display: none !important;
     }
 

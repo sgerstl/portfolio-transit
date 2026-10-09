@@ -1,4 +1,4 @@
-export type LineKey = 'ai' | 'ent' | 'pers';
+export type LineKey = 'pro' | 'indie' | 'pers';
 
 export type CaseSlug =
   | 'epilog'
@@ -7,6 +7,7 @@ export type CaseSlug =
   | 'brightly'
   | 'fleet'
   | 'pqdr'
+  | 'ziggy'
   | 'about'
   | 'contact';
 
@@ -27,6 +28,18 @@ export type CaseBody = {
   metrics: CaseMetric[];
   claim: string;
   ctaHref: string;
+  // The homepage station card's own line and figure (index into metrics),
+  // for cases the hero already features: the card says something the hero
+  // tile doesn't, instead of repeating its number.
+  cardTagline?: string;
+  // null shows no figure on the card.
+  cardMetric?: number | null;
+  // Which part of the screenshot the card shows (CSS object-position);
+  // defaults to the top left.
+  cardShotPosition?: string;
+  // Live demo for a case whose full case page isn't built yet.
+  // Moves to detail.demoUrl once the case has a detail block.
+  demoUrl?: string;
 };
 
 export type CaseDecision = { title: string; body: string };
@@ -80,6 +93,8 @@ export type CaseEntry = {
   tagline: string;
   line: LineKey;
   readingMinutes: number;
+  /** Shows the AI badge on the card. AI is a property of the work, not a line. */
+  ai?: boolean;
   body?: CaseBody;
   detail?: CaseDetail;
   personal?: PersonalBody;
@@ -90,8 +105,9 @@ export const CASES: CaseEntry[] = [
     slug: 'epilog',
     name: 'Epilog',
     tagline: 'AI caught a drug interaction. The neurologist confirmed it.',
-    line: 'ai',
+    line: 'indie',
     readingMinutes: 4,
+    ai: true,
     body: {
       domains: [
         'Healthcare',
@@ -116,8 +132,9 @@ export const CASES: CaseEntry[] = [
           linkHref: 'https://epilog-demo.scottgerstl.com',
         },
       ],
-      claim: 'I design AI features that produce clinical-grade outcomes. Surfacing patterns a clinician verifies and acts on.',
-      ctaHref: '/work/epilog',
+      claim: 'I design AI features for the moment their output lands in front of a doctor.',
+      ctaHref: '/work/epilog/',
+      cardMetric: null,
     },
     detail: {
       demoUrl: 'https://epilog-demo.scottgerstl.com',
@@ -131,13 +148,13 @@ export const CASES: CaseEntry[] = [
           title: 'Understanding the constraint',
           subtitle: 'What it took to define the right problem',
           paragraphs: [
-            "Someone you love has epilepsy. You watch them try to log an event after a seizure or aura, still foggy, motor control off, cognitive function not fully back online. The event is over, but the aftermath is real. That's not a user story you write on a whiteboard. It's something you understand by being in the room.",
+            "Someone you love has epilepsy. You watch them try to log an event after a seizure or aura, still foggy, motor control off, cognitive function not fully back online. The event is over, but the aftermath is real. That understanding only comes from being in the room.",
             'Three constraints came out of that proximity:',
           ],
           decisions: [
             {
               title: 'Log in seconds while still recovering.',
-              body: "Events get logged in the aftermath, when brain function is still impaired. If the logging flow requires concentration, the data doesn't get captured. This wasn't a performance goal. It was a clinical one.",
+              body: "Events get logged in the aftermath, when brain function is still impaired. If the logging flow requires concentration, the data doesn't get captured. That makes speed a clinical requirement, and the design treated it as one.",
             },
             {
               title: 'Find correlations without being a data analyst.',
@@ -166,7 +183,7 @@ export const CASES: CaseEntry[] = [
           subtitle: 'Why the best design decision was deleting a feature',
           paragraphs: [
             "Early on, I built a medication reminder system. Push notifications at dosing times, confirmation flows, the whole pattern you'd expect. It didn't survive first contact with real use.",
-            "The problem wasn't the reminders. It was the assumption. Most of the time, medication is taken on schedule. Building a system that demanded confirmation twice a day created friction on the 95% of days when everything was fine. The user stopped engaging with the app entirely.",
+            "The assumption was the problem. Most of the time, medication is taken on schedule. Building a system that demanded confirmation twice a day created friction on the 95% of days when everything was fine. The user stopped engaging with the app entirely.",
             'So I stripped it out and inverted the model: assume adherence, only capture deviations. A "Missed Dose" event type replaced the entire notification system. One tap when something goes wrong, silence when it doesn\'t.',
           ],
           italicOutro: 'AI can generate a notification system in minutes. Recognizing that the right move is to delete it requires judgment that only comes from watching someone actually use it.',
@@ -181,7 +198,7 @@ export const CASES: CaseEntry[] = [
             "The user's seizure activity had been increasing over several weeks. They'd been logging consistently: seizures, auras, missed doses, sleep data from their wearable. They ran the AI analysis.",
             "The analysis flagged something unexpected: a potential interaction between psyllium husk, a fiber supplement their GP had prescribed for digestive issues, and their anti-epileptic medication. Psyllium husk can interfere with drug absorption when taken at the same time. The GP hadn't considered this. It's not their domain.",
             'The user brought the finding to their neurologist. The neurologist confirmed the concern. They stopped the supplement. Seizure activity decreased.',
-            "An AI tool, built by one designer, caught something a doctor missed. Not because the AI was smarter than the doctor. Because it had the right data, in the right context, and surfaced the right question.",
+            "An AI tool, built by one designer, caught something a doctor missed. It had data the doctor never sees. Months of events and doses, plus sleep from the wearable, all in one place.",
           ],
           italicOutro: "The AI didn't replace clinical judgment. The designer's job was knowing what data to collect, how to frame the output, and when to get out of the way. That's the part AI can't do for you.",
           tryIts: [
@@ -203,8 +220,9 @@ export const CASES: CaseEntry[] = [
     slug: 'cal',
     name: 'Cal',
     tagline: 'AI as deliverable. AI as builder. AI inside the product.',
-    line: 'ai',
+    line: 'indie',
     readingMinutes: 3,
+    ai: true,
     body: {
       domains: [
         'Cycling',
@@ -216,6 +234,7 @@ export const CASES: CaseEntry[] = [
       visualImage: '/images/cases/cal/cal-dashboard.jpeg',
       visualImageAlt: 'Cal app dashboard screen',
       visualLayout: 'split',
+      cardShotPosition: 'center 72%',
       metrics: [
         {
           num: '3',
@@ -232,8 +251,10 @@ export const CASES: CaseEntry[] = [
           linkHref: 'https://cal-demo.scottgerstl.com',
         },
       ],
-      claim: 'I am AI-fluent at every layer of design. Research, analysis, building, shipping.',
-      ctaHref: '/work/cal',
+      claim: 'When AI does the building, my job is deciding what to build and judging what got built.',
+      ctaHref: '/work/cal/',
+      cardTagline: 'An AI workout planner, built for my own training and used by three people.',
+      cardMetric: 1,
     },
     detail: {
       demoUrl: 'https://cal-demo.scottgerstl.com',
@@ -247,11 +268,11 @@ export const CASES: CaseEntry[] = [
           title: 'When execution is free, judgment is expensive',
           subtitle: 'What building at speed revealed',
           paragraphs: [
-            "Cal shipped in 5 days. Claude Code produced functioning UI, wired-up components, and working API integrations faster than any developer handoff I've experienced. But the timeline isn't a boast. It's a data point about where the design effort went.",
+            "Cal shipped in 5 days. Claude Code produced functioning UI, wired-up components, and working API integrations faster than any developer handoff I've experienced. The interesting part of the timeline is where the design effort went.",
             'What took time was the evaluation loop. Running each generated plan through the same criteria a human trainer would: Does this progression make sense for someone at this fitness level? Are the rest periods appropriate for the intensity? Would a real athlete trust this enough to follow it for six weeks?',
-            'Zero visible AI scaffolding. The experience reads as a polished, intentional product, not a prototype. That\'s not because the AI was good enough on its own. It\'s because the evaluation criteria were specific enough to catch what "good enough" actually means.',
+            'Zero visible AI scaffolding. The experience reads as a polished, intentional product. The polish came from the evaluation criteria, which were specific enough to define what "good enough" meant.',
           ],
-          italicOutro: "The role stops being about making things and starts being about deciding what's worth making and whether what was made is good enough.",
+          italicOutro: "Five days of building, and most of them went to evaluating output against a trainer's criteria.",
           tryIts: [
             'Browse the plan overview and tap into a day. The warmup sets, progressive overload, and rest periods are all AI-generated from one profile. Notice how injury accommodations (lower back) shape exercise selection across every session.',
           ],
@@ -284,7 +305,6 @@ export const CASES: CaseEntry[] = [
               body: 'Weeks 1-6 became Foundation, Accumulate, Intensify, Peak. Named phases give the model a conceptual anchor for each block. This produced more coherent progressions than numeric targets alone.',
             },
           ],
-          italicOutro: 'Any team shipping AI features needs this distinction: the prompt is a design artifact, not an engineering concern. The quality of AI output is a design outcome.',
           tryIts: [
             'Watch the plan generate in the demo. The briefing, week themes, and exercise selections all come from a single structured prompt. Tap into any week to see how constraints like "max 3 working sets" and injury accommodations carry through.',
           ],
@@ -302,10 +322,10 @@ export const CASES: CaseEntry[] = [
           paragraphs: [
             "The voice control system is the feature I'm most honest about. It works. It's also the roughest part of the app, and the reasons why are instructive.",
             'The architecture is sound: two-tier parsing with local regex handling ~90% of commands instantly (no network round-trip) and Claude Haiku as a fallback for edge cases. ElevenLabs TTS for synthesized coaching cues, with IndexedDB caching to avoid re-fetching repeated phrases.',
-            'The failure modes are physical, not digital. A missed "done" command mid-set means the user has to touch their phone between reps, exactly the friction the feature was supposed to eliminate. Commands fired twice when the transcript updated incrementally. Haiku triggered on background noise that regex correctly ignored. Each fix revealed a new edge case.',
-            "This isn't a solvable problem in the traditional sense. It's a calibration problem that requires real-world testing with real users in gyms. Heuristic evaluation in a quiet office catches maybe 30% of failure modes. The other 70% only appear under physical use conditions.",
+            'The failure modes are physical. A missed "done" command mid-set means the user has to touch their phone between reps, exactly the friction the feature was supposed to eliminate. Commands fired twice when the transcript updated incrementally. Haiku triggered on background noise that regex correctly ignored. Each fix revealed a new edge case.',
+            "This is a calibration problem, and it requires real-world testing with real users in gyms. Heuristic evaluation in a quiet office catches maybe 30% of failure modes. The other 70% only appear under physical use conditions.",
           ],
-          italicOutro: 'Voice UX requires a different evaluation methodology than visual UX. If your product has voice features, the test environment is part of the design spec, not an afterthought.',
+          italicOutro: 'Voice UX needs its own evaluation method. If a product has voice features, the test environment is part of the design spec.',
           tryIts: [
             'Start a workout in the demo, then tap the microphone icon at the bottom of the screen to activate voice control. Try saying "done" to complete a set, or "skip rest" to jump ahead. The two-tier parsing handles most commands locally with no network delay.',
           ],
@@ -323,7 +343,7 @@ export const CASES: CaseEntry[] = [
         paragraphs: [
           'Cal runs as the coach I use for my own training. The plans hold up across six-week cycles. Voice control has its rough edges, but it does the one thing it was supposed to do: keeps my hands off the phone between sets. Both plan types, strength and mobility, generate from a single profile, and the two halves of the week support each other instead of competing for attention.',
         ],
-        highlight: "That's the honest test for an AI-built product. Not whether it shipped fast, but whether it's still the tool you reach for when you have other options.",
+        highlight: "The test for an AI-built product is whether it is still the tool you reach for when you have other options.",
       },
     },
   },
@@ -331,8 +351,9 @@ export const CASES: CaseEntry[] = [
     slug: 'sim-racing',
     name: 'Sim Racing Coach',
     tagline: 'Race-engineer practice, designed into an AI product.',
-    line: 'ai',
+    line: 'pro',
     readingMinutes: 6,
+    ai: true,
     body: {
       domains: [
         'Motorsports',
@@ -341,7 +362,7 @@ export const CASES: CaseEntry[] = [
       ],
       outcome: "Design consulting on an AI sim-racing telemetry tool. Reframed the analysis app as the AI agent's workspace, not a chat panel beside it. Designed a race engineer pattern that translates expert practice into UX for sim-racers who don't have an engineer. Four worked archetypes shipped against the product's telemetry schemas.",
       visualLabel: 'SIM RACING COACH · TELEMETRY VIEW',
-      visualImage: '/images/cases/sim-racing/prototype-web-idle.png',
+      visualImage: '/images/cases/sim-racing/prototype-web-idle.webp',
       visualImageAlt: 'Sim Racing Coach web prototype, idle state with agent rail',
       metrics: [
         {
@@ -357,8 +378,8 @@ export const CASES: CaseEntry[] = [
           label: "Worked patterns shipped against the product's telemetry schemas",
         },
       ],
-      claim: 'I bring motorsports domain knowledge to AI product design. I use AI to scale expert practice and analysis so drivers at every level can benefit.',
-      ctaHref: '/work/sim-racing',
+      claim: 'I translate expert practice into agent behavior.',
+      ctaHref: '/work/sim-racing/',
     },
     detail: {
       chips: ['Consulting', 'AI', 'Agent UX', 'Sim-Racing'],
@@ -396,7 +417,7 @@ export const CASES: CaseEntry[] = [
           subtitle: 'One structural move that reframed the whole product',
           paragraphs: [
             'The reframe was a single architectural commitment. The web app stops being an analysis tool with a chat panel. It becomes an AI agent surface, with the analysis view as the workspace the agent operates inside.',
-            'Not chat-adjacent-to-data. Not three modes the user toggles between. Three states of one persistent agent rail: idle when the user opens a session and the agent has the floor, investigating when the agent narrates while the workspace annotates, exploring when the agent recedes and the user drives.',
+            'The rail has three states rather than three modes. Idle, when the user opens a session and the agent has the floor. Investigating, when the agent narrates while the workspace annotates. Exploring, when the agent recedes and the user drives.',
             'Under that architecture sits the behavioral spec. A race engineer pattern, not a chat persona. Diagnose before prescribe. One primary correction per cycle. Specificity over generality. Annotate the workspace, do not just describe it. Suggest a follow-up so the conversation has somewhere to go.',
           ],
           decisions: [
@@ -413,12 +434,12 @@ export const CASES: CaseEntry[] = [
               body: 'Tell the user what is wrong before suggesting anything different. The same restraint a real engineer applies, and the restraint that earns trust from a self-coached racer with strong opinions about their own driving.',
             },
           ],
-          italicOutro: 'The architecture is not a coaching tool that will need replacing when the next model arrives. It is the shape of the conversation the user will eventually have with the product wherever it grows.',
+          italicOutro: 'The user never chooses a mode. The agent\'s prominence shifts with what the user is doing.',
           screenshots: {
             columns: 2,
             images: [
               {
-                src: '/images/cases/sim-racing/prototype-web-idle.png',
+                src: '/images/cases/sim-racing/prototype-web-idle.webp',
                 alt: 'Web prototype, idle state with agent rail and surfaced findings',
                 caption: 'Web: agent rail with findings surfaced',
               },
@@ -439,7 +460,7 @@ export const CASES: CaseEntry[] = [
             'Temporal questions: where in the session did something change, and why? Same architecture, different canvas, different supporting data, same investigative pattern around it.',
             'Distributional questions: how consistent is the driver across the session, and where should they look closer? The agent walks the lap, points out what is working before flagging what is not, then hands the depth navigation to the user.',
             'State-along-line questions: what was the car doing as it moved through that moment? A different visualization shape, the same conversational shell around it.',
-            'The four archetypes were the proof, not the point. The point was that the architecture can carry the kind of question the product roadmap implies but does not yet have a surface for.',
+            'Four archetypes were enough to prove it. The architecture can carry the kind of question the product roadmap implies but does not yet have a surface for.',
           ],
           decisions: [
             {
@@ -455,7 +476,7 @@ export const CASES: CaseEntry[] = [
               body: 'Each archetype shaped to what the capture layer already produces. The design extends what the team has already built rather than asking for new infrastructure to land first.',
             },
           ],
-          italicOutro: 'The point of working four archetypes was never that there should be four. It was that one architecture can hold whatever the product asks of it next.',
+          italicOutro: 'One shell held all four question shapes without changing.',
           screenshots: {
             columns: 2,
             images: [
@@ -489,7 +510,6 @@ export const CASES: CaseEntry[] = [
           "A conceptual diagnostic carrying the architectural argument. A working web prototype with the four archetypes. A desktop role redefinition from chat host to capture-and-trailer surface. All designed against the product's existing data layer. All aligned with the long-term direction the founder was building toward.",
           'The 20-hour timebox held. The handoff carried the architectural commitment, the worked archetypes, and a clean list of open questions for the next round.',
         ],
-        highlight: "The honest test of a design engagement isn't whether it shipped. It's whether the architecture can carry the product where the founder said he wanted to take it.",
       },
     },
   },
@@ -497,7 +517,7 @@ export const CASES: CaseEntry[] = [
     slug: 'brightly',
     name: 'Brightly',
     tagline: 'Design direction for a $1.575B acquisition.',
-    line: 'ent',
+    line: 'pro',
     readingMinutes: 6,
     body: {
       domains: [
@@ -521,14 +541,16 @@ export const CASES: CaseEntry[] = [
           label: 'Increase in time on dashboard pages in user testing',
         },
       ],
-      claim: 'I lead design vision that holds up under acquisition-grade scrutiny.',
-      ctaHref: '/work/brightly',
+      claim: 'I turn platform strategy into something a customer can click through.',
+      ctaHref: '/work/brightly/',
+      cardTagline: 'One design language and integration model for the whole portfolio.',
+      cardMetric: 2,
     },
     detail: {
       chips: ['Enterprise', 'Platform Vision', 'Design System', 'B2B SaaS'],
       hook: [
         'Brightly was acquired by Siemens for $1.575B. Before the deal closed, the platform vision was previewed to existing customers: 74% of conference attendees expressed excitement about the future product direction, 36% said they were more likely to renew. User testing on the functional prototypes saw time on dashboard pages increase 5×. NPS verbatims, gathered independently, validated the survey findings.',
-        'The work behind those signals: vision design across 12 siloed products at Brightly, anchored to a complete corporate rebrand and a major client conference. A new design language. A unified design system and front-end-agnostic component library. North star designs for the integrated portfolio. A transition plan from siloed products to platform.',
+        'Behind those signals was vision design across 12 siloed products at Brightly, anchored to a complete corporate rebrand and a major client conference. The work produced a new design language, a unified design system with a front-end-agnostic component library, North star designs for the integrated portfolio, and a plan for moving the siloed products onto the platform.',
       ],
       sections: [
         {
@@ -536,14 +558,14 @@ export const CASES: CaseEntry[] = [
           subtitle: 'The hero screens, and the design intention behind each',
           paragraphs: [
             'Three hero surfaces did most of the work of carrying the platform claim. Each was a different argument the vision had to make.',
-            'The dashboard was the moment a customer landed in the product and saw all of their work in one place: planned maintenance, team availability, at-risk assets, work orders waiting on triage. The decision was that the dashboard had to be role-based, customizable, actionable, and data-driven. Every part of that list answered a specific complaint customers had raised in the research.',
+            'The dashboard was the moment a customer landed in the product and saw all of their work in one place: planned maintenance, team availability, at-risk assets, work orders waiting on triage. We decided the dashboard had to be role-based, customizable, actionable, and data-driven. Every part of that list answered a specific complaint customers had raised in the research.',
             "Asset health and suggested actions extended the dashboard's logic. Asset health was the system saying which equipment was likely to fail, on what timeline, with what financial exposure: predicted failure, estimated losses, recommended course of action. Suggested actions was the system proposing the next move with the recommended option marked. Together they collapsed the old workflow (jump between tools, read the data yourself, decide alone) into a single surface where the system did the analysis and the operator made the call.",
-            'The design system itself was the third surface. A front-end-agnostic component library, branded and unified, paired with the new corporate design language. Not a documentation site. A working library that any product team could pull from regardless of stack, which is what made the platform claim implementable across 12 different products at once.',
+            'The design system itself was the third surface. A front-end-agnostic component library, branded and unified, paired with the new corporate design language. It was a working library rather than a documentation site. Any product team could pull from it regardless of stack, which is what made the platform claim implementable across 12 different products at once.',
           ],
           decisions: [
             {
               title: 'Dashboard principles framed as customer answers.',
-              body: 'Role-based, customizable, actionable, data-driven. Each principle answered a specific complaint surfaced in the research mix (Pendo analytics, Aha! product feedback, Client Advisory Boards, client visits, internal SME interviews). The principles were not aesthetic. They were arguments back at the field.',
+              body: 'Role-based, customizable, actionable, data-driven. Each principle answered a specific complaint surfaced in the research mix (Pendo analytics, Aha! product feedback, Client Advisory Boards, client visits, internal SME interviews). The principles were arguments back at the field.',
             },
             {
               title: 'Asset health as a three-part decision support surface.',
@@ -554,7 +576,7 @@ export const CASES: CaseEntry[] = [
               body: 'A unified design system is worth less than a unified component library, because a design system still has to be re-implemented by every product team. The library was built front-end-agnostic so any product, on any stack, in any office, could pull components directly. That is what made the platform claim implementable rather than aspirational.',
             },
           ],
-          italicOutro: 'Hero screens earn their position by showing what the platform claim looks like when a customer scrolls through it. The argument lives in the screens, not next to them.',
+          italicOutro: 'Hero screens earn their position by showing what the platform claim looks like when a customer scrolls through it.',
           screenshots: {
             columns: 3,
             images: [
@@ -588,7 +610,7 @@ export const CASES: CaseEntry[] = [
           decisions: [
             {
               title: 'Tie the vision to two business events, not one.',
-              body: 'The rebrand gave the design language permission to break with the past. The client conference gave the prototypes a real deadline and a real audience. Anchoring the vision to both meant the work had business justification on two axes, not just one.',
+              body: 'The rebrand gave the design language permission to break with the past. The client conference gave the prototypes a real deadline and a real audience. Anchoring the vision to both gave the work business justification on two axes.',
             },
             {
               title: 'Lead the structure, partner on the craft.',
@@ -599,7 +621,7 @@ export const CASES: CaseEntry[] = [
               body: 'Vision design is easy to dismiss as aspirational. Pairing the North star designs with a transition plan from current products to platform made the work answerable to engineering: here is what we propose, here is how the existing portfolio gets there from where it is.',
             },
           ],
-          italicOutro: 'Strategic narratives say "platform." Design evidence says what the platform actually looks like when a customer clicks through it, what the design language allows, and how the existing products get there.',
+          italicOutro: 'The board saw the same prototypes the customers had already clicked through.',
           screenshots: {
             columns: 2,
             images: [
@@ -623,7 +645,7 @@ export const CASES: CaseEntry[] = [
           'The Chief Product Officer was happy enough with the work to put the prototypes into multiple high-stakes rooms. They went into board presentations supporting funding requests. They went into the acquisition-stage meetings with Siemens leading up to the deal. Brightly was acquired by Siemens for $1.575B.',
           'The design work did not cause the acquisition. It was the part of the story the acquirer needed to see to evaluate whether the platform claim had design proof underneath the strategic narrative.',
         ],
-        highlight: 'Design judgment at the layer above craft is what enterprise design vision actually means. Not making things prettier. Making the strategic claim verifiable before the business commits to it.',
+        highlight: 'The acquirer could click through the platform claim instead of taking it on faith.',
       },
     },
   },
@@ -631,7 +653,7 @@ export const CASES: CaseEntry[] = [
     slug: 'fleet',
     name: 'Fleet',
     tagline: 'Three tools and two forms, consolidated into one.',
-    line: 'ent',
+    line: 'pro',
     readingMinutes: 5,
     body: {
       domains: [
@@ -658,13 +680,14 @@ export const CASES: CaseEntry[] = [
         },
       ],
       claim: 'I own design end-to-end on industrial products that have to work in physical-world conditions.',
-      ctaHref: '/work/fleet',
+      ctaHref: '/work/fleet/',
+      cardTagline: 'Yard management for an outdoor trailer yard, built to work in the field.',
     },
     detail: {
       chips: ['Industrial', 'Logistics', '0→1', 'Sole UX'],
       hook: [
         'Sole UX lead on a 0→1 yard-management product at Ndustrial. The shipped pilot consolidated three software tools and two paper forms into a single yard-management interface, deployed at a cold-storage third-party-logistics facility tracking hybrid electric trailers.',
-        "Industrial conditions don't tolerate friction. The tool ran on a tablet in an open trailer yard in the summer heat. Twelve trucks waiting on dock assignments. Every design decision was answerable to whether it survived the dock, not whether it looked clean in design review.",
+        "Industrial conditions don't tolerate friction. The tool ran on a tablet in an open trailer yard in the summer heat. Twelve trucks waiting on dock assignments. Every design decision had to survive the dock.",
       ],
       sections: [
         {
@@ -679,18 +702,17 @@ export const CASES: CaseEntry[] = [
           decisions: [
             {
               title: 'Consolidation, not aggregation.',
-              body: 'Three software tools and two paper forms were not consolidated by bundling them into one screen. They were consolidated by deciding which jobs each had been doing, which jobs the new interface had to do, and which ones could disappear entirely because they had been workarounds in the first place.',
+              body: 'The three software tools and two paper forms were consolidated by deciding which jobs each had been doing, which jobs the new interface had to do, and which ones could disappear entirely because they had been workarounds in the first place.',
             },
             {
               title: 'Driver comms as text, not radio.',
-              body: 'Radio works for one person speaking to one driver at a time, in real time, in their general direction. Text works for a yard manager handling twelve trucks in parallel. The change was not a UI choice. It was a choice about which job comms was supposed to do in this product.',
+              body: 'Radio works for one person speaking to one driver at a time, in real time, in their general direction. Text works for a yard manager handling twelve trucks in parallel. The change was about which job comms was supposed to do in this product.',
             },
             {
               title: 'Detail alongside the map, not a page away from it.',
-              body: "The trailer detail opens as a side panel, not as a navigation. The map stays visible the whole time. That decision keeps the yard manager oriented to the whole facility while drilling into one trailer, which matters because the next decision is almost never about the trailer in isolation. It's about how that trailer fits into the dock assignment, the waitlist, and the eight other trailers waiting their turn.",
+              body: "The trailer detail opens as a side panel, not as a navigation. The map stays visible the whole time. That decision keeps the yard manager oriented to the whole facility while drilling into one trailer, which matters because the next decision almost always depends on how that trailer fits into the dock assignment, the waitlist, and the eight other trailers waiting their turn.",
             },
           ],
-          italicOutro: 'Three hero screens did the work of replacing three software tools and two paper forms. Each one named what the old way had been doing, what the new way was doing instead, and which job the user was actually trying to get done.',
           screenshots: {
             columns: 2,
             images: [
@@ -721,10 +743,10 @@ export const CASES: CaseEntry[] = [
           title: 'Sole UX, research through ship',
           subtitle: 'What it took to design end-to-end for an industrial pilot',
           paragraphs: [
-            "Sole UX at Ndustrial meant being the only UX resource at the company, not just on this project. Yard management was running in parallel with the Power Quality and Demand Response work for industrial customers, plus whatever else needed design judgment that week. Research, workflow design, visual design, prototypes, hand-off to engineering, pilot support: the work either happened or it didn't get done, across whichever project was loudest at the moment.",
-            'Research happened on the dock. The product was not designed in a conference room and shipped to operators to use. It was shaped by watching yard managers work, watching drivers wait, watching paperwork accumulate. The constraints (an open yard, summer heat, time pressure) were not assumptions. They were observations from the people who were going to use the thing.',
+            "Sole UX at Ndustrial meant being the only UX resource in the company. Yard management was running in parallel with the Power Quality and Demand Response work for industrial customers, plus whatever else needed design judgment that week. Research, workflow design, visual design, prototypes, hand-off to engineering, pilot support: the work either happened or it didn't get done, across whichever project was loudest at the moment.",
+            'Research happened on the dock. The product was shaped by watching yard managers work, drivers wait, and paperwork pile up. The constraints (an open yard, summer heat, time pressure) were observations from the people who were going to use the thing.',
             'Industrial conditions shaped every design decision. Every minute spent in the interface was a minute not spent moving a truck, so cognitive load had to come down. The interface had to compete with paper, radios, and walking the dock, and lose less often than it won.',
-            "The pilot deployed at one facility. Not an enterprise rollout, not a category-wide product, not a broad-scale launch. One real customer site, with real yard managers running their actual dock through it. That is what 'shipped' meant in this case, and what made the work credible: the interface worked under the actual conditions where it would have to work.",
+            "The pilot deployed at one facility, with real yard managers running their actual dock through it. That is what 'shipped' meant in this case, and it made the work credible, because the interface held up under the conditions it was built for.",
           ],
           decisions: [
             {
@@ -733,23 +755,23 @@ export const CASES: CaseEntry[] = [
             },
             {
               title: 'Research where the work happens.',
-              body: 'User research at the customer site was not a methodology choice. It was the only way to know what the actual constraints were. The conditions a yard manager works under cannot be reproduced in an office, and assumptions that get past the conference room get caught on the dock.',
+              body: 'User research at the customer site was the only way to know what the actual constraints were. The conditions a yard manager works under cannot be reproduced in an office, and assumptions that get past the conference room get caught on the dock.',
             },
             {
               title: 'Pilot scope as honest framing.',
               body: 'One facility shipping a real pilot is different from a category-wide rollout. Naming the scope (a single customer site, a single pilot) keeps the work credible and lets the reader trust the rest of the case. Overclaiming on scale undermines everything else the case is trying to say.',
             },
           ],
-          italicOutro: "Industrial design judgment doesn't come from working on industrial products. It comes from being in the rooms where industrial work actually happens. The interface either survives those rooms or it doesn't.",
+          italicOutro: "The constraints in the spec were written standing on the dock.",
         },
       ],
       outcomeBeat: {
         title: 'What shipped',
         paragraphs: [
           'The pilot shipped during my tenure at Ndustrial. Yard managers at a cold-storage third-party-logistics facility ran their dock through it instead of jumping between three software tools and two paper forms. The broader Ndustrial program (including shore-power infrastructure for the hybrid electric trailers) continued after I was laid off in mid-2025.',
-          'The case here is not about scale. It is about whether an industrial product designed by one person, at one company, for one pilot site, can hold up in real industrial conditions. This one did.',
+          'The case is about whether an industrial product designed by one person, at one company, for one pilot site, can hold up in real industrial conditions. This one did.',
         ],
-        highlight: "Industrial design end-to-end means sole UX, research through ship, no specialists to hand off to, and an interface that either survives the dock or it doesn't.",
+        highlight: "One designer carried it from research through ship, and the interface survived the dock.",
       },
     },
   },
@@ -757,8 +779,9 @@ export const CASES: CaseEntry[] = [
     slug: 'pqdr',
     name: 'Power Quality and Demand Response',
     tagline: 'AI insight, operator decision. 200+ industrial locations.',
-    line: 'ent',
+    line: 'pro',
     readingMinutes: 5,
+    ai: true,
     body: {
       domains: [
         'Energy',
@@ -784,7 +807,9 @@ export const CASES: CaseEntry[] = [
         },
       ],
       claim: 'I design operator-facing surfaces that turn AI insight into industrial-scale operational decisions.',
-      ctaHref: '/work/pqdr',
+      ctaHref: '/work/pqdr/',
+      cardTagline: 'AI insight, operator decision.',
+      cardMetric: 1,
     },
     detail: {
       chips: ['Enterprise', 'AI Insight', 'Operator UX', 'Industrial'],
@@ -799,7 +824,7 @@ export const CASES: CaseEntry[] = [
           paragraphs: [
             'One AI analysis layer. Two operator-facing surfaces. The decision to split the operator view rather than the AI was structural: the AI did the same kind of analysis in both cases, but the human work it triggered was fundamentally different in shape.',
             'Power Quality was the diagnostic surface. The AI analyzed power quality data across the facility and the dashboard surfaced which equipment was most likely causing efficiency losses. Facility managers could see, at a glance, where their power was being wasted and which assets to investigate first.',
-            'Demand Response was the time-sensitive surface. When the utility signaled an impending peak-demand event, the alert surface notified facility or regional managers in time to curtail operations and comply with the program. The penalty for non-compliance with peak-shaving events can run into six figures annually for an industrial site. The interface was designed to make the curtailment decision fast, clear, and accountable.',
+            'Demand Response was the time-sensitive surface. When the utility signaled an impending peak-demand event, the alert surface notified facility or regional managers in time to curtail operations and comply with the program. The penalty for non-compliance with peak-shaving events can run into six figures annually for an industrial site. The interface was designed to make the curtailment decision fast and accountable.',
             "Treating these as two operator views on one AI system, rather than one combined screen or two separate products, was the move. The AI's job was the same in both cases: analyze the data, surface what mattered. The operator's job was different. Diagnostic decisions take minutes or hours. Demand-response decisions take seconds. The two surfaces let each decision happen at its own speed.",
           ],
           decisions: [
@@ -809,14 +834,14 @@ export const CASES: CaseEntry[] = [
             },
             {
               title: 'Diagnostic surface: surface what matters, not all the data.',
-              body: "The Power Quality dashboard's job was to point at the equipment most likely causing efficiency losses, not to show every event in the facility's history. Facility managers were already drowning in data. The AI's job was to filter; the design's job was to make the filter trustworthy.",
+              body: "The Power Quality dashboard's job was to point at the equipment most likely causing efficiency losses. Facility managers were already drowning in data. The AI's job was to filter; the design's job was to make the filter trustworthy.",
             },
             {
               title: 'Time-sensitive surface: design for the window, not the user.',
               body: 'Demand Response had a fixed clock. The utility signal arrived, the curtailment window opened, the penalty avoidance depended on action within that window. The surface had to make the decision visible, the consequences clear, and the action trivial to execute. Anything else competed with the window.',
             },
           ],
-          italicOutro: "Operator-facing UX for AI insight is not the same problem as designing the AI itself. The AI's correctness is one question. Whether the operator can act on it within the time the situation allows is a different one.",
+          italicOutro: "The same AI feeds both surfaces. The operator's clock is what differs, minutes on one and seconds on the other.",
           screenshots: {
             columns: 2,
             images: [
@@ -840,7 +865,7 @@ export const CASES: CaseEntry[] = [
             "Designing operator-facing surfaces for AI output is a different competency than designing AI features. The AI engineer's question is whether the model produces correct output. The operator UX designer's question is whether the human downstream can recognize the output, trust it, and act on it within the time the situation allows.",
             "Power Quality and Demand Response were the same answer to two versions of that question. Both surfaces gave the operator a view onto AI-generated analysis. Neither gave the operator the AI itself. The design move in both cases was to find the place where the operator's decision actually happens, then to surface the AI's contribution at that exact place.",
             'Deployed across 200+ industrial locations of one customer, the system met operators where their decisions happened. Facility managers at the site for the diagnostic work. Facility or regional managers in the curtailment window for time-sensitive response. The operator was always the actor. The AI was always the analyst.',
-            'The structural value claim is the honest version: penalty avoidance built into the operator decision flow at industrial scale. Measured savings at a given site depended on operational data I never personally saw post-deployment. Naming the structural framing keeps the case credible; claiming dollars I cannot verify would not.',
+            'The value claim stays structural. Penalty avoidance built into the operator decision flow, at industrial scale. Site-level savings depended on operational data I never saw after deployment, so this case names what it can show.',
           ],
           decisions: [
             {
@@ -849,14 +874,14 @@ export const CASES: CaseEntry[] = [
             },
             {
               title: 'The operator is the actor. The AI is the analyst.',
-              body: "The system was never designed to replace the operator's judgment. It was designed to make the operator's judgment faster and better informed. Every surface decision followed from that division of labor.",
+              body: "The system was designed to make the operator's judgment faster and better informed, and the operator still made the call. Every surface decision followed from that division of labor.",
             },
             {
               title: 'Structural value, not measured savings.',
-              body: 'The product was designed to help facilities avoid utility penalties that can run into six figures annually per industrial site. That is the structural framing. Measured savings at a specific site depended on conditions I never saw post-deployment, so the honest version of value is the structural one, not a dollar figure I cannot verify.',
+              body: 'The product was designed to help facilities avoid utility penalties that can run into six figures annually per industrial site. That is the structural framing. Measured savings at a specific site depended on conditions I never saw after deployment, so the value this case claims is structural.',
             },
           ],
-          italicOutro: "The portfolio claim is not 'I shipped a feature that saved X dollars.' It is 'I designed the surfaces that turn AI insight into operator action at industrial scale.' One of those is provable from the design. The other depends on operational data I don't have.",
+          italicOutro: "What is provable is in the design itself. The dollar outcomes sat in operational data I never saw after rollout.",
           screenshots: {
             columns: 2,
             images: [
@@ -878,9 +903,127 @@ export const CASES: CaseEntry[] = [
         title: 'What the system was for',
         paragraphs: [
           'Deployed across more than 200 industrial locations of a single large customer at Ndustrial. Two operator surfaces, Power Quality and Demand Response, running on one AI analysis layer underneath. Designed to help facilities avoid utility penalties that can run into six figures annually for non-compliance with peak-shaving events.',
-          'Post-deployment performance data is not mine to claim. I designed the system; I did not personally see how each of the 200+ sites used it after rollout. The honest version of the work is what was shipped and what it was structured to enable, not a measured outcome number.',
+          'Post-deployment performance data is not mine to claim. I designed the system; I did not personally see how each of the 200+ sites used it after rollout. This case shows what shipped and what it was structured to enable.',
         ],
-        highlight: "Operator UX for AI insight is its own kind of design judgment. The AI can be right and the design can still fail if the operator can't act on what the AI surfaces in the time the situation allows.",
+        highlight: "The AI can be right and the design can still fail, if the operator cannot act on what it surfaces in the time the situation allows.",
+      },
+    },
+  },
+  {
+    slug: 'ziggy',
+    name: 'Ziggy',
+    tagline: 'An agent arranges my day. The data fills it in.',
+    line: 'indie',
+    readingMinutes: 3,
+    ai: true,
+    body: {
+      domains: ['Personal AI', 'Agent design', 'Android'],
+      outcome: 'A phone app I use every morning. It pulls my calendar, health data, messages and to-dos onto one screen, and an AI agent decides what goes first and why. The agent can only point at real things in my notes, and the app fills in every number and date itself.',
+      visualLabel: 'ZIGGY · TODAY ON THE OLED DISPLAY',
+      visualImage: '/images/cases/ziggy/ziggy-today-oled.jpg',
+      visualImageAlt: 'Ziggy Today screen on the OLED material, from the demo build with an invented person',
+      visualLayout: 'full',
+      metrics: [
+        { num: '5 days', label: 'Sketch to an installed Android app' },
+        { num: '~5', label: 'Notifications a day, by design' },
+        { num: '0', label: 'Numbers written by the model' },
+      ],
+      claim: "I design agent interfaces that can't make up a number.",
+      ctaHref: '/work/ziggy/',
+      cardMetric: 2,
+      cardShotPosition: 'center bottom',
+    },
+    detail: {
+      demoUrl: "https://ziggy-demo.scottgerstl.com",
+      chips: [
+        "Personal",
+        "AI",
+        "Agent",
+        "Android",
+      ],
+      hook: [
+        "Ziggy is a phone app that puts my calendar, last night's sleep, messages and dated tasks on one screen. An AI agent decides what goes first.",
+        "I built it in five days with Claude Code as a design craft exercise. The interesting decisions were about the object, and about how little of the screen the model gets to touch.",
+      ],
+      sections: [
+        {
+          title: "Designed as an object",
+          subtitle: "Structure first, then materials, then measured",
+          paragraphs: [
+            "The first look borrowed from the handheld computer in Quantum Leap, the show Ziggy is named after. It read as a themed app. The direction that stuck treats Ziggy as a piece of hardware in the spirit of Teenage Engineering, with grey moulded keys under a display and lights that only come on when something is waiting.",
+            "The keys stay put and the display changes. Each new look became a material of that one object, a set of token overrides on the same structure, and the demo ships on the OLED one. On OLED everything drawn in pixels uses the same 1.5px dot on a 2px grid. Something bigger uses more of those dots, so the fonts are generated from glyph tables with the dot built in.",
+            "When the app felt slow, I asked about rewriting it natively. An hour of profiling on the phone showed the cost was mine. Frosted glass on every header put 21.5% of frames over budget, and solid headers brought that down to about 3%.",
+          ],
+          italicOutro: "Measure before you rewrite. The slowness was something I had built.",
+          screenshots: {
+            columns: 2,
+            images: [
+              {
+                src: "/images/cases/ziggy/ziggy-ride-check-dots.jpg",
+                alt: "Ride check on the OLED display, every mark drawn from the same dot",
+                caption: "One dot size for everything",
+              },
+              {
+                src: "/images/cases/ziggy/ziggy-key-row.jpg",
+                alt: "Ziggy's key row with area counts, indicator lights and the orange ziggy key",
+                caption: "Keys that stay put",
+              },
+            ],
+          },
+        },
+        {
+          title: "Where the AI shows up",
+          subtitle: "Three rules for an agent that arranges a screen",
+          paragraphs: [
+            "Three times a day, Claude reads a summary of my notes and writes the plan for Today. That's a one-line headline and up to six cards, each one pointing at something real in my notes with a short reason for showing it.",
+          ],
+          decisions: [
+            {
+              title: "The model picks, the data fills in.",
+              body: "The phone looks up each card the model names and builds it from the data. If the model names something that doesn't exist, the card never appears, and the model never writes a date or a count.",
+            },
+            {
+              title: "The slow path is visible.",
+              body: "A router answers quick questions from data already on the phone. Questions that need all of my notes go to Claude for a deep answer, and Ziggy shows that hand-off while it works. If it hid that, I wouldn't know which answers to double-check.",
+            },
+            {
+              title: "It says when it doesn't know.",
+              body: "The home-screen widget says AS OF once its snapshot is an hour old. Lights stay off unless something is waiting, and a verdict like \"recovery looks low\" only appears when there's a rule I trust behind it.",
+            },
+          ],
+          tryIts: [
+            "Press the orange ziggy key and ask \"What's my plan for Saltfern?\" The screen shows it going out for a deep answer, and the answer prints with a card that opens the prep note.",
+            "On Today, tap a line and press DONE. Nothing reaches the notes without that tap.",
+          ],
+          italicOutro: "A lot of designing for AI is deciding which parts of the screen it gets to touch.",
+          screenshots: {
+            columns: 3,
+            images: [
+              {
+                src: "/images/cases/ziggy/ziggy-today-plan.jpg",
+                alt: "Ziggy Today screen with the agent's headline, ride check and Needs You list",
+                caption: "The plan's headline",
+              },
+              {
+                src: "/images/cases/ziggy/ziggy-blue-lion-printing.jpg",
+                alt: "Ask screen showing a question sent for a deep answer, with a progress bar",
+                caption: "The hand-off, shown",
+              },
+              {
+                src: "/images/cases/ziggy/ziggy-blue-lion-answer.jpg",
+                alt: "The printed answer about an interview, with a card linking the prep note",
+                caption: "The answer, with its source",
+              },
+            ],
+          },
+        },
+      ],
+      outcomeBeat: {
+        title: "What Ziggy is now",
+        paragraphs: [
+          "I started Ziggy on 3 October 2026, and it has one user. It isn't a product. Phone makers own the data permissions, and WhatsApp has no API for reading messages. The demo on this page runs on an invented person.",
+        ],
+        highlight: "The test I care about is whether it's still the first thing I look at in a month.",
       },
     },
   },
@@ -936,27 +1079,41 @@ export const CASES: CaseEntry[] = [
   },
 ];
 
-export const SECTIONS: { line: LineKey; code: string; title: string; subtitle: string }[] = [
+export const SECTIONS: {
+  line: LineKey;
+  code: string;
+  title: string;
+  subtitle: string;
+  /** Stop order on the line. Paid work leads, matching the resume. */
+  stops: CaseSlug[];
+}[] = [
   {
-    line: 'ai',
+    line: 'pro',
     code: 'CS1',
-    title: 'AI Case Studies',
-    subtitle: '3 stops · AI features, AI products, AI as the design medium',
+    title: 'Professional Work',
+    subtitle: '4 stops · for employers and clients',
+    stops: ['brightly', 'sim-racing', 'pqdr', 'fleet'],
   },
   {
-    line: 'ent',
+    line: 'indie',
     code: 'CS2',
-    title: 'Enterprise Case Studies',
-    subtitle: '3 stops · vision, workflows, and operator surfaces',
+    title: 'Independent Builds',
+    subtitle: '3 stops · designed and built solo with AI',
+    stops: ['epilog', 'ziggy', 'cal'],
   },
   {
     line: 'pers',
     code: 'P',
     title: 'Personal',
     subtitle: '2 stops · who I am and how to reach me',
+    stops: ['about', 'contact'],
   },
 ];
 
 export function casesForLine(line: LineKey): CaseEntry[] {
-  return CASES.filter((c) => c.line === line);
+  const section = SECTIONS.find((s) => s.line === line);
+  if (!section) return [];
+  return section.stops
+    .map((slug) => CASES.find((c) => c.slug === slug))
+    .filter((c): c is CaseEntry => !!c);
 }

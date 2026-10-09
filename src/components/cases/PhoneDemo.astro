@@ -1,0 +1,101 @@
+---
+// The live demo in a phone frame, beside a case page on wide screens.
+// Below 1024px it hides and the page offers an "Open demo" link instead.
+import { ui } from '../../lib/ui';
+
+interface Props {
+  src: string;
+  name: string;
+}
+
+const { src, name } = Astro.props;
+---
+
+<aside class="phone-col" aria-label={`${name} interactive demo`}>
+  <div class="phone-sticky">
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <iframe src={src} title={`${name} interactive demo`} loading="lazy" />
+      </div>
+      <div class="phone-mask"></div>
+      <img class="phone-png" src="/images/iphone-frame.png" alt="" draggable="false" />
+    </div>
+    <p class="phone-caption">{ui('case.demoCaption')}</p>
+  </div>
+</aside>
+
+<style>
+  .phone-col {
+    align-self: stretch;
+  }
+
+  .phone-sticky {
+    position: sticky;
+    top: 80px;
+  }
+
+  .phone-frame {
+    position: relative;
+    width: 316px;
+    height: 636px;
+  }
+
+  .phone-screen {
+    position: absolute;
+    overflow: hidden;
+    top: 22px;
+    left: 17px;
+    width: 281px;
+    height: 591px;
+  }
+
+  .phone-screen iframe {
+    width: 430px;
+    height: 904px;
+    transform: scale(0.6535);
+    transform-origin: top left;
+    border: 0;
+    display: block;
+  }
+
+  .phone-mask {
+    position: absolute;
+    pointer-events: none;
+    top: 2px;
+    left: -3px;
+    width: 321px;
+    height: 631px;
+    border-radius: 44px;
+    border: 16px solid var(--color-bg, #f6f6f6);
+    box-sizing: border-box;
+  }
+
+  .phone-png {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .phone-caption {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--color-text-soft);
+    text-align: center;
+    margin-top: 14px;
+  }
+
+  @media (max-width: 1023px) {
+    .phone-col {
+      display: none;
+    }
+  }
+
+  @media print {
+    .phone-col {
+      display: none !important;
+    }
+  }
+</style>

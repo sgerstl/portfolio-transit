@@ -32,17 +32,6 @@ export type UIKey =
   | 'lab.didntWork'
   | 'lab.forYourTeam'
   | 'lab.openDemo'
-  | 'hero.prelude'
-  | 'hero.qualifiers'
-  | 'hero.propLabel'
-  | 'hero.propPrimary'
-  | 'hero.propSecondary'
-  | 'hero.statBrightly'
-  | 'hero.statEpilog'
-  | 'hero.statCal'
-  | 'hero.ariaBrightly'
-  | 'hero.ariaEpilog'
-  | 'hero.ariaCal'
   | 'hero.ariaIntro'
   | 'resume.title'
   | 'resume.lede'
@@ -94,17 +83,6 @@ export const UI: Record<UIKey, string> = {
   'contactFab.aria': 'Jump to contact section',
   'header.menuOpen': 'Open menu',
   'header.menuClose': 'Close menu',
-  'hero.prelude': 'All aboard! Three stops to your destination.',
-  'hero.qualifiers': '15 years · Enterprise systems and AI products · US/German citizen, EU work-authorized',
-  'hero.propLabel': 'Proposition',
-  'hero.propPrimary': 'Senior product design judgment for AI features and enterprise systems.',
-  'hero.propSecondary': 'Outcomes land in factories, schools, and hospitals, with the people who run them and the people they serve.',
-  'hero.statBrightly': 'Set the design direction for a $1.575B acquisition',
-  'hero.statEpilog': 'Built an AI tool that caught a drug interaction a doctor missed',
-  'hero.statCal': 'Shipped a working app in a week using AI to research, design, build, and deploy',
-  'hero.ariaBrightly': 'Jump to Brightly case study',
-  'hero.ariaEpilog': 'Jump to Epilog case study',
-  'hero.ariaCal': 'Jump to Cal case study',
   'hero.ariaIntro': 'Introduction',
   'siteTitle': 'Scott Gerstl | Portfolio',
   'siteTitleCase': '{name} | Scott Gerstl',

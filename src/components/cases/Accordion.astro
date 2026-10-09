@@ -25,8 +25,11 @@
       }
     });
     card.classList.add('case-card--open');
+    card.querySelector('.case-toggle')?.setAttribute('aria-expanded', 'true');
     const body = card.querySelector<HTMLElement>('.case-body');
     if (!body) return;
+    // Collapsed bodies are inert so keyboard focus can't land on hidden links.
+    body.inert = false;
     body.style.maxHeight = body.scrollHeight + 'px';
 
     const onEnd = (e: TransitionEvent) => {
@@ -48,7 +51,9 @@
     body.style.maxHeight = body.scrollHeight + 'px';
     void body.offsetHeight;
     body.style.maxHeight = '0px';
+    body.inert = true;
     card.classList.remove('case-card--open');
+    card.querySelector('.case-toggle')?.setAttribute('aria-expanded', 'false');
     tickSpineDuring(TRANSITION_MS);
   }
 
@@ -67,6 +72,8 @@
       header.addEventListener(
         'click',
         (e) => {
+          // The case name is a real link to the case page; let it navigate.
+          if ((e.target as HTMLElement).closest('a')) return;
           e.preventDefault();
           if (card.classList.contains('case-card--open')) {
             closeCard(card);

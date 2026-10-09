@@ -17,9 +17,10 @@ Defined in `src/styles/global.css` as a Tailwind v4 `@theme` block. **Use the to
 | `--color-text-soft` | `#6a6258` | Secondary text, warm grey |
 | `--color-rail-blue` | `#009DE0` | The spine's main rail |
 | `--color-ring-stroke` | `#555555` | Station ring stroke on the spine |
-| `--color-line-ai` | `#43AF00` | Branch line: AI work |
-| `--color-line-ent` | `#DA5A00` | Branch line: enterprise work. Also the orange used for section rules and carried into the resume renderings |
-| `--color-line-pers` | `#896CAE` | Branch line: personal work |
+| `--color-line-pro` | `#DA5A00` | Branch line: Professional Work (CS1). Also the brand orange used for section rules, the hero tile wash, and carried into the resume renderings |
+| `--color-line-indie` | `#43AF00` | Branch line: Independent Builds (CS2) |
+| `--color-line-pers` | `#896CAE` | Branch line: Personal |
+| `--color-board-*` | various | The departure boards: LED amber on near-black, and the hero board's enamel, rim, bezel and yellow housing |
 
 Type: `--font-sans` Inter (body), `--font-condensed` Barlow Condensed (display and headings), `--font-mono` VT323.
 

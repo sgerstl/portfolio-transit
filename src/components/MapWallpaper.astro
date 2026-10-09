@@ -9,8 +9,13 @@
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 1440px;
+    /* Never narrower than the viewport, so its edges never show on wide
+       screens. Below 1440 it keeps its designed scale and crops. */
+    width: max(1440px, 100vw);
+    min-height: 100vh;
     height: auto;
+    object-fit: cover;
+    object-position: top center;
     z-index: 0;
     pointer-events: none;
     user-select: none;
