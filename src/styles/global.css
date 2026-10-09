@@ -11,16 +11,14 @@
   --color-text: #4B4B4B;
   --color-text-soft: #6a6258;
   --color-rail-blue: #009DE0;
-  /* Station-sign navy, after DB S-Bahn platform signs. Used only by the hero sign. */
-  --color-sign-navy: #1E2A6E;
   --color-ring-stroke: #555555;
   /* Departure board: amber LEDs on a near-black panel, after BVG platform
-     displays. Used by DepartureBoard and the hero G board. */
+     displays. Used by DepartureBoard and the hero board. */
   --color-board-bg: #171511;
   --color-board-amber: #FFB000;
   --color-board-amber-hi: #FFD060;
-  /* MOCK (hero G): the board's housing. Bezel grey was already the
-     DepartureBoard frame colour, hard-coded there. */
+  /* The hero board's housing. Bezel grey was already the DepartureBoard
+     frame colour, hard-coded there. */
   --color-board-frame: #F3F3F0;
   --color-board-frame-shade: #DADBD6;
   --color-board-rim: #A7ABAF;
@@ -29,8 +27,10 @@
   --color-board-housing-shade: #B98F12;
   --color-board-ink: #1B1B1A;
 
-  --color-line-ai: #DA5A00; /* MOCK: swapped so CS1 Professional keeps the brand orange; rename keys before shipping */
-  --color-line-ent: #43AF00;
+  /* Branch lines, one per section. Professional Work carries the brand
+     orange, also used for section rules and in the resume renderings. */
+  --color-line-pro: #DA5A00;
+  --color-line-indie: #43AF00;
   --color-line-pers: #896CAE;
 
   --font-sans: 'Inter', sans-serif;
@@ -95,172 +95,6 @@ img:not([data-allow-save]) {
   will-change: opacity;
 }
 
-.hero-cards {
-  position: relative;
-  padding-top: 14px;
-  width: 1024px;
-  max-width: 100%;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 24px;
-}
-
-.hero-prelude {
-  --slide-x: 0px;
-  display: block;
-  margin-bottom: 30px;
-  will-change: transform, opacity;
-  position: relative;
-  transform: translate3d(var(--slide-x), 0, 0);
-}
-
-.hero-prelude-line {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 38px;
-  font-weight: 500;
-  line-height: 1.1;
-  letter-spacing: 0.01em;
-  color: var(--color-text-soft);
-}
-
-.hero-qualifiers {
-  margin-top: 10px;
-  font-family: 'Inter', sans-serif;
-  font-size: 17px;
-  font-weight: 400;
-  line-height: 1.45;
-  color: var(--color-text-soft);
-  opacity: 0.85;
-  max-width: 720px;
-}
-
-/* Card transform uses CSS variables so the scroll-driven slide-X
-   composes with the hover-driven lift-Y without one clobbering
-   the other (writing style.transform from JS would overwrite
-   the :hover transform rule). */
-.hero-card {
-  --slide-x: 0px;
-  --hover-y: 0px;
-  border-radius: 4px;
-  will-change: transform, opacity;
-  position: relative;
-  overflow: hidden;
-  transform: translate3d(var(--slide-x), var(--hover-y), 0);
-}
-
-.hero-card--stat {
-  background: white;
-  border: 1px solid rgba(0, 0, 0, 0.10);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  display: grid;
-  grid-template-columns: 124px 1fr;
-  align-items: center;
-  cursor: pointer;
-  pointer-events: auto;
-  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
-}
-
-.hero-card--stat:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
-  --hover-y: -2px;
-  border-color: rgba(0, 0, 0, 0.18);
-}
-
-.hero-card--stat:hover::before {
-  height: 9px;
-}
-
-.hero-card--stat::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 5px;
-  background: var(--color-rail-blue);
-  transition: height 0.2s ease;
-}
-
-.hero-card--stat .stat-num {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 72px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: 0.01em;
-  color: var(--color-rail-blue);
-  text-align: center;
-  padding: 22px 0 18px;
-  border-right: 1px solid rgba(0, 0, 0, 0.06);
-  user-select: none;
-}
-
-.hero-card--stat .stat-text {
-  font-family: 'Inter', sans-serif;
-  font-size: 22px;
-  font-weight: 500;
-  line-height: 1.35;
-  color: var(--color-text);
-  padding: 22px 30px 20px 28px;
-}
-
-.hero-card--stat strong {
-  font-weight: 700;
-  color: #1a1714;
-}
-
-.hero-card--proposition {
-  margin-top: 20px;
-  width: 1020px;
-  max-width: 100%;
-  padding: 26px 38px 32px;
-  background: #4B4B4B;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
-  position: relative;
-}
-
-.hero-card--proposition::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 5px;
-  background: var(--color-rail-blue);
-}
-
-.hero-card--proposition .prop-label {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.22em;
-  color: var(--color-rail-blue);
-  display: block;
-  margin-bottom: 18px;
-}
-
-.hero-card--proposition .prop-primary {
-  font-family: 'Inter', sans-serif;
-  font-size: 25px;
-  font-weight: 600;
-  line-height: 1.40;
-  color: #f6f6f6;
-  letter-spacing: 0.003em;
-  margin-bottom: 16px;
-}
-
-.hero-card--proposition .prop-secondary {
-  font-family: 'Inter', sans-serif;
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: #d6d6d6;
-  letter-spacing: 0.005em;
-}
-
 /* ── SPINE CONTAINER + SVG ────────────────────────────── */
 .spine-container {
   /* Spine.astro reads --rail-center-x to position the rail, rings,
@@ -291,12 +125,6 @@ img:not([data-allow-save]) {
   fill: var(--color-rail-blue);
 }
 
-.spine-rail-ring {
-  fill: white;
-  stroke: var(--color-ring-stroke);
-  stroke-width: 1;
-}
-
 .spine-arrow-tile {
   fill: white;
   stroke: var(--color-text);
@@ -315,8 +143,8 @@ img:not([data-allow-save]) {
   stroke-linejoin: miter;
 }
 
-.spine-branch-line--ai   { stroke: var(--color-line-ai); }
-.spine-branch-line--ent  { stroke: var(--color-line-ent); }
+.spine-branch-line--pro   { stroke: var(--color-line-pro); }
+.spine-branch-line--indie  { stroke: var(--color-line-indie); }
 .spine-branch-line--pers { stroke: var(--color-line-pers); }
 
 .spine-line-terminator {
@@ -324,8 +152,8 @@ img:not([data-allow-save]) {
   stroke-width: 1;
 }
 
-.spine-line-terminator--ai,
-.spine-line-terminator--ent,
+.spine-line-terminator--pro,
+.spine-line-terminator--indie,
 .spine-line-terminator--pers {
   stroke: var(--color-ring-stroke);
 }
@@ -337,8 +165,6 @@ img:not([data-allow-save]) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-card,
-  .hero-prelude,
   .ns-led-inner {
     will-change: auto;
     transition-duration: 0.001ms !important;
@@ -357,10 +183,6 @@ img:not([data-allow-save]) {
   .hero {
     padding-left: 90px;
     padding-right: 32px;
-  }
-
-  .hero-prelude-line {
-    font-size: 30px;
   }
 }
 
@@ -387,74 +209,6 @@ img:not([data-allow-save]) {
        large viewport, which pushes the bottom hero card below the visible
        area. svh = small viewport height, sized for toolbars-visible. */
     height: 100svh;
-  }
-
-  /* Prelude hidden on mobile — proposition takes over as the lead-in. */
-  .hero-prelude {
-    display: none;
-  }
-
-  .hero-prelude-line {
-    font-size: 18px;
-    line-height: 1.25;
-  }
-
-  .hero-qualifiers {
-    font-size: 13px;
-    margin-top: 8px;
-  }
-
-  .hero-cards {
-    width: 100%;
-    padding-top: 0;
-    gap: 8px;
-  }
-
-  /* Stat cards: number INLINE LEFT of sentence (matches desktop, smaller).
-     5px rail-blue top stripe stays. */
-  .hero-card--stat {
-    grid-template-columns: 64px 1fr;
-  }
-
-  .hero-card--stat .stat-num {
-    font-size: 36px;
-    line-height: 1;
-    text-align: center;
-    padding: 14px 0 12px;
-  }
-
-  .hero-card--stat .stat-text {
-    font-size: 17px;
-    line-height: 1.4;
-    padding: 12px 16px 12px 14px;
-  }
-
-  .hero-card--proposition {
-    width: 100%;
-    /* Proposition leads on mobile: visually pulled above the 3 stat cards.
-       Source order is unchanged (proposition stays last in the DOM) so the
-       JS animation stagger still slides it out last — meaning the most
-       important card both arrives first visually AND lingers longest as
-       the reader starts scrolling. */
-    order: -1;
-    margin-top: 0;
-    padding: 22px 22px 26px;
-  }
-
-  .hero-card--proposition .prop-label {
-    font-size: 11px;
-    margin-bottom: 14px;
-  }
-
-  .hero-card--proposition .prop-primary {
-    font-size: 18px;
-    line-height: 1.4;
-    margin-bottom: 12px;
-  }
-
-  .hero-card--proposition .prop-secondary {
-    font-size: 14px;
-    line-height: 1.5;
   }
 
   .spine-svg {

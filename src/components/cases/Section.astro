@@ -19,11 +19,11 @@ const { line } = Astro.props;
     padding: 0 96px;
   }
 
-  .section-ai {
+  .section-pro {
     padding-left: 200px;
   }
 
-  .section-ent {
+  .section-indie {
     margin-top: 80px;
     padding-left: 280px;
   }
@@ -44,13 +44,13 @@ const { line } = Astro.props;
       padding: 0 32px;
     }
 
-    .section-ai,
-    .section-ent,
+    .section-pro,
+    .section-indie,
     .section-pers {
       padding-left: 96px;
     }
 
-    .section-ent,
+    .section-indie,
     .section-pers {
       margin-top: 56px;
     }
@@ -58,8 +58,8 @@ const { line } = Astro.props;
 
   @media (max-width: 767px) {
     .section,
-    .section-ai,
-    .section-ent,
+    .section-pro,
+    .section-indie,
     .section-pers {
       padding: 0;
       margin: 0;
@@ -69,15 +69,15 @@ const { line } = Astro.props;
        header is clearly separated from the previous section's last
        case card. The colored bar (::before) runs through this padding
        so the line stays continuous; only the color changes. */
-    .section-ent,
+    .section-indie,
     .section-pers {
       padding-top: 28px;
     }
 
     /* Per-section colored bar on the left edge. Card chips at left:0
        overlap the bar (same color); gaps between cards expose the bar. */
-    .section-ai::before,
-    .section-ent::before,
+    .section-pro::before,
+    .section-indie::before,
     .section-pers::before {
       content: '';
       position: absolute;
@@ -87,8 +87,8 @@ const { line } = Astro.props;
       width: 9px;
       z-index: 0;
     }
-    .section-ai::before  { background: var(--color-line-ai); }
-    .section-ent::before { background: var(--color-line-ent); }
+    .section-pro::before  { background: var(--color-line-pro); }
+    .section-indie::before { background: var(--color-line-indie); }
     .section-pers::before { background: var(--color-line-pers); }
   }
 </style>

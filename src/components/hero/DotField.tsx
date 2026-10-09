@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { FONT_M } from './dotfont';
 
-// MOCK sketch (hero G): an amber LED departure board. At rest it shows
-// Berlin's Ringbahn, Stadtbahn and Spree as a slowly turning 3D object, with
-// the TV tower standing up out of it. Hovering or focusing a work tile pours
+// The hero's amber LED departure board. At rest it shows the rooftop
+// portrait, or with ?idle=ring Berlin's Ringbahn, Stadtbahn and Spree as a
+// slowly turning 3D object with the TV tower standing up out of it (the
+// Ring's coordinates are approximate, ±100–300 m, which is fine at this
+// resolution). Hovering or focusing a work tile pours
 // the lit LEDs into a departure for that case: line, name, reading time, and
 // where the work started and where it ended. The how is the click.
 //
@@ -29,14 +31,14 @@ const TILT = (64 * Math.PI) / 180; // 0 is straight down onto the map
 const UNLIT = 0.07;
 
 export type Departure = { line: string; name: string; minutes: number; from: string; to: string };
-// MOCK: what the board shows at rest. 'ring' turns; 'face' is the still
-// rooftop portrait.
+// What the board shows at rest. 'ring' turns; 'face' is the still rooftop
+// portrait, the default.
 export type Idle = 'ring' | 'face';
 const PORTRAIT = '/images/hero/scott-rooftop.webp';
 type Cell = { x: number; y: number; a: number };
 type V3 = [number, number, number, number]; // x (east), y (up), z (north), brightness
 
-// Same projection as hero F's map: a 600 × 381 frame, drawing in y 18–350.
+// A flat projection into a 600 × 381 frame, drawing in y 18–350.
 const RING = 'M84.2 214.3 L101.1 230.6 L123.6 258.9 L149.1 291.1 L186 298.4 L217.3 296.6 L235.6 292.6 L267.8 307.1 L312.4 325.6 L414.7 336.5 L439.1 329.9 L467.6 315.8 L481.3 241.1 L498.4 206.3 L511.6 167.9 L488.4 131.2 L467.8 112 L429.8 71.8 L404.7 55.8 L375.8 38.8 L318.7 41.3 L270.2 62.7 L219.3 85.9 L186.7 93.2 L121.3 107 L88.7 152.3 L85.3 190 L84.2 214.3';
 const STADTBAHN = 'M84.2 214.3 L132.9 199 L194.2 193.6 L232.7 181.6 L276.4 142.1 L315.3 143.9 L369.6 139.9 L384.4 163.2 L421.6 180.9 L498.4 206.3';
 const SPREE = 'M545.6 252 L490 226.6 L446 210.7 L410.2 186 L384.4 163.2 L354.4 155.2 L327.8 143.2 L295.1 146.8 L267.8 137.8 L234.4 133.1 L190 146.5 L145.6 146.8 L101.1 124 L56.7 92.5';

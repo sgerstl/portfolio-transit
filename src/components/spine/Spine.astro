@@ -14,7 +14,6 @@ const RAIL_TOP_Y = 64;
     width="6"
     height="586"
   />
-  <g class="spine-rings" id="spine-rings"></g>
   <g class="spine-arrow" id="spine-arrow" transform="translate(113.5, 642)">
     <rect class="spine-arrow-tile" width={ARROW_W} height={ARROW_H} rx="4" />
     <path
@@ -22,25 +21,24 @@ const RAIL_TOP_Y = 64;
       d="M11.16 5 L13.81 5 L13.84 5 L13.84 13.75 L19 8.34 L19 12.18 L12.5 19 L6 12.18 L6 8.31 L11.16 13.72 L11.16 5 Z"
     />
   </g>
-  <path class="spine-branch-line spine-branch-line--ai" id="spine-branch-ai" d=""></path>
-  <path class="spine-branch-line spine-branch-line--ent" id="spine-branch-ent" d=""></path>
+  <path class="spine-branch-line spine-branch-line--pro" id="spine-branch-pro" d=""></path>
+  <path class="spine-branch-line spine-branch-line--indie" id="spine-branch-indie" d=""></path>
   <path class="spine-branch-line spine-branch-line--pers" id="spine-branch-pers" d=""></path>
-  <rect class="spine-line-terminator spine-line-terminator--ai" id="spine-term-ai" rx="4" width="14" height="8" />
-  <rect class="spine-line-terminator spine-line-terminator--ent" id="spine-term-ent" rx="4" width="14" height="8" />
+  <rect class="spine-line-terminator spine-line-terminator--pro" id="spine-term-pro" rx="4" width="14" height="8" />
+  <rect class="spine-line-terminator spine-line-terminator--indie" id="spine-term-indie" rx="4" width="14" height="8" />
   <rect class="spine-line-terminator spine-line-terminator--pers" id="spine-term-pers" rx="4" width="14" height="8" />
-  <rect class="spine-line-indicator spine-line-indicator--ai" id="spine-ind-ai" rx="4" width="28" height="8" />
-  <rect class="spine-line-indicator spine-line-indicator--ent" id="spine-ind-ent" rx="4" width="22" height="8" />
+  <rect class="spine-line-indicator spine-line-indicator--pro" id="spine-ind-pro" rx="4" width="28" height="8" />
+  <rect class="spine-line-indicator spine-line-indicator--indie" id="spine-ind-indie" rx="4" width="22" height="8" />
   <rect class="spine-line-indicator spine-line-indicator--pers" id="spine-ind-pers" rx="4" width="8" height="8" />
 </svg>
 
 <script>
   const DEFAULT_RAIL_CENTER_X = 126;
-  const RING_SIZE = 14;
   const ARROW_W = 25;
   const ARROW_H = 24;
   const RAIL_TOP_Y = 64;
 
-  type SectionKey = 'ai' | 'ent' | 'pers';
+  type SectionKey = 'pro' | 'indie' | 'pers';
 
   let controller: AbortController | null = null;
   let resizeObserver: ResizeObserver | null = null;
@@ -83,24 +81,23 @@ const RAIL_TOP_Y = 64;
     const spineContainer = svg.parentElement as HTMLElement | null;
     if (!spineContainer) return;
 
-    const ringsGroup = document.getElementById('spine-rings') as SVGGElement | null;
     const arrowGroup = document.getElementById('spine-arrow') as SVGGElement | null;
     const track = document.getElementById('spine-rail-track') as SVGRectElement | null;
-    if (!ringsGroup || !arrowGroup || !track) return;
+    if (!arrowGroup || !track) return;
 
     const linePaths: Record<SectionKey, SVGPathElement | null> = {
-      ai: document.getElementById('spine-branch-ai') as SVGPathElement | null,
-      ent: document.getElementById('spine-branch-ent') as SVGPathElement | null,
+      pro: document.getElementById('spine-branch-pro') as SVGPathElement | null,
+      indie: document.getElementById('spine-branch-indie') as SVGPathElement | null,
       pers: document.getElementById('spine-branch-pers') as SVGPathElement | null,
     };
     const lineTerminators: Record<SectionKey, SVGRectElement | null> = {
-      ai: document.getElementById('spine-term-ai') as SVGRectElement | null,
-      ent: document.getElementById('spine-term-ent') as SVGRectElement | null,
+      pro: document.getElementById('spine-term-pro') as SVGRectElement | null,
+      indie: document.getElementById('spine-term-indie') as SVGRectElement | null,
       pers: document.getElementById('spine-term-pers') as SVGRectElement | null,
     };
     const lineIndicators: Record<SectionKey, SVGRectElement | null> = {
-      ai: document.getElementById('spine-ind-ai') as SVGRectElement | null,
-      ent: document.getElementById('spine-ind-ent') as SVGRectElement | null,
+      pro: document.getElementById('spine-ind-pro') as SVGRectElement | null,
+      indie: document.getElementById('spine-ind-indie') as SVGRectElement | null,
       pers: document.getElementById('spine-ind-pers') as SVGRectElement | null,
     };
 
@@ -123,35 +120,13 @@ const RAIL_TOP_Y = 64;
     const placeSpineGeometry = () => {
       const railCenterX = getRailCenterX();
       track.setAttribute('x', String(railCenterX - 3));
-      const heroCards = Array.from(
-        document.querySelectorAll<HTMLLIElement>('.hero-cards .hero-card'),
-      );
-      ringsGroup.innerHTML = '';
-      heroCards.forEach((card) => {
-        const r = card.getBoundingClientRect();
-        const center = r.top + r.height / 2;
-        const ring = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        ring.setAttribute('class', 'spine-rail-ring');
-        ring.setAttribute('x', String(railCenterX - RING_SIZE / 2));
-        ring.setAttribute('y', String(center - RING_SIZE / 2));
-        ring.setAttribute('width', String(RING_SIZE));
-        ring.setAttribute('height', String(RING_SIZE));
-        ring.setAttribute('rx', '7');
-        ringsGroup.appendChild(ring);
-      });
-
-      const lastCard = heroCards[heroCards.length - 1];
+      // The rail ends at a transfer station level with the bottom of the
+      // hero headline, which leaves the branch lines a long run down past
+      // the work tiles. Measured in the container's own space.
       let arrowTop = 642;
-      // MOCK: hero G has no cards and scrolls with the page. The rail ends
-      // at a transfer station level with the bottom of the headline, which
-      // leaves the branch lines a long run down past the work tiles.
-      // Measured in the container's own space.
-      const gTitle = document.querySelector<HTMLElement>('.hv--g .hvf-h1');
-      if (gTitle) {
-        arrowTop = gTitle.getBoundingClientRect().bottom - ARROW_H - spineContainer.getBoundingClientRect().top;
-      } else if (lastCard) {
-        const r = lastCard.getBoundingClientRect();
-        arrowTop = r.bottom + 80;
+      const title = document.querySelector<HTMLElement>('.hero .hvf-h1');
+      if (title) {
+        arrowTop = title.getBoundingClientRect().bottom - ARROW_H - spineContainer.getBoundingClientRect().top;
       }
       arrowGroup.setAttribute('transform', `translate(${railCenterX - ARROW_W / 2}, ${arrowTop})`);
 
@@ -163,8 +138,8 @@ const RAIL_TOP_Y = 64;
     const regenerateBranchLines = () => {
       const railCenterX = getRailCenterX();
       const sectionHeaders: Record<SectionKey, HTMLElement | null> = {
-        ai: document.getElementById('section-ai'),
-        ent: document.getElementById('section-ent'),
+        pro: document.getElementById('section-pro'),
+        indie: document.getElementById('section-indie'),
         pers: document.getElementById('section-pers'),
       };
 
@@ -175,14 +150,14 @@ const RAIL_TOP_Y = 64;
       const lineStartY = arrowY + ARROW_H;
 
       const startXs: Record<SectionKey, number> = {
-        ai: railCenterX - 8,
-        ent: railCenterX,
+        pro: railCenterX - 8,
+        indie: railCenterX,
         pers: railCenterX + 8,
       };
 
       const verticalEnds: Partial<Record<SectionKey, number>> = {};
 
-      (['ai', 'ent', 'pers'] as const).forEach((key) => {
+      (['pro', 'indie', 'pers'] as const).forEach((key) => {
         const headerEl = sectionHeaders[key];
         const path = linePaths[key];
         const term = lineTerminators[key];
@@ -199,17 +174,17 @@ const RAIL_TOP_Y = 64;
       const MARKER_H = 8;
       const MARKER_OFFSET = 8;
 
-      if (lineIndicators.ai && verticalEnds.ai !== undefined) {
+      if (lineIndicators.pro && verticalEnds.pro !== undefined) {
         const w = 28;
-        const center = (startXs.ai + startXs.pers) / 2;
-        lineIndicators.ai.setAttribute('x', String(center - w / 2));
-        lineIndicators.ai.setAttribute('y', String(verticalEnds.ai - MARKER_H - MARKER_OFFSET));
+        const center = (startXs.pro + startXs.pers) / 2;
+        lineIndicators.pro.setAttribute('x', String(center - w / 2));
+        lineIndicators.pro.setAttribute('y', String(verticalEnds.pro - MARKER_H - MARKER_OFFSET));
       }
-      if (lineIndicators.ent && verticalEnds.ent !== undefined) {
+      if (lineIndicators.indie && verticalEnds.indie !== undefined) {
         const w = 22;
-        const center = (startXs.ent + startXs.pers) / 2;
-        lineIndicators.ent.setAttribute('x', String(center - w / 2));
-        lineIndicators.ent.setAttribute('y', String(verticalEnds.ent - MARKER_H - MARKER_OFFSET));
+        const center = (startXs.indie + startXs.pers) / 2;
+        lineIndicators.indie.setAttribute('x', String(center - w / 2));
+        lineIndicators.indie.setAttribute('y', String(verticalEnds.indie - MARKER_H - MARKER_OFFSET));
       }
       if (lineIndicators.pers && verticalEnds.pers !== undefined) {
         const w = 8;
@@ -218,22 +193,22 @@ const RAIL_TOP_Y = 64;
       }
     };
 
-    // MOCK (hero G): at rest the rail ends at the transfer station. The
-    // branch lines, each led by its end cap as a train, leave it the moment you scroll and grow 1.5px per pixel
-    // scrolled, so they run ahead of the reader and reach each section by
-    // the time it is on screen. Vertical travel
-    // costs its full distance and horizontal travel half, so the run into a
-    // section header draws on rather than snapping across. Reduced motion,
-    // or any other hero, gets the lines fully drawn.
+    // At rest the rail ends at the transfer station. The branch lines, each
+    // led by its end cap as a train, leave it the moment you scroll and grow
+    // 1.5px per pixel scrolled, so they run ahead of the reader and reach
+    // each section by the time it is on screen. Vertical travel costs its
+    // full distance and horizontal travel half, so the run into a section
+    // header draws on rather than snapping across. Reduced motion gets the
+    // lines fully drawn.
     type Reveal = { path: SVGPathElement; total: number; lens: number[]; costs: number[]; dockX: number; dockY: number };
     const LEAD = 1.5; // line growth per pixel scrolled, so it leads the page
     let reveals: Partial<Record<SectionKey, Reveal>> = {};
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const revealOn = () => !!document.querySelector('.hv--g') && !reducedMotion.matches;
+    const revealOn = () => !!document.querySelector('.hero') && !reducedMotion.matches;
 
     const measureReveals = () => {
       reveals = {};
-      (['ai', 'ent', 'pers'] as const).forEach((key) => {
+      (['pro', 'indie', 'pers'] as const).forEach((key) => {
         const path = linePaths[key];
         if (!path || !path.getAttribute('d')) return;
         const total = path.getTotalLength();
@@ -262,7 +237,7 @@ const RAIL_TOP_Y = 64;
     const updateReveal = () => {
       const on = revealOn();
       const scrolled = Math.max(0, -spineContainer.getBoundingClientRect().top);
-      (['ai', 'ent', 'pers'] as const).forEach((key) => {
+      (['pro', 'indie', 'pers'] as const).forEach((key) => {
         const r = reveals[key];
         const term = lineTerminators[key];
         const ind = lineIndicators[key];

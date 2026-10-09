@@ -1,4 +1,4 @@
-export type LineKey = 'ai' | 'ent' | 'pers';
+export type LineKey = 'pro' | 'indie' | 'pers';
 
 export type CaseSlug =
   | 'epilog'
@@ -105,7 +105,7 @@ export const CASES: CaseEntry[] = [
     slug: 'epilog',
     name: 'Epilog',
     tagline: 'AI caught a drug interaction. The neurologist confirmed it.',
-    line: 'ent',
+    line: 'indie',
     readingMinutes: 4,
     ai: true,
     body: {
@@ -220,7 +220,7 @@ export const CASES: CaseEntry[] = [
     slug: 'cal',
     name: 'Cal',
     tagline: 'AI as deliverable. AI as builder. AI inside the product.',
-    line: 'ent',
+    line: 'indie',
     readingMinutes: 3,
     ai: true,
     body: {
@@ -352,7 +352,7 @@ export const CASES: CaseEntry[] = [
     slug: 'sim-racing',
     name: 'Sim Racing Coach',
     tagline: 'Race-engineer practice, designed into an AI product.',
-    line: 'ai',
+    line: 'pro',
     readingMinutes: 6,
     ai: true,
     body: {
@@ -363,7 +363,7 @@ export const CASES: CaseEntry[] = [
       ],
       outcome: "Design consulting on an AI sim-racing telemetry tool. Reframed the analysis app as the AI agent's workspace, not a chat panel beside it. Designed a race engineer pattern that translates expert practice into UX for sim-racers who don't have an engineer. Four worked archetypes shipped against the product's telemetry schemas.",
       visualLabel: 'SIM RACING COACH · TELEMETRY VIEW',
-      visualImage: '/images/cases/sim-racing/prototype-web-idle.png',
+      visualImage: '/images/cases/sim-racing/prototype-web-idle.webp',
       visualImageAlt: 'Sim Racing Coach web prototype, idle state with agent rail',
       metrics: [
         {
@@ -440,7 +440,7 @@ export const CASES: CaseEntry[] = [
             columns: 2,
             images: [
               {
-                src: '/images/cases/sim-racing/prototype-web-idle.png',
+                src: '/images/cases/sim-racing/prototype-web-idle.webp',
                 alt: 'Web prototype, idle state with agent rail and surfaced findings',
                 caption: 'Web: agent rail with findings surfaced',
               },
@@ -519,7 +519,7 @@ export const CASES: CaseEntry[] = [
     slug: 'brightly',
     name: 'Brightly',
     tagline: 'Design direction for a $1.575B acquisition.',
-    line: 'ai',
+    line: 'pro',
     readingMinutes: 6,
     body: {
       domains: [
@@ -655,7 +655,7 @@ export const CASES: CaseEntry[] = [
     slug: 'fleet',
     name: 'Fleet',
     tagline: 'Three tools and two forms, consolidated into one.',
-    line: 'ai',
+    line: 'pro',
     readingMinutes: 5,
     body: {
       domains: [
@@ -782,7 +782,7 @@ export const CASES: CaseEntry[] = [
     slug: 'pqdr',
     name: 'Power Quality and Demand Response',
     tagline: 'AI insight, operator decision. 200+ industrial locations.',
-    line: 'ai',
+    line: 'pro',
     readingMinutes: 5,
     ai: true,
     body: {
@@ -916,7 +916,7 @@ export const CASES: CaseEntry[] = [
     slug: 'ziggy',
     name: 'Ziggy',
     tagline: 'An agent arranges my day. The data fills it in.',
-    line: 'ent',
+    line: 'indie',
     readingMinutes: 6,
     ai: true,
     body: {
@@ -1152,14 +1152,14 @@ export const SECTIONS: {
   stops: CaseSlug[];
 }[] = [
   {
-    line: 'ai',
+    line: 'pro',
     code: 'CS1',
     title: 'Professional Work',
     subtitle: '4 stops · for employers and clients',
     stops: ['brightly', 'sim-racing', 'pqdr', 'fleet'],
   },
   {
-    line: 'ent',
+    line: 'indie',
     code: 'CS2',
     title: 'Independent Builds',
     subtitle: '3 stops · designed and built solo with AI',

@@ -20,7 +20,7 @@ import { ui } from '../../lib/ui';
 <Layout title={ui('siteTitle')} canonicalPath="/">
   <Header />
 
-  <div class="page">
+  <main class="page">
     <MapWallpaper />
     <Hero client:load />
 
@@ -57,7 +57,7 @@ import { ui } from '../../lib/ui';
                 body={c.body}
                 personal={c.personal}
                 ai={c.ai}
-                demo={!!(c.detail?.demoUrl || c.body?.demoUrl)}
+                demo={!!c.detail?.demoUrl}
                 readingMinutes={c.readingMinutes}
               />
             ))}
@@ -65,7 +65,7 @@ import { ui } from '../../lib/ui';
         </Section>
       ))}
     </div>
-  </div>
+  </main>
 
   <Accordion />
   <Lightbox />
