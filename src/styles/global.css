@@ -19,9 +19,14 @@
   --color-board-bg: #171511;
   --color-board-amber: #FFB000;
   --color-board-amber-hi: #FFD060;
-  /* MOCK (hero G): the board's enamel housing and its label ink. */
-  --color-board-frame: #ECECE8;
-  --color-board-frame-shade: #C8C9C3;
+  /* MOCK (hero G): the board's housing. Bezel grey was already the
+     DepartureBoard frame colour, hard-coded there. */
+  --color-board-frame: #F3F3F0;
+  --color-board-frame-shade: #DADBD6;
+  --color-board-rim: #A7ABAF;
+  --color-board-bezel: #616870;
+  --color-board-housing: #EDC22B;
+  --color-board-housing-shade: #B98F12;
   --color-board-ink: #1B1B1A;
 
   --color-line-ai: #DA5A00; /* MOCK: swapped so CS1 Professional keeps the brand orange; rename keys before shipping */

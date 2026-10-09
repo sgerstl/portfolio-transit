@@ -444,28 +444,36 @@ export default function DotField({ active, departures }: { active: string | null
   // object, not the operator's mark.
   return (
     <div className="hvg-board" ref={boardRef}>
-      <div className="hvg-head" aria-hidden="true" lang="de">
-        <span className="hvg-col-line">Linie</span>
-        <span className="hvg-col-ziel">Ziel</span>
-        <span className="hvg-col-time">Lesezeit</span>
-      </div>
-      <div className="hvg-glass">
-        <div className="hvg-field" ref={wrapRef} aria-hidden="true">
-          <canvas ref={canvasRef} />
+      {/* Depth: the yellow electronics box the board is mounted on, and the
+          housing's own edge. Both sit behind the face in 3D. */}
+      <div className="hvg-box" aria-hidden="true" />
+      <div className="hvg-edge" aria-hidden="true" />
+      <div className="hvg-face">
+        <div className="hvg-head" aria-hidden="true" lang="de">
+          <span className="hvg-col-line">Linie</span>
+          <span className="hvg-col-ziel">Ziel</span>
+          <span className="hvg-col-time">Lesezeit</span>
         </div>
-      </div>
-      <div className="hvg-foot">
-        <span className="hvg-stop" aria-hidden="true">Berlin</span>
-        <button
-          type="button"
-          className="hvg-pause"
-          onClick={() => setPaused((p) => !p)}
-          aria-label={paused ? 'Play the map animation' : 'Pause the map animation'}
-        >
-          <svg viewBox="0 0 16 16" aria-hidden="true">
-            {paused ? <path d="M5 3.5v9l7.5-4.5z" /> : <path d="M4.5 3.5h2.5v9H4.5zM9 3.5h2.5v9H9z" />}
-          </svg>
-        </button>
+        <div className="hvg-glass">
+          <div className="hvg-field" ref={wrapRef} aria-hidden="true">
+            <canvas ref={canvasRef} />
+          </div>
+        </div>
+        <div className="hvg-foot">
+          <span className="hvg-stop" aria-hidden="true">Berlin</span>
+          {/* Where the real board has its operator badge: a plain yellow key
+              that pauses the turn. */}
+          <button
+            type="button"
+            className="hvg-pause"
+            onClick={() => setPaused((p) => !p)}
+            aria-label={paused ? 'Play the map animation' : 'Pause the map animation'}
+          >
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              {paused ? <path d="M5 3.5v9l7.5-4.5z" /> : <path d="M4.5 3.5h2.5v9H4.5zM9 3.5h2.5v9H9z" />}
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   );
