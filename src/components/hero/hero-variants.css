@@ -920,3 +920,313 @@
 @media (prefers-reduced-motion: reduce) {
   .hv-sign .hv-sign-row { transition: none; }
 }
+
+/* ── F · Map + work ─────────────────────────────────────
+   Positioning sentence first and largest, the qualifier line promoted, the
+   three proof cases as unboxed tiles with real product imagery, and a still
+   map of Berlin as the one visual object. The hero is fixed to the viewport
+   (inherited from the live hero), so every vertical size here is capped by
+   vh to keep the whole thing on one screen down to about 1366 × 768.
+   Type: Barlow Condensed 600 for display, Inter 400 for text. */
+.hv--f {
+  padding-top: clamp(88px, 12.5vh, 124px);
+  padding-right: 56px;
+}
+
+/* The map is the transit object here, so the wallpaper map behind the hero
+   is quieted across the full width rather than only behind the text. */
+.hv--f::before {
+  width: calc(100% - 140px);
+  max-width: none;
+  background: color-mix(in srgb, var(--color-bg) 97%, transparent);
+  mask-image: linear-gradient(180deg, #000 0%, #000 88%, transparent 100%);
+}
+
+.hvf-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 560px);
+  column-gap: 48px;
+  align-items: start;
+}
+
+.hvf-h1 {
+  font-family: var(--font-condensed);
+  font-size: min(clamp(52px, 5.6vw, 84px), 9.2vh);
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: -0.015em;
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.hvf-lead {
+  margin-top: clamp(16px, 2.6vh, 24px);
+  max-width: 52ch;
+  font-family: var(--font-sans);
+  font-size: 19px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-text-soft);
+}
+
+.hvf-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: clamp(14px, 2.2vh, 20px);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+.hvf-sep {
+  margin: 0 10px;
+  color: var(--color-text-soft);
+}
+
+/* The face lives on the map; it moves into this line only when the map is
+   hidden, so the human detail survives at every width. */
+.hvf-face {
+  display: none;
+  width: 28px;
+  height: 28px;
+  margin-right: 12px;
+  border-radius: 50%;
+}
+
+.hvf-map {
+  justify-self: end;
+  width: 100%;
+  /* On short laptop screens the map's height would set the row, so its
+     width is capped by viewport height too. */
+  max-width: min(560px, 62vh);
+  margin: 0;
+}
+
+.hvf-map svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.hvf-caption {
+  margin-top: 8px;
+  max-width: 46ch;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--color-text-soft);
+}
+
+/* No water token exists; the Spree is the rail blue mixed into the page
+   background so it reads as a river, not a line. */
+.hvf-spree {
+  fill: none;
+  stroke: color-mix(in srgb, var(--color-rail-blue) 28%, var(--color-bg));
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hvf-ring {
+  fill: color-mix(in srgb, var(--color-text) 3%, transparent);
+  stroke: var(--color-ring-stroke);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+.hvf-stadtbahn {
+  fill: none;
+  stroke: var(--color-ring-stroke);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  opacity: 0.5;
+}
+
+.hvf-home {
+  fill: white;
+  stroke: var(--color-ring-stroke);
+  stroke-width: 2.5;
+}
+
+.hvf-dot {
+  fill: white;
+  stroke: var(--color-ring-stroke);
+  stroke-width: 2.5;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 150ms ease-out, fill 150ms ease-out, stroke 150ms ease-out;
+}
+
+/* MOCK: --color-line-ai holds the brand orange on this branch. */
+.hvf-halo {
+  fill: var(--color-line-ai);
+  opacity: 0;
+  transition: opacity 150ms ease-out;
+}
+
+/* Labels carry a page-coloured stroke behind the glyphs so lines passing
+   underneath never cut through the letters. */
+.hvf-name,
+.hvf-domain {
+  dominant-baseline: middle;
+  paint-order: stroke;
+  stroke: var(--color-bg);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+
+.hvf-name {
+  font-family: var(--font-condensed);
+  font-size: 20px;
+  font-weight: 600;
+  fill: var(--color-text);
+}
+
+.hvf-domain {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  font-weight: 400;
+  fill: var(--color-text-soft);
+}
+
+/* Active stop: fill, size and halo change together, so the state survives
+   grayscale and never rests on colour alone. */
+.hvf-stop.is-active .hvf-dot {
+  fill: var(--color-line-ai);
+  stroke: var(--color-line-ai);
+  transform: scale(1.4);
+}
+.hvf-stop.is-active .hvf-halo {
+  opacity: 0.18;
+}
+.hvf-stop.is-active .hvf-name {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.hvf-work {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+  margin-top: clamp(24px, 4.5vh, 48px);
+  padding: 0;
+  list-style: none;
+}
+
+.hvf-work a {
+  display: flex;
+  flex-direction: column;
+}
+
+.hvf-shot {
+  display: block;
+  height: clamp(112px, 21vh, 220px);
+  overflow: hidden;
+  border-radius: 6px;
+  /* Shows if an image fails to load, so the tile keeps its shape. */
+  background: color-mix(in srgb, var(--color-text) 6%, var(--color-bg));
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 150ms ease-out, transform 150ms ease-out;
+}
+
+.hvf-shot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+}
+
+.hvf-kicker {
+  margin-top: 14px;
+  font-family: var(--font-condensed);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+}
+
+.hvf-fig {
+  margin-top: 6px;
+  font-family: var(--font-condensed);
+  font-size: clamp(30px, 4.4vh, 40px);
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+}
+
+.hvf-label {
+  margin-top: 6px;
+  max-width: 36ch;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--color-text);
+}
+
+.hvf-work a:hover .hvf-shot {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), 0 14px 32px rgba(0, 0, 0, 0.09);
+}
+.hvf-work a:hover .hvf-label {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.hvf-work a:active .hvf-shot {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hvf-dot,
+  .hvf-halo,
+  .hvf-shot {
+    transition: none;
+  }
+  .hvf-work a:hover .hvf-shot {
+    transform: none;
+  }
+}
+
+/* Below 1200 the map gives way, as in D, and the face moves into the
+   qualifier line. */
+@media (max-width: 1199px) {
+  .hvf-top { grid-template-columns: minmax(0, 1fr); }
+  .hvf-map { display: none; }
+  .hvf-face { display: block; }
+  .hvf-h1 { font-size: min(clamp(44px, 6.4vw, 64px), 9vh); }
+}
+
+/* Phone: the tiles become rows, thumbnail left. */
+@media (max-width: 767px) {
+  .hv--f { padding-top: 80px; padding-right: 16px; }
+  .hv--f::before { width: 100%; }
+  .hvf-h1 { font-size: 40px; }
+  .hvf-lead { font-size: 16px; margin-top: 14px; }
+  .hvf-meta { font-size: 13px; margin-top: 14px; }
+  /* Wrapped lines would start with a dot, so the phone drops the
+     separators and spaces the items instead. */
+  .hvf-meta { column-gap: 12px; row-gap: 2px; }
+  .hvf-sep { display: none; }
+  .hvf-face { width: 24px; height: 24px; margin-right: 8px; }
+  .hvf-work { grid-template-columns: minmax(0, 1fr); gap: 14px; margin-top: 24px; }
+  .hvf-work a {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    column-gap: 12px;
+    align-items: center;
+  }
+  .hvf-shot { grid-row: 1 / span 3; height: 64px; border-radius: 4px; }
+  .hvf-kicker { margin-top: 0; font-size: 12px; }
+  .hvf-fig { margin-top: 2px; font-size: 24px; }
+  .hvf-label { margin-top: 2px; font-size: 14px; }
+}
