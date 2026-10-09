@@ -38,7 +38,11 @@ const KICKER = 'Scott Gerstl · Design leader · Berlin';
 // proof rows are the links, and hovering or focusing one lights its stop.
 // Copy source: vault Projects/Dev/Portfolio Site/hero-f-copy-2026-10-09.md.
 const F_H1 = 'I design enterprise software and the AI inside it.';
-const F_QUALIFIERS = ['15 years', 'Berlin', 'US/German citizen, EU work-authorized'];
+// The headline names the work; the lead and the qualifier line carry the
+// leadership and the product thinking (chosen 2026-10-09; drafts in the vault
+// copy file).
+const F_LEAD = 'My craft is design. My thinking has always been about the product and the people who use it.';
+const F_QUALIFIERS = ['15 years', 'Built and led a team of 7', 'US/German citizen, EU work-authorized'];
 const F_CAPTION = "The industries I've designed for, pinned to Berlin places that do the same work.";
 const F_MAP_DESC =
   "Map of Berlin marking six industries I've designed for: manufacturing at Siemensstadt (Brightly), energy at Kraftwerk Klingenberg (PQ + DR), logistics at Westhafen (Fleet), motorsports at the old AVUS circuit (Sim Racing Coach), healthcare at the Charité (Epilog), and cycling at the Velodrom (Cal).";
@@ -388,7 +392,7 @@ export default function Hero() {
           <div className="hvf-top">
             <div className="hvf-text">
               <h1 className="hvf-h1">{F_H1}</h1>
-              <p className="hvf-lead">{ui('hero.propSecondary')}</p>
+              <p className="hvf-lead">{F_LEAD}</p>
               <p className="hvf-meta">
                 <img className="hvf-face" src="/images/scott-headshot.png" alt="" width={28} height={28} />
                 {F_QUALIFIERS.map((q, i) => (
