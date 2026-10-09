@@ -629,7 +629,7 @@
   max-width: min(500px, 62vh);
 }
 
-/* PROTOTYPE (?parallax=1): the tiles ride above the slower headline and board. */
+/* Slide-over: the tiles ride above the slower headline and board (Hero.tsx). */
 .hv--parallax .hvf-top {
   position: relative;
   z-index: 0;

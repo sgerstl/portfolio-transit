@@ -82,17 +82,17 @@ export default function Hero() {
     };
   }, []);
 
-  // PROTOTYPE, behind ?parallax=1 (2026-10-09): the headline and board scroll
-  // at 0.6x and fade while the work tiles slide over them at full speed.
-  // Only at 1200px and up, only while the hero fits the window (zoomed or
-  // short screens would otherwise lose the hero's lower part under the
-  // tiles), and never under reduced motion.
+  // Slide-over (Scott, 2026-10-09): the headline and board scroll at 0.7x and
+  // fade while the work tiles slide over them at full speed. Only at 1200px
+  // and up, only while the hero fits the window (zoomed or short screens would
+  // otherwise lose the hero's lower part under the tiles), and never under
+  // reduced motion. The fade is done by 320px, so the rail's end station,
+  // which stays put, is never far from the headline it ends beside.
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).get('parallax') !== '1') return;
     const heroEl = heroRef.current;
     const top = heroEl?.querySelector<HTMLElement>('.hvf-top');
     if (!heroEl || !top) return;
-    const RATE = 0.4; // how far behind the page the top falls: 0.4 means it moves at 0.6x
+    const RATE = 0.3; // how far behind the page the top falls: 0.3 means it moves at 0.7x
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
     let raf = 0;
     const on = () => window.innerWidth >= 1200 && heroEl.offsetHeight <= window.innerHeight && !reduced.matches;
@@ -109,7 +109,7 @@ export default function Hero() {
       const lag = Math.min(y, heroEl.offsetHeight) * RATE;
       top.style.transform = `translate3d(0, ${lag.toFixed(1)}px, 0)`;
       // Fades out as the tiles reach it, so nothing shows through the gaps between them
-      top.style.opacity = String(Math.max(0, 1 - Math.max(0, y - 120) / 320));
+      top.style.opacity = String(Math.max(0, 1 - Math.max(0, y - 60) / 260));
     };
     const queue = () => {
       if (!raf) raf = requestAnimationFrame(apply);
