@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './hero-variants.css';
 import RingObject from './RingObject';
-import DotField from './DotField';
+import DotField, { type Departure } from './DotField';
 import { smoothScrollTo } from '../../lib/scroll';
 import { ui } from '../../lib/ui';
 
@@ -63,11 +63,17 @@ const F_PROOF: FProof[] = [
   },
 ];
 
-// G: what the dot field spells for each case. Same words as each tile's
-// domains line, so the field only ever repeats what the page already says.
-const G_STATES: Record<string, string[]> = Object.fromEntries(
-  F_PROOF.map((p) => [p.slug, p.domains.map((d) => d.toUpperCase())]),
-);
+// G: the departure each tile puts on the board. Copy source: the vault
+// draft (hero-f-copy-2026-10-09.md); every line comes from the case itself.
+const G_DEPARTURES: Record<string, Departure> = {
+  brightly: { line: 'CS1', name: 'Brightly', minutes: 6, from: '12 siloed products', to: 'One platform vision' },
+  pqdr: { line: 'CS1', name: 'PQ + DR', minutes: 5, from: 'AI insight', to: 'Operator decision' },
+  'sim-racing': { line: 'CS1', name: 'Sim Racing', minutes: 6, from: 'Data and a chat window', to: 'A race engineer' },
+};
+const gDescription = (slug: string) => {
+  const d = G_DEPARTURES[slug];
+  return d ? `From ${d.from.toLowerCase()} to ${d.to.toLowerCase()}. ${d.minutes} minute read.` : '';
+};
 
 // Flat projection of the Ring mock's coordinates (same ±100–300 m caveat:
 // replace with OSM or VBB geometry before shipping). Projected into 600 × 381,
@@ -157,14 +163,11 @@ export default function Hero() {
   const cardsRef = useRef<HTMLLIElement[]>([]);
   const [variant, setVariant] = useState<Variant>('current');
   const [fActive, setFActive] = useState<string | null>(null);
-  const [gPanel, setGPanel] = useState(false);
   const leaveTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
     const v = new URLSearchParams(window.location.search).get('hero');
     if (v === 'a' || v === 'e' || v === 'f' || v === 'g') setVariant(v);
-    // MOCK: ?panel=1 puts G's dots on the navy sign panel instead of the page.
-    setGPanel(new URLSearchParams(window.location.search).get('panel') === '1');
   }, []);
 
   const STAT_CARDS: StatCard[] = [
@@ -373,7 +376,7 @@ export default function Hero() {
                 ))}
               </p>
             </div>
-            {g ? <DotField active={fActive} states={G_STATES} panel={gPanel} /> : <BerlinMap active={fActive} />}
+            {g ? <DotField active={fActive} departures={G_DEPARTURES} /> : <BerlinMap active={fActive} />}
           </div>
           <ul className="hvf-work" aria-label="Selected work">
             {F_PROOF.map((p) => {
@@ -382,6 +385,7 @@ export default function Hero() {
               <li key={p.href}>
                 <a
                   href={p.href}
+                  aria-describedby={g ? `hvg-desc-${p.slug}` : undefined}
                   onMouseEnter={() => enter(key)}
                   onMouseLeave={clear}
                   onFocus={() => enter(key)}
@@ -395,6 +399,7 @@ export default function Hero() {
                   <span className="hvf-label">{p.label}</span>
                   <span className="hvf-domains">{p.domains.join(' · ')}</span>
                 </a>
+                {g && <span id={`hvg-desc-${p.slug}`} className="sr-only">{gDescription(p.slug)}</span>}
               </li>
               );
             })}

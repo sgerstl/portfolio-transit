@@ -284,7 +284,7 @@ const homeLabel = ui('departureBoard.home');
   }
 
   .ns-led {
-    background: #171511;
+    background: var(--color-board-bg);
     padding: 4px 12px;
     overflow: hidden;
     height: 128px;
@@ -298,7 +298,7 @@ const homeLabel = ui('departureBoard.home');
     font-family: 'VT323', monospace;
     font-size: 22px;
     line-height: 1;
-    color: #FFB000;
+    color: var(--color-board-amber);
     text-shadow: 0 0 4px rgba(255, 176, 0, 0.45);
     cursor: pointer;
     transition: color 0.15s ease, text-shadow 0.15s ease;
@@ -307,7 +307,7 @@ const homeLabel = ui('departureBoard.home');
   }
 
   .ns-row--led:hover {
-    color: #FFD060;
+    color: var(--color-board-amber-hi);
     text-shadow: 0 0 6px rgba(255, 208, 96, 0.65);
   }
 

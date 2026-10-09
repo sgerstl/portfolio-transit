@@ -14,6 +14,11 @@
   /* Station-sign navy, after DB S-Bahn platform signs. Used only by the hero sign. */
   --color-sign-navy: #1E2A6E;
   --color-ring-stroke: #555555;
+  /* Departure board: amber LEDs on a near-black panel, after BVG platform
+     displays. Used by DepartureBoard and the hero G board. */
+  --color-board-bg: #171511;
+  --color-board-amber: #FFB000;
+  --color-board-amber-hi: #FFD060;
 
   --color-line-ai: #DA5A00; /* MOCK: swapped so CS1 Professional keeps the brand orange; rename keys before shipping */
   --color-line-ent: #43AF00;

@@ -1,47 +1,54 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FONT_M } from './dotfont';
 
-// MOCK sketch (hero G): Berlin's Ringbahn, Stadtbahn and Spree as a field of
-// display dots. Hovering or focusing a work tile pours the dots into that
-// case's industries; leaving pours them back into the map.
+// MOCK sketch (hero G): an amber LED departure board. At rest it shows
+// Berlin's Ringbahn, Stadtbahn and Spree as a slowly turning 3D object, with
+// the TV tower standing up out of it. Hovering or focusing a work tile pours
+// the lit LEDs into a departure for that case: line, name, reading time, and
+// where the work started and where it ended. The how is the click.
 //
-// The material is Ziggy's OLED (~/code/ziggy/components/device/pixelmotion.ts):
-// one 1.5px dot on a 2px grid, bigger means more dots never bigger ones,
-// motion steps at 15 frames a second, and a change between two pictures
-// passes through a neutral midpoint (white noise) instead of showing both.
+// Board look: one LED per cell on a fixed grid, unlit LEDs faintly visible,
+// amber from the site's departure board tokens. Motion steps at 15 frames a
+// second like a real display, and a change between two pictures passes
+// through a moment of noise instead of showing both (the rule from Ziggy's
+// OLED transitions). Lettering is Ziggy's font M, one LED per font pixel.
 //
-// The field is decoration. Every word it spells is also real text in the
-// tile, so it is hidden from assistive tech and says nothing on its own.
-// It moves only on load (under a second) and on a tile's hover or focus,
-// then holds still. Reduced motion, or a hidden page, just changes.
+// The canvas is decoration: hidden from assistive tech, and each tile link
+// carries the same words as a description. The idle turn runs past five
+// seconds, so the board has a pause button (WCAG 2.2.2); it starts paused
+// under reduced motion and stops drawing whenever the hero is hidden.
 
-const PITCH = 2; // CSS px between dot centres
-const DOT = 1.5; // CSS px dot size
+const COLS = 136; // LEDs across; the pitch follows from the board's width
 const FPS = 15;
 const STEP_MS = 1000 / FPS;
 const SCATTER_FRAMES = 2;
 const TRAVEL_FRAMES = 5;
 const INTRO_FRAMES = 12;
+const TURN_SECONDS = 36;
+const TILT = (64 * Math.PI) / 180; // 0 is straight down onto the map
+const UNLIT = 0.07;
 
-type Target = { x: number; y: number; a: number };
-type Particle = { x: number; y: number; a: number; fx: number; fy: number; fa: number; tx: number; ty: number; ta: number; sx: number; sy: number };
+export type Departure = { line: string; name: string; minutes: number; from: string; to: string };
+type Cell = { x: number; y: number; a: number };
+type V3 = [number, number, number, number]; // x (east), y (up), z (north), brightness
 
-// Same projection as hero F's map, cropped to y 18–350 of a 600 × 381 frame.
-const MAP_W = 600;
-const MAP_H = 332;
-const MAP_Y0 = 18;
+// Same projection as hero F's map: a 600 × 381 frame, drawing in y 18–350.
 const RING = 'M84.2 214.3 L101.1 230.6 L123.6 258.9 L149.1 291.1 L186 298.4 L217.3 296.6 L235.6 292.6 L267.8 307.1 L312.4 325.6 L414.7 336.5 L439.1 329.9 L467.6 315.8 L481.3 241.1 L498.4 206.3 L511.6 167.9 L488.4 131.2 L467.8 112 L429.8 71.8 L404.7 55.8 L375.8 38.8 L318.7 41.3 L270.2 62.7 L219.3 85.9 L186.7 93.2 L121.3 107 L88.7 152.3 L85.3 190 L84.2 214.3';
 const STADTBAHN = 'M84.2 214.3 L132.9 199 L194.2 193.6 L232.7 181.6 L276.4 142.1 L315.3 143.9 L369.6 139.9 L384.4 163.2 L421.6 180.9 L498.4 206.3';
 const SPREE = 'M545.6 252 L490 226.6 L446 210.7 L410.2 186 L384.4 163.2 L354.4 155.2 L327.8 143.2 L295.1 146.8 L267.8 137.8 L234.4 133.1 L190 146.5 L145.6 146.8 L101.1 124 L56.7 92.5';
+const CX = 300, CY = 184; // turn around the middle of the Ring
 const HOME = { x: 365.3, y: 142.1 };
+// The Ring reaches about 218 map units from its centre; the Spree is trimmed
+// just past that so the turning object can be sized to the Ring, not the river.
+const FIT_R = 230;
+const TOWER = 75; // map units tall, for the eye rather than to scale
 
 const pts = (d: string) =>
   d.replace(/[ML]/g, ' ').trim().split(/\s+/).map(Number).reduce<[number, number][]>((acc, v, i, arr) => {
-    if (i % 2 === 0) acc.push([v, arr[i + 1] - MAP_Y0]);
+    if (i % 2 === 0) acc.push([v, arr[i + 1]]);
     return acc;
   }, []);
 
-// Deterministic noise, so the cloud is the same on every load.
 function rng(seed: number) {
   let t = seed >>> 0;
   return () => {
@@ -61,99 +68,118 @@ function inPoly(x: number, y: number, poly: [number, number][]) {
   return inside;
 }
 
-function mapTargets(cols: number, rows: number): Target[] {
-  const margin = Math.max(4, Math.round(cols * 0.05));
-  const k = Math.min((cols - margin * 2) / MAP_W, (rows - margin * 2) / MAP_H);
-  const ox = (cols - MAP_W * k) / 2;
-  const oy = (rows - MAP_H * k) / 2;
-  const cells = new Map<number, number>();
-  const put = (cx: number, cy: number, a: number) => {
-    if (cx < 0 || cy < 0 || cx >= cols || cy >= rows) return;
-    const key = cy * cols + cx;
-    cells.set(key, Math.max(cells.get(key) ?? 0, a));
-  };
-  const stroke = (d: string, brush: number, a: number) => {
+// The model, built once: ground lines, a thin point cloud inside the Ring,
+// and the TV tower as the one thing with height.
+function buildModel(): V3[] {
+  const out: V3[] = [];
+  const ground = (x: number, y: number, a: number): V3 => [x - CX, 0, CY - y, a];
+  const near = (x: number, y: number) => Math.hypot(x - CX, y - CY) <= FIT_R;
+  const line = (d: string, step: number, a: number) => {
     const p = pts(d);
     for (let i = 1; i < p.length; i++) {
       const [x0, y0] = p[i - 1], [x1, y1] = p[i];
-      const len = Math.hypot(x1 - x0, y1 - y0) * k;
-      const n = Math.max(1, Math.ceil(len * 2));
-      for (let s = 0; s <= n; s++) {
-        const cx = Math.round(ox + (x0 + ((x1 - x0) * s) / n) * k);
-        const cy = Math.round(oy + (y0 + ((y1 - y0) * s) / n) * k);
-        for (let bx = 0; bx < brush; bx++) for (let by = 0; by < brush; by++) put(cx + bx, cy + by, a);
+      const n = Math.max(1, Math.ceil(Math.hypot(x1 - x0, y1 - y0) / step));
+      for (let s = 0; s < n; s++) {
+        const x = x0 + ((x1 - x0) * s) / n, y = y0 + ((y1 - y0) * s) / n;
+        if (near(x, y)) out.push(ground(x, y, a));
       }
     }
   };
-  stroke(SPREE, 2, 0.38);
-  stroke(STADTBAHN, 1, 0.7);
-  stroke(RING, 2, 1);
-
-  // The city as a point cloud: dense inside the Ring, thinning outside it.
+  line(SPREE, 4, 0.45);
+  line(STADTBAHN, 4, 0.7);
+  line(RING, 2.5, 1);
   const ring = pts(RING);
   const r = rng(52);
-  for (let cy = 0; cy < rows; cy++) {
-    for (let cx = 0; cx < cols; cx++) {
-      const mx = (cx - ox) / k, my = (cy - oy) / k;
-      const inside = inPoly(mx, my, ring);
-      const dx = (mx - HOME.x) / MAP_W, dy = (my - (HOME.y - MAP_Y0)) / MAP_H;
-      const p = inside ? 0.075 : 0.03 * Math.exp(-Math.hypot(dx, dy) * 4);
-      if (r() < p) put(cx, cy, 0.18 + r() * 0.32);
-    }
+  for (let i = 0; i < 260; i++) {
+    const x = 84 + r() * 430, y = 38 + r() * 300;
+    if (inPoly(x, y, ring)) out.push(ground(x, y, 0.22 + r() * 0.2));
   }
-  // Home: a small bright block at the TV tower.
-  const hx = Math.round(ox + HOME.x * k), hy = Math.round(oy + (HOME.y - MAP_Y0) * k);
-  for (let bx = -2; bx <= 2; bx++) for (let by = -2; by <= 2; by++) if (Math.abs(bx) + Math.abs(by) < 4) put(hx + bx, hy + by, 1);
+  const hx = HOME.x - CX, hz = CY - HOME.y;
+  for (let h = 0; h <= TOWER; h += 2.5) out.push([hx, h, hz, 1]);
+  for (let k = 0; k < 16; k++) {
+    const t = (k / 16) * Math.PI * 2;
+    out.push([hx + Math.cos(t) * 9, TOWER * 0.72, hz + Math.sin(t) * 9, 1]);
+  }
+  return out;
+}
 
+function ringCells(model: V3[], angle: number, cols: number, rows: number): Cell[] {
+  const R = FIT_R;
+  const k = Math.min((cols - 10) / (2 * R), (rows - 8) / (2 * R * Math.cos(TILT) + TOWER * Math.sin(TILT)));
+  // Perspective shrinks the far side, so the visible shape sits low if
+  // centred on its bounding box; lift it most of the way back.
+  const oy = rows / 2 + TOWER * Math.sin(TILT) * k * 0.15;
+  const cos = Math.cos(angle), sin = Math.sin(angle);
+  const cells = new Map<number, number>();
+  for (const [x, y, z, a] of model) {
+    const rx = x * cos - z * sin;
+    const rz = x * sin + z * cos;
+    // Far side dims, near side is full; a touch of perspective.
+    const depth = (rz / R + 1) / 2;
+    const p = 1 / (1 + depth * 0.18);
+    const sx = Math.round(cols / 2 + rx * k * p);
+    const sy = Math.round(oy - rz * Math.cos(TILT) * k * p - y * Math.sin(TILT) * k * p);
+    if (sx < 0 || sy < 0 || sx >= cols || sy >= rows) continue;
+    const lit = a * (1 - depth * 0.45);
+    const key = sy * cols + sx;
+    if ((cells.get(key) ?? 0) < lit) cells.set(key, lit);
+  }
   return [...cells].map(([key, a]) => ({ x: key % cols, y: Math.floor(key / cols), a }));
 }
 
-// Words in font M. Each font pixel is an s × s block of dots; s is the
-// largest that fits, so short words come out big and long lists smaller.
-// Letters are set proportionally: each glyph is trimmed to its lit columns
-// and followed by one blank column, so a narrow I doesn't leave a hole.
+// Proportional setting: each glyph trimmed to its lit columns plus one blank.
 function glyphSpan(ch: string): [number, number] {
   const glyph = FONT_M[ch];
-  if (!glyph) return [0, 2]; // space
+  if (!glyph) return [0, 2];
   let lo = 5, hi = -1;
   for (const row of glyph) for (let x = 0; x < row.length; x++) if (row[x] === '1') { lo = Math.min(lo, x); hi = Math.max(hi, x); }
   return hi < 0 ? [0, 2] : [lo, hi];
 }
+const textWidth = (s: string) => [...s].reduce((w, ch) => { const [lo, hi] = glyphSpan(ch); return w + hi - lo + 2; }, -1);
 
-function textTargets(lines: string[], cols: number, rows: number): Target[] {
-  const margin = Math.max(8, Math.round(cols * 0.08));
-  const widthPx = (line: string) => [...line].reduce((w, ch) => { const [lo, hi] = glyphSpan(ch); return w + hi - lo + 2; }, -1);
-  const wide = Math.max(...lines.map(widthPx));
-  const tall = lines.length * 7 + (lines.length - 1) * 3;
-  let s = 6;
-  while (s > 1 && (wide * s > cols - margin * 2 || tall * s > rows - margin * 2)) s--;
-  const oy = Math.floor((rows - tall * s) / 2);
-  const out: Target[] = [];
-  lines.forEach((line, li) => {
-    let pen = Math.floor((cols - widthPx(line) * s) / 2);
-    const top = oy + li * 10 * s;
-    for (const ch of line) {
-      const [lo, hi] = glyphSpan(ch);
-      FONT_M[ch]?.forEach((row, gy) => {
-        for (let gx = lo; gx <= hi; gx++) {
-          if (row[gx] !== '1') continue;
-          for (let bx = 0; bx < s; bx++) for (let by = 0; by < s; by++) {
-            out.push({ x: pen + (gx - lo) * s + bx, y: top + gy * s + by, a: 1 });
-          }
-        }
-      });
-      pen += (hi - lo + 2) * s;
-    }
-  });
-  return out;
+function setText(out: Cell[], s: string, x0: number, y0: number, a: number) {
+  let pen = x0;
+  for (const ch of s) {
+    const [lo, hi] = glyphSpan(ch);
+    FONT_M[ch]?.forEach((row, gy) => {
+      for (let gx = lo; gx <= hi; gx++) if (row[gx] === '1') out.push({ x: pen + gx - lo, y: y0 + gy, a });
+    });
+    pen += hi - lo + 2;
+  }
+}
+
+// A departure, laid out like a platform display: line and name left, time
+// right, a dotted rule, then FROM and TO with their values.
+function departureCells(d: Departure, cols: number, rows: number): Cell[] {
+  const m = 4;
+  const lh = 10;
+  const top = Math.max(2, Math.floor((rows - (6 * lh - 3)) / 2));
+  const out: Cell[] = [];
+  setText(out, `${d.line}  ${d.name}`.toUpperCase(), m, top, 1);
+  const time = `${d.minutes} MIN`;
+  setText(out, time, cols - m - textWidth(time), top, 1);
+  for (let x = m; x < cols - m; x += 2) out.push({ x, y: top + lh + 2, a: 0.35 });
+  setText(out, 'FROM', m, top + lh * 2 - 2, 0.5);
+  setText(out, d.from.toUpperCase(), m, top + lh * 3 - 2, 1);
+  setText(out, 'TO', m, top + lh * 4 - 1, 0.5);
+  setText(out, d.to.toUpperCase(), m, top + lh * 5 - 1, 1);
+  return out.filter((c) => c.x >= 0 && c.y >= 0 && c.x < cols && c.y < rows);
 }
 
 const ease = (t: number) => 1 - (1 - t) ** 3;
 
-export default function DotField({ active, states, panel }: { active: string | null; states: Record<string, string[]>; panel: boolean }) {
+type Particle = { x: number; y: number; a: number; fx: number; fy: number; fa: number; sx: number; sy: number; tx: number; ty: number; ta: number };
+
+export default function DotField({ active, departures }: { active: string | null; departures: Record<string, Departure> }) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const api = useRef<{ show: (key: string | null) => void } | null>(null);
+  const api = useRef<{ show: (key: string | null) => void; setPaused: (p: boolean) => void } | null>(null);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) setPaused(true);
+  }, []);
 
   useEffect(() => {
     const wrap = wrapRef.current, canvas = canvasRef.current;
@@ -162,128 +188,220 @@ export default function DotField({ active, states, panel }: { active: string | n
     if (!ctx) return;
 
     const css = getComputedStyle(document.documentElement);
-    const ink = panel ? '#ffffff' : css.getPropertyValue('--color-text').trim() || '#4B4B4B';
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const amber = css.getPropertyValue('--color-board-amber').trim() || '#FFB000';
+    const reducedQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const model = buildModel();
 
-    let cols = 0, rows = 0, dpr = 1;
-    let pictures: Record<string, Target[]> = {};
+    let cols = COLS, rows = 0, pitch = 4, dpr = 1;
+    let angle = -0.5;
+    let isPaused = reducedQuery.matches;
+    let mode: 'ring' | 'text' | 'move' = 'ring';
+    let target: string | null = null;
+    let shown: Cell[] = [];
     let parts: Particle[] = [];
-    let current: string = 'map';
     let raf = 0;
+    let running = false;
+    let moveStart = 0, moveFrames = 0, moveScatter = 0, moveIntro = false;
+    let lastStep = -1;
+    let unlit: HTMLCanvasElement | null = null;
+    let sprite: HTMLCanvasElement | null = null;
     const rand = rng(7);
 
-    const draw = () => {
+    const visible = () =>
+      !document.hidden && (wrap.checkVisibility ? wrap.checkVisibility({ opacityProperty: true, visibilityProperty: true }) : true);
+
+    const makeSprites = () => {
+      const size = Math.max(2, Math.round(pitch * dpr));
+      const r = size * 0.38;
+      const dot = (alpha: number, glow: boolean) => {
+        const c = document.createElement('canvas');
+        c.width = c.height = size;
+        const g = c.getContext('2d')!;
+        if (glow) {
+          const grad = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+          grad.addColorStop(0, amber);
+          grad.addColorStop(0.55, amber);
+          grad.addColorStop(1, 'transparent');
+          g.fillStyle = grad;
+          g.fillRect(0, 0, size, size);
+        } else {
+          g.globalAlpha = alpha;
+          g.fillStyle = amber;
+          g.beginPath();
+          g.arc(size / 2, size / 2, r, 0, Math.PI * 2);
+          g.fill();
+        }
+        return c;
+      };
+      sprite = dot(1, true);
+      const one = dot(UNLIT, false);
+      unlit = document.createElement('canvas');
+      unlit.width = canvas.width;
+      unlit.height = canvas.height;
+      const u = unlit.getContext('2d')!;
+      for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) u.drawImage(one, Math.round(x * pitch * dpr), Math.round(y * pitch * dpr));
+    };
+
+    const draw = (cells: { x: number; y: number; a: number }[]) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = ink;
-      const d = DOT * dpr, p = PITCH * dpr;
-      // Bucket by alpha so the canvas state changes a handful of times a frame.
-      const buckets = new Map<number, Particle[]>();
-      for (const q of parts) {
-        if (q.a < 0.04) continue;
-        const b = Math.round(q.a * 10);
-        (buckets.get(b) ?? buckets.set(b, []).get(b)!).push(q);
+      if (unlit) ctx.drawImage(unlit, 0, 0);
+      if (!sprite) return;
+      const buckets = new Map<number, { x: number; y: number }[]>();
+      for (const c of cells) {
+        if (c.a < 0.05) continue;
+        const b = Math.min(10, Math.round(c.a * 10));
+        (buckets.get(b) ?? buckets.set(b, []).get(b)!).push(c);
       }
+      const p = pitch * dpr;
       for (const [b, list] of buckets) {
         ctx.globalAlpha = b / 10;
-        for (const q of list) ctx.fillRect(Math.round(q.x) * p, Math.round(q.y) * p, d, d);
+        for (const c of list) ctx.drawImage(sprite, Math.round(Math.round(c.x) * p), Math.round(Math.round(c.y) * p));
       }
       ctx.globalAlpha = 1;
     };
 
-    // Give every particle a target in the picture; spares fade out on top
-    // of a lit dot so the count never changes.
-    const assign = (key: string) => {
-      const pic = pictures[key] ?? pictures.map;
-      const order = pic.map((_, i) => i);
+    const picture = (key: string | null): Cell[] =>
+      key && departures[key] ? departureCells(departures[key], cols, rows) : ringCells(model, angle, cols, rows);
+
+    // Start a move from whatever is lit now to the next picture.
+    const moveTo = (key: string | null, intro = false) => {
+      const from: Cell[] = mode === 'move' ? parts.map((q) => ({ x: q.x, y: q.y, a: q.a })) : shown;
+      const to = picture(key);
+      const n = Math.max(from.length, to.length, 1);
+      const order = to.map((_, i) => i);
       for (let i = order.length - 1; i > 0; i--) {
         const j = Math.floor(rand() * (i + 1));
         [order[i], order[j]] = [order[j], order[i]];
       }
-      parts.forEach((q, i) => {
-        const t = i < order.length ? pic[order[i]] : pic[Math.floor(rand() * pic.length)];
-        q.tx = t.x; q.ty = t.y; q.ta = i < order.length ? t.a : 0;
+      parts = Array.from({ length: n }, (_, i) => {
+        const f = from.length ? from[i % from.length] : { x: rand() * cols, y: rand() * rows, a: 0 };
+        const fa = i < from.length ? f.a : 0;
+        const t = i < to.length ? to[order[i]] : to.length ? to[Math.floor(rand() * to.length)] : f;
+        const ta = i < to.length ? t.a : 0;
+        const ang = rand() * Math.PI * 2, spread = 3 + rand() * 6;
+        return {
+          x: f.x, y: f.y, a: fa, fx: f.x, fy: f.y, fa,
+          sx: intro ? rand() * cols : f.x + Math.cos(ang) * spread,
+          sy: intro ? rand() * rows : f.y + Math.sin(ang) * spread,
+          tx: t.x, ty: t.y, ta,
+        };
       });
-    };
-
-    const snap = () => {
-      for (const q of parts) { q.x = q.tx; q.y = q.ty; q.a = q.ta; }
-      draw();
-    };
-
-    const animate = (frames: number, scatter: number, intro = false) => {
-      cancelAnimationFrame(raf);
-      for (const q of parts) {
-        q.fx = q.x; q.fy = q.y; q.fa = q.a;
-        // The neutral midpoint: every dot jumps to a nearby random cell at
-        // full brightness, so the field reads as white noise between pictures.
-        const spread = 10 + rand() * 16;
-        const ang = rand() * Math.PI * 2;
-        q.sx = intro ? rand() * cols : q.x + Math.cos(ang) * spread;
-        q.sy = intro ? rand() * rows : q.y + Math.sin(ang) * spread;
+      target = key;
+      if (reducedQuery.matches || !visible()) {
+        shown = to;
+        mode = key ? 'text' : 'ring';
+        draw(shown);
+        kick();
+        return;
       }
-      const start = performance.now();
-      let last = -1;
-      const tick = (now: number) => {
-        const frame = Math.floor((now - start) / STEP_MS);
-        if (frame !== last) {
-          last = frame;
-          for (const q of parts) {
-            if (frame < scatter) {
-              const t = (frame + 1) / scatter;
-              q.x = q.fx + (q.sx - q.fx) * t;
-              q.y = q.fy + (q.sy - q.fy) * t;
-              q.a = Math.max(q.fa, q.ta) > 0.04 ? 0.85 : 0;
-            } else {
-              const t = ease(Math.min(1, (frame - scatter + 1) / frames));
-              // Dots that were lit leave the noise at its brightness; the
-              // intro fades everything up from dark.
-              const fromA = !intro && Math.max(q.fa, q.ta) > 0.04 ? 0.85 : 0;
-              q.x = q.sx + (q.tx - q.sx) * t;
-              q.y = q.sy + (q.ty - q.sy) * t;
-              q.a = fromA + (q.ta - fromA) * t;
-            }
-          }
-          draw();
+      mode = 'move';
+      moveStart = performance.now();
+      moveScatter = intro ? 0 : SCATTER_FRAMES;
+      moveFrames = intro ? INTRO_FRAMES : TRAVEL_FRAMES;
+      moveIntro = intro;
+      lastStep = -1;
+      kick();
+    };
+
+    const stepMove = (now: number) => {
+      const frame = Math.floor((now - moveStart) / STEP_MS);
+      if (frame === lastStep) return;
+      lastStep = frame;
+      for (const q of parts) {
+        const litEither = Math.max(q.fa, q.ta) > 0.05;
+        if (frame < moveScatter) {
+          const t = (frame + 1) / moveScatter;
+          q.x = q.fx + (q.sx - q.fx) * t;
+          q.y = q.fy + (q.sy - q.fy) * t;
+          q.a = litEither ? 0.8 : 0;
+        } else {
+          const t = ease(Math.min(1, (frame - moveScatter + 1) / moveFrames));
+          const fromA = !moveIntro && litEither ? 0.8 : 0;
+          q.x = q.sx + (q.tx - q.sx) * t;
+          q.y = q.sy + (q.ty - q.sy) * t;
+          q.a = fromA + (q.ta - fromA) * t;
         }
-        if (frame < scatter + frames - 1) raf = requestAnimationFrame(tick);
-        else snap();
-      };
+      }
+      if (frame >= moveScatter + moveFrames - 1) {
+        mode = target ? 'text' : 'ring';
+        shown = picture(target);
+        draw(shown);
+      } else {
+        draw(parts);
+      }
+    };
+
+    // The turn advances by elapsed time (capped, so a pause or a hidden tab
+    // never makes it jump) and redraws only on 15 fps steps.
+    const SPEED = (Math.PI * 2) / (TURN_SECONDS * 1000);
+    let prevNow = 0, drawnStep = -1;
+    const needed = () => mode === 'move' || (mode === 'ring' && !isPaused);
+    const schedule = () => {
+      running = true;
       raf = requestAnimationFrame(tick);
     };
+    function tick(now: number) {
+      running = false;
+      if (!visible()) { prevNow = 0; return; }
+      if (mode === 'move') {
+        stepMove(now);
+        prevNow = 0;
+      } else if (mode === 'ring' && !isPaused) {
+        if (prevNow) angle += Math.min(now - prevNow, 200) * SPEED;
+        prevNow = now;
+        const st = Math.floor(now / STEP_MS);
+        if (st !== drawnStep) {
+          drawnStep = st;
+          shown = ringCells(model, angle, cols, rows);
+          draw(shown);
+        }
+      }
+      if (needed()) schedule();
+      else prevNow = 0;
+    }
 
-    const still = () => reduced.matches || document.hidden;
-
-    const show = (key: string | null) => {
-      const next = key && pictures[key] ? key : 'map';
-      if (next === current) return;
-      current = next;
-      assign(next);
-      if (still()) { cancelAnimationFrame(raf); snap(); } else animate(TRAVEL_FRAMES, SCATTER_FRAMES);
-    };
-    api.current = { show };
+    function kick() {
+      if (!needed() || running || !visible()) return;
+      prevNow = 0;
+      schedule();
+    }
 
     let built = false;
     const build = () => {
       const w = wrap.clientWidth, h = wrap.clientHeight;
       if (!w || !h) return;
+      cancelAnimationFrame(raf);
+      running = false;
       dpr = Math.min(window.devicePixelRatio || 1, 2);
+      pitch = w / COLS;
+      cols = COLS;
+      rows = Math.floor(h / pitch);
       canvas.width = Math.round(w * dpr);
       canvas.height = Math.round(h * dpr);
-      cols = Math.floor(w / PITCH);
-      rows = Math.floor(h / PITCH);
-      pictures = { map: mapTargets(cols, rows) };
-      for (const [k, lines] of Object.entries(states)) pictures[k] = textTargets(lines, cols, rows);
-      const n = Math.max(...Object.values(pictures).map((p) => p.length));
-      parts = Array.from({ length: n }, () => ({ x: 0, y: 0, a: 0, fx: 0, fy: 0, fa: 0, tx: 0, ty: 0, ta: 0, sx: 0, sy: 0 }));
-      assign(current);
-      if (!built && !still()) {
+      makeSprites();
+      if (!built && !reducedQuery.matches) {
         built = true;
-        animate(INTRO_FRAMES, 0, true);
+        shown = [];
+        moveTo(null, true);
       } else {
         built = true;
-        cancelAnimationFrame(raf);
-        snap();
+        mode = target ? 'text' : 'ring';
+        shown = picture(target);
+        draw(shown);
+        kick();
       }
+    };
+
+    api.current = {
+      show: (key) => {
+        const next = key && departures[key] ? key : null;
+        if (next === target && mode !== 'move') return;
+        moveTo(next);
+      },
+      setPaused: (p) => {
+        isPaused = p;
+        kick();
+      },
     };
 
     build();
@@ -293,21 +411,43 @@ export default function DotField({ active, states, panel }: { active: string | n
       t = setTimeout(build, 120);
     });
     ro.observe(wrap);
+    // The hero fades and hides on scroll; pick the turn back up when it returns.
+    const wake = () => kick();
+    window.addEventListener('scroll', wake, { passive: true });
+    document.addEventListener('visibilitychange', wake);
     return () => {
       ro.disconnect();
       clearTimeout(t);
       cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', wake);
+      document.removeEventListener('visibilitychange', wake);
       api.current = null;
     };
-  }, [states, panel]);
+  }, [departures]);
 
   useEffect(() => {
     api.current?.show(active);
   }, [active]);
 
+  useEffect(() => {
+    api.current?.setPaused(paused);
+  }, [paused]);
+
   return (
-    <div className={`hvg-field${panel ? ' hvg-field--panel' : ''}`} ref={wrapRef} aria-hidden="true">
-      <canvas ref={canvasRef} />
+    <div className="hvg-board">
+      <div className="hvg-field" ref={wrapRef} aria-hidden="true">
+        <canvas ref={canvasRef} />
+      </div>
+      <button
+        type="button"
+        className="hvg-pause"
+        onClick={() => setPaused((p) => !p)}
+        aria-label={paused ? 'Play the map animation' : 'Pause the map animation'}
+      >
+        <svg viewBox="0 0 16 16" aria-hidden="true">
+          {paused ? <path d="M5 3.5v9l7.5-4.5z" /> : <path d="M4.5 3.5h2.5v9H4.5zM9 3.5h2.5v9H9z" />}
+        </svg>
+      </button>
     </div>
   );
 }

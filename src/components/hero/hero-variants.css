@@ -854,16 +854,24 @@
 }
 
 /* ── G · Dot field ──────────────────────────────────────
-   F with the map replaced by a canvas of display dots in Ziggy's OLED
-   material. Sized like F's map so the two compare directly. */
+   F with the map replaced by an amber LED departure board: the Ring turns
+   slowly at rest, and a hovered tile puts its departure on the board. */
 .hv--g .hvf-shot {
   height: clamp(104px, 19vh, 210px);
 }
 
-.hvg-field {
+.hvg-board {
+  position: relative;
   justify-self: end;
   width: 100%;
   max-width: min(560px, 62vh);
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--color-board-bg);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 10px 28px rgba(0, 0, 0, 0.10);
+}
+
+.hvg-field {
   aspect-ratio: 600 / 340;
 }
 
@@ -873,16 +881,49 @@
   height: 100%;
 }
 
-/* MOCK: the panel option uses the site's navy sign token, so the dots read
-   as a lit display rather than ink on the page. */
-.hvg-field--panel {
-  border-radius: 10px;
-  background: var(--color-sign-navy);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 10px 28px rgba(0, 0, 0, 0.10);
+/* The idle turn runs past five seconds, so it gets a pause (WCAG 2.2.2).
+   32px target, amber on the board, a 2px focus ring in the bright amber. */
+.hvg-pause {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-board-amber);
+  opacity: 0.7;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: opacity 150ms ease-out, background-color 150ms ease-out;
+}
+.hvg-pause svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+.hvg-pause:hover {
+  opacity: 1;
+  background: color-mix(in srgb, var(--color-board-amber) 14%, transparent);
+}
+.hvg-pause:active {
+  background: color-mix(in srgb, var(--color-board-amber) 24%, transparent);
+}
+.hvg-pause:focus-visible {
+  opacity: 1;
+  outline: 2px solid var(--color-board-amber-hi);
+  outline-offset: -2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hvg-pause { transition: none; }
 }
 
 @media (max-width: 1199px) {
-  .hvg-field { display: none; }
+  .hvg-board { display: none; }
 }
 
 @media (max-width: 767px) {
