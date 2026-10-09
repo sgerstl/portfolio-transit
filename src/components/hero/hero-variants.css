@@ -145,246 +145,9 @@
   text-underline-offset: 4px;
 }
 
-/* ── B · Route strip ─────────────────────────────────────
-   The Linienband over U-Bahn doors: one line, three stops. The line
-   starts at the vertical rail, where the spine draws a junction ring. */
-.hv-routewrap {
-  width: 860px;
-  max-width: 100%;
-  padding-top: 0;
-}
-
-.hv-route {
-  position: relative;
-  width: 100%;
-}
-
-.hv-route::before {
-  content: '';
-  position: absolute;
-  left: -27px;
-  right: 24px;
-  top: 50%;
-  height: 6px;
-  margin-top: -3px;
-  background: var(--color-rail-blue);
-  border-radius: 0 3px 3px 0;
-}
-
-.hv-stops {
-  position: relative;
-  list-style: none;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.hv-stop a {
-  display: grid;
-  grid-template-rows: 1fr 18px 1fr;
-  justify-items: center;
-  row-gap: 14px;
-  text-align: center;
-  padding: 0 12px;
-}
-
-.hv-stop .hv-fig {
-  align-self: end;
-  font-size: 44px;
-}
-
-.hv-ring {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: white;
-  box-shadow: inset 0 0 0 2px var(--color-ring-stroke);
-}
-
-.hv-stop .hv-label {
-  align-self: start;
-  max-width: 24ch;
-}
-
-.hv-stop a:hover .hv-ring {
-  box-shadow: inset 0 0 0 5px var(--color-rail-blue);
-}
-
-/* ── C · Station sign ────────────────────────────────────
-   After a Berlin S-Bahn platform sign (Westkreuz): station name on a dark
-   enamel panel, hairline rules between connection bands, and each band
-   packed to the right edge as destination, pictograms, line badge, arrow.
-   The panel is --color-sign-navy, after the DB signs. */
-.hv-signwrap {
-  width: 860px;
-  max-width: 100%;
-  padding-top: 0;
-  gap: 28px;
-}
-
-.hv-sign {
-  width: 100%;
-  background: var(--color-sign-navy);
-  color: white;
-  border-radius: 6px;
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.10),
-    0 1px 2px rgba(0, 0, 0, 0.06),
-    0 12px 32px rgba(0, 0, 0, 0.10);
-}
-
-.hv-sign-name {
-  padding: 26px 32px 28px;
-}
-
-.hv-sign-sub {
-  font-family: var(--font-condensed);
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.78);
-  margin-bottom: 12px;
-}
-
-.hv-sign .hv-h1 {
-  color: white;
-  font-size: 48px;
-}
-
-.hv-sign-rows {
-  list-style: none;
-}
-
-.hv-sign-rows li {
-  border-top: 1px solid rgba(255, 255, 255, 0.28);
-}
-
-.hv-sign .hv-sign-row {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 16px;
-  min-height: 48px;
-  padding: 8px 12px 8px 32px;
-  transition: background-color 0.15s ease-out;
-}
-
-.hv-sign .hv-sign-row:hover {
-  background: rgba(255, 255, 255, 0.07);
-}
-
-.hv-sign .hv-sign-row:focus-visible {
-  outline: 2px solid white;
-  outline-offset: -4px;
-  border-radius: 4px;
-}
-
-.hv-sign-dest {
-  text-align: right;
-  line-height: 1.2;
-}
-
-.hv-sign-destname {
-  font-family: var(--font-condensed);
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-}
-
-.hv-sign-detail {
-  margin-left: 10px;
-  font-family: var(--font-sans);
-  font-size: 15px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.78);
-}
-
-.hv-sign-marks {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
-/* Pictogram tiles: white-outlined squares, as on the real signs. */
-.hv-tile {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 3px;
-  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.9);
-}
-
-.hv-tile svg {
-  width: 16px;
-  height: 16px;
-  fill: none;
-  stroke: white;
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.hv-tile--text {
-  font-family: var(--font-condensed);
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-
-.hv-tile--arrow {
-  margin-left: 4px;
-  width: 34px;
-  height: 34px;
-}
-
-.hv-tile--arrow svg {
-  width: 18px;
-  height: 18px;
-  stroke-width: 2;
-}
-
-.hv-sign .hv-sign-row:hover .hv-tile--arrow {
-  background: white;
-}
-.hv-sign .hv-sign-row:hover .hv-tile--arrow svg {
-  stroke: var(--color-sign-navy);
-}
-
-/* Line badges: stadium pills like the S-Bahn's. Dark text, because white
-   on these line colours fails 4.5:1; real networks switch text colour per
-   line for the same reason. #1a1714 has no token (the live hero uses it
-   for its bold figure). MOCK: --color-line-ai holds the orange. */
-.hv-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 46px;
-  height: 24px;
-  padding: 0 9px;
-  border-radius: 12px;
-  font-family: var(--font-condensed);
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  color: #1a1714;
-}
-.hv-badge--cs1 { background: var(--color-line-ai); }
-.hv-badge--cs2 { background: var(--color-line-ent); }
-
-.hv-under .hv-lead {
-  margin-top: 0;
-}
-.hv-under .hv-meta {
-  margin-top: 16px;
-}
-
-/* ── D · Lit map ─────────────────────────────────────────
-   A's left column with a bigger headline, and an excerpt of the network on
-   the right in the wallpaper map's language. The headshot is the origin
-   station both lines leave from. */
+/* ── Two-column base (was D · Lit map) ───────────────────
+   A's left column with a bigger headline and an object on the right. D's
+   network map was removed 2026-10-09; E still builds on this layout. */
 .hv--d::before {
   width: min(1240px, calc(100% - 140px));
   background: linear-gradient(
@@ -441,126 +204,10 @@
   gap: 14px;
 }
 
-.hv-net {
-  width: 100%;
-  height: auto;
-  margin-top: 8px;
-  overflow: visible;
-  pointer-events: auto;
-}
-
-.hv-net-track {
-  fill: none;
-  stroke-width: 8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 0;
-}
-/* MOCK: --color-line-ai holds the orange (see global.css). */
-.hv-net-line--cs1 .hv-net-track { stroke: var(--color-line-ai); }
-.hv-net-line--cs2 .hv-net-track { stroke: var(--color-line-ent); }
-.hv-net-line--cs1 .hv-net-term { fill: var(--color-line-ai); }
-.hv-net-line--cs2 .hv-net-term { fill: var(--color-line-ent); }
-
-.hv-net-ring {
-  fill: white;
-  stroke: var(--color-ring-stroke);
-  stroke-width: 2;
-  transition: stroke-width 0.15s ease-out;
-}
-
-.hv-net-hit {
-  fill: transparent;
-}
-
-.hv-net-name {
-  font-family: var(--font-condensed);
-  font-size: 21px;
-  font-weight: 600;
-  fill: var(--color-text);
-  dominant-baseline: middle;
-}
-
-.hv-net-domain {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 400;
-  fill: var(--color-text-soft);
-  dominant-baseline: middle;
-}
-
-.hv-net-stop:hover .hv-net-ring,
-.hv-net-stop:focus-visible .hv-net-ring {
-  stroke-width: 5;
-}
-.hv-net-stop:hover .hv-net-name,
-.hv-net-stop:focus-visible .hv-net-name {
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 3px;
-}
-.hv-net-stop:focus-visible {
-  outline: none;
-}
-.hv-net-stop:focus-visible .hv-net-hit {
-  stroke: var(--color-text);
-  stroke-width: 2;
-  rx: 4px;
-}
-
-.hv-net-origin-ring {
-  fill: white;
-  stroke: var(--color-ring-stroke);
-  stroke-width: 2;
-}
-
-.hv-net-pill--cs1 { fill: var(--color-line-ai); }
-.hv-net-pill--cs2 { fill: var(--color-line-ent); }
-.hv-net-pilltext {
-  font-family: var(--font-condensed);
-  font-size: 13px;
-  font-weight: 600;
-  fill: #1a1714;
-  dominant-baseline: middle;
-}
-
-/* One moment of motion: the lines draw out from the origin, then the
-   stations arrive. Skipped entirely under reduced motion. */
-@media (prefers-reduced-motion: no-preference) {
-  .hv-net-track {
-    animation: hv-net-draw 900ms cubic-bezier(0.2, 0.7, 0.2, 1) 150ms both;
-  }
-  .hv-net-line--cs2 .hv-net-track {
-    animation-delay: 300ms;
-  }
-  .hv-net-stop,
-  .hv-net-term,
-  .hv-net-legend {
-    animation: hv-net-arrive 260ms ease-out both;
-    animation-delay: calc(600ms + var(--i, 0) * 90ms);
-  }
-  .hv-net-term,
-  .hv-net-legend {
-    animation-delay: 1000ms;
-  }
-}
-
-@keyframes hv-net-draw {
-  from { stroke-dashoffset: 1; }
-  to { stroke-dashoffset: 0; }
-}
-
-@keyframes hv-net-arrive {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
 /* The map needs room; below 1200 it gives way and the face moves into the
    kicker so the human detail stays. */
 @media (max-width: 1199px) {
   .hv-d-grid { grid-template-columns: minmax(0, 1fr); }
-  .hv-net { display: none; }
   .hv-d-face { display: block; }
   .hv--d .hv-h1 { font-size: 56px; }
   .hv--d::before { width: calc(100% - 140px); }
@@ -846,8 +493,6 @@
 /* ── Mid width ───────────────────────────────────────── */
 @media (max-width: 1199px) and (min-width: 768px) {
   .hv-h1 { font-size: 48px; }
-  .hv-sign .hv-h1 { font-size: 42px; }
-  .hv-signwrap { width: 100%; }
 }
 
 /* ── Mobile ──────────────────────────────────────────── */
@@ -871,8 +516,7 @@
   .hv-lead { font-size: 16px; margin-top: 12px; }
   .hv-meta { margin-top: 24px; font-size: 12px; }
 
-  .hv-stations,
-  .hv-routewrap {
+  .hv-stations {
     border-left: 3px solid var(--color-rail-blue);
     padding-left: 14px;
     gap: 14px;
@@ -882,44 +526,11 @@
   .hv-station .hv-fig { font-size: 30px; }
   .hv-label { font-size: 14px; }
 
-  /* B collapses to the same vertical list; on a phone the rail is vertical. */
-  .hv-route::before { display: none; }
-  .hv-stops { grid-template-columns: 1fr; gap: 14px; }
-  .hv-stop a {
-    grid-template-rows: none;
-    grid-template-columns: 100px 1fr;
-    justify-items: start;
-    align-items: baseline;
-    text-align: left;
-    padding: 0;
-    column-gap: 10px;
-  }
-  .hv-stop .hv-fig { font-size: 30px; }
-  .hv-ring { display: none; }
-
-  .hv-sign-name { padding: 20px 18px 22px; }
-  .hv-sign-sub { font-size: 12px; margin-bottom: 8px; }
-  .hv-sign .hv-h1 { font-size: 30px; }
-  .hv-sign .hv-sign-row {
-    justify-content: space-between;
-    padding: 8px 10px 8px 18px;
-    gap: 10px;
-  }
-  .hv-sign-dest { text-align: left; }
-  .hv-sign-destname { display: block; font-size: 18px; }
-  .hv-sign-detail { display: block; margin-left: 0; font-size: 13px; }
-  .hv-tile { width: 26px; height: 26px; }
-  .hv-tile--arrow { width: 30px; height: 30px; }
-  .hv-badge { min-width: 40px; height: 22px; font-size: 13px; }
-
   .hv-switch { bottom: 8px; font-size: 12px; }
   .hv-switch a { padding: 6px 7px; }
   .hv-switch-tag { display: none; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .hv-sign .hv-sign-row { transition: none; }
-}
 
 /* ── F · Map + work ─────────────────────────────────────
    Positioning sentence first and largest, the qualifier line promoted, the
