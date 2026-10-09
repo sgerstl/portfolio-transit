@@ -73,6 +73,25 @@ test.describe('Back to the cases', () => {
     expect(await settledScrollY(page)).toBe(1700);
   });
 
+  test('after using an embedded demo, the back link still leaves the case, not the demo', async ({ page }) => {
+    await home(page);
+    await scrollToY(page, 1500);
+    await openCase(page, 'ziggy');
+    // Stand-in for a live demo: a same-origin iframe that adds its own pages to the tab's history
+    await page.evaluate(async () => {
+      const f = document.createElement('iframe');
+      f.src = '/lab/';
+      f.style.cssText = 'width:10px;height:10px;position:absolute;left:-20px';
+      document.body.appendChild(f);
+      await new Promise((r) => f.addEventListener('load', r, { once: true }));
+      f.contentWindow!.history.pushState({}, '', '/lab/?demo=1');
+      f.contentWindow!.history.pushState({}, '', '/lab/?demo=2');
+    });
+    await page.locator('a[data-back]').click();
+    await backHome(page, /\/$/);
+    expect(await settledScrollY(page)).toBe(1500);
+  });
+
   test('landing on a case directly, the back link puts that card under the header', async ({ page }) => {
     await page.goto('/work/fleet/');
     await page.waitForLoadState('networkidle');
