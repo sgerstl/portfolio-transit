@@ -49,6 +49,12 @@ No a11y tooling is installed in this repo yet. `eslint-plugin-jsx-a11y` does not
 
 ---
 
+## Interaction tests (Chrome and Firefox)
+
+`npm run test:e2e` builds the site, serves it on port 4330 and runs `tests/e2e/` with Playwright in Chrome (the installed Google Chrome) and Firefox, at 1440x900 and 375x812. It covers back navigation (the back link, the browser's back, back after a header link, a direct landing), the gallery viewer (arrows, buttons, back closes it, Escape) and the phone layout. Run it before pushing anything that touches navigation, scrolling, history or the hero. First time on a machine: `npx playwright install firefox`.
+
+The preview pane and headless Chrome are both Chromium and don't run animation frames while hidden, so they can't stand in for this. Firefox differs in 3D transforms, view-transition support and scroll restoration timing.
+
 ## Structure
 
 - `src/components/spine/` — the rail navigation (`Spine.astro`, `MobileSpine.astro`)
