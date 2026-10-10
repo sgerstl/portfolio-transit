@@ -31,7 +31,7 @@ const metric =
 const cardLine = body.cardTagline ?? tagline;
 ---
 
-<article class="station" data-case={slug} id={`case-${slug}`} style={`--card-color: ${colorVar};`}>
+<article class="station" data-case={slug} data-wash id={`case-${slug}`} style={`--card-color: ${colorVar};`}>
   <div class="chip"></div>
   <div class="station-shot">
     {body.visualImage ? (
@@ -77,6 +77,8 @@ const cardLine = body.cardTagline ?? tagline;
 <style>
   .station {
     position: relative;
+    /* The hover wash (global.css) in this card's line colour, as the hero tiles have it in theirs. */
+    --wash-color: color-mix(in oklab, var(--card-color) 14%, var(--color-bg));
     display: grid;
     grid-template-columns: 200px minmax(0, 1fr) auto;
     align-items: center;
@@ -84,7 +86,7 @@ const cardLine = body.cardTagline ?? tagline;
     padding: 14px 20px 14px 28px;
     background: white;
     border-radius: 4px;
-    box-shadow: 1px 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-card);
     transition: box-shadow 0.2s ease, transform 0.2s ease;
   }
 
@@ -270,7 +272,7 @@ const cardLine = body.cardTagline ?? tagline;
   }
 
   .station:hover {
-    box-shadow: 2px 4px 14px rgba(0, 0, 0, 0.14);
+    box-shadow: var(--shadow-card-hover);
     transform: translateY(-2px);
   }
   .station:hover .chip {

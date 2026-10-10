@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { FONT_M } from './dotfont';
 
-// The hero's amber LED departure board. At rest it shows the rooftop
-// portrait, or with ?idle=ring Berlin's Ringbahn, Stadtbahn and Spree as a
+// The hero's amber LED departure board. At rest it shows the café portrait
+// over a wall of the work's domains in big type, scrolling slowly up behind
+// him, or with ?idle=ring Berlin's Ringbahn, Stadtbahn and Spree as a
 // slowly turning 3D object with the TV tower standing up out of it (the
 // Ring's coordinates are approximate, ±100–300 m, which is fine at this
 // resolution). Hovering or focusing a work tile pours
@@ -16,8 +17,8 @@ import { FONT_M } from './dotfont';
 // OLED transitions). Lettering is Ziggy's font M, one LED per font pixel.
 //
 // The canvas is decoration: hidden from assistive tech, and each tile link
-// carries the same words as a description. The idle turn runs past five
-// seconds, so the board has a pause button (WCAG 2.2.2); it starts paused
+// carries the same words as a description. The idle turn and the scroll run
+// past five seconds, so the board has a pause button (WCAG 2.2.2); it starts paused
 // under reduced motion and stops drawing whenever the hero is hidden.
 
 const COLS = 136; // LEDs across; the pitch follows from the board's width
@@ -29,12 +30,16 @@ const INTRO_FRAMES = 12;
 const TURN_SECONDS = 60;
 const TILT = (64 * Math.PI) / 180; // 0 is straight down onto the map
 const UNLIT = 0.07;
+const DOMAIN_LEVEL = 0.3; // the domains: legible, but under all but the face's darkest step
+const DOMAIN_SCALE = 2; // each font LED drawn as a 2 x 2 block: 10 x 14 capitals
+const DOMAIN_LEADING = 4; // LED rows between one word and the next
+const DOMAIN_ROWS_PER_S = 6; // the domains' scroll: a new word about every three seconds
 
 export type Departure = { line: string; name: string; minutes: number; from: string; to: string };
-// What the board shows at rest. 'ring' turns; 'face' is the still rooftop
-// portrait, the default.
+// What the board shows at rest. 'ring' turns; 'face' is the portrait over
+// the scrolling domains, the default.
 export type Idle = 'ring' | 'face';
-const PORTRAIT = '/images/hero/scott-rooftop.webp';
+const PORTRAIT = '/images/hero/scott-cafe.webp';
 type Cell = { x: number; y: number; a: number };
 type V3 = [number, number, number, number]; // x (east), y (up), z (north), brightness
 
@@ -143,14 +148,23 @@ function glyphSpan(ch: string): [number, number] {
 }
 const textWidth = (s: string) => [...s].reduce((w, ch) => { const [lo, hi] = glyphSpan(ch); return w + hi - lo + 2; }, -1);
 
-function setText(out: Cell[], s: string, x0: number, y0: number, a: number) {
+// scale draws each font LED as a scale x scale block; gap is the blank
+// between letters, one font LED (so scale LEDs) unless set tighter.
+const scaledWidth = (s: string, scale: number, gap: number) =>
+  [...s].reduce((w, ch) => { const [lo, hi] = glyphSpan(ch); return w + (hi - lo + 1) * scale + gap; }, -gap);
+function setText(out: Cell[], s: string, x0: number, y0: number, a: number, scale = 1, gap = scale) {
   let pen = x0;
   for (const ch of s) {
     const [lo, hi] = glyphSpan(ch);
     FONT_M[ch]?.forEach((row, gy) => {
-      for (let gx = lo; gx <= hi; gx++) if (row[gx] === '1') out.push({ x: pen + gx - lo, y: y0 + gy, a });
+      for (let gx = lo; gx <= hi; gx++) {
+        if (row[gx] !== '1') continue;
+        for (let dy = 0; dy < scale; dy++) for (let dx = 0; dx < scale; dx++) {
+          out.push({ x: pen + (gx - lo) * scale + dx, y: y0 + gy * scale + dy, a });
+        }
+      }
     });
-    pen += hi - lo + 2;
+    pen += (hi - lo + 1) * scale + gap;
   }
 }
 
@@ -172,49 +186,60 @@ function departureCells(d: Departure, cols: number, rows: number): Cell[] {
   return out.filter((c) => c.x >= 0 && c.y >= 0 && c.x < cols && c.y < rows);
 }
 
-// The portrait in LEDs: a low-poly illustration of Scott on a Berlin rooftop
-// (public/images/hero/scott-rooftop.webp), cropped to the board's shape so it
-// fills the display edge to edge. Not mirrored: he already sits right and
-// looks into the frame, and mirroring would flip the skyline. One LED per
-// cell. Brightness is weighted toward warm tones (red over blue), so skin
-// and the autumn trees glow while the bright sky and the blue shirt recede;
-// plain brightness let the sky outshine the face. Levels are stretched
-// between the 1st and 99th percentile, then a 1.3 gamma deepens the shadows.
+// The portrait in LEDs: a café selfie of Scott cut out onto a transparent
+// background (public/images/hero/scott-cafe.webp). The transparency is his
+// silhouette: everything outside it stays dark, and the scrolling domains
+// pass behind it. Cropped to the board's shape so it fills the display edge
+// to edge. Mirrored and sitting well right, so he leans in toward the
+// headline and the longest domain clears his ear. The face's shadow side is
+// lifted in the source so the beard and smile survive at one LED per cell.
+// Brightness is weighted toward warm tones (red over blue), so skin glows
+// while the blue in the shirt recedes. The earlier rooftop illustration is
+// still at scott-rooftop.webp. Levels are stretched between the 1st and 99th
+// percentile, then a 1.3 gamma deepens the shadows. Finally each LED snaps to
+// off or one of four lit steps, so the face posterizes like a cruder board
+// than this one; at three lit steps the shirt dropped out, at five it read as
+// a photo again.
 const PORTRAIT_WARMTH = 2.2;
-function faceCells(img: HTMLImageElement, cols: number, rows: number): Cell[] {
+const PORTRAIT_LEVELS = 4; // lit steps, plus off
+type Face = { grid: Float32Array; inside: Uint8Array };
+function faceCells(img: HTMLImageElement, cols: number, rows: number): Face {
+  const n = cols * rows;
+  const face: Face = { grid: new Float32Array(n), inside: new Uint8Array(n) };
   const c = document.createElement('canvas');
   c.width = cols;
   c.height = rows;
   const g = c.getContext('2d', { willReadFrequently: true });
-  if (!g) return [];
+  if (!g) return face;
   g.imageSmoothingQuality = 'high';
   // Cover the board: scale to fill, centre, crop any excess.
   const scale = Math.max(cols / img.naturalWidth, rows / img.naturalHeight);
   const dw = img.naturalWidth * scale, dh = img.naturalHeight * scale;
   g.drawImage(img, (cols - dw) / 2, (rows - dh) / 2, dw, dh);
   const d = g.getImageData(0, 0, cols, rows).data;
-  const raw = new Float32Array(cols * rows);
-  for (let i = 0; i < cols * rows; i++) {
-    const r = d[i * 4] / 255, gr = d[i * 4 + 1] / 255, b = d[i * 4 + 2] / 255;
+  const raw = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    const r = d[i * 4] / 255, gr = d[i * 4 + 1] / 255, b = d[i * 4 + 2] / 255, al = d[i * 4 + 3] / 255;
     const lum = 0.2126 * r + 0.7152 * gr + 0.0722 * b;
     const warm = Math.max(0, Math.min(1, (r - b) * PORTRAIT_WARMTH + 0.15));
-    raw[i] = lum * (0.2 + 1.2 * warm);
+    raw[i] = lum * (0.2 + 1.2 * warm) * al;
+    face.inside[i] = al > 0.5 ? 1 : 0;
   }
   const sorted = Array.from(raw).sort((a, b) => a - b);
   const lo = sorted[Math.floor(sorted.length * 0.01)], hi = sorted[Math.floor(sorted.length * 0.99)];
-  const out: Cell[] = [];
-  for (let i = 0; i < cols * rows; i++) {
+  for (let i = 0; i < n; i++) {
     const v = Math.max(0, Math.min(1, (raw[i] - lo) / (hi - lo || 1))) ** 1.3;
-    if (v > 0.06) out.push({ x: i % cols, y: Math.floor(i / cols), a: v });
+    const q = Math.round(v * PORTRAIT_LEVELS) / PORTRAIT_LEVELS;
+    face.grid[i] = q;
   }
-  return out;
+  return face;
 }
 
 const ease = (t: number) => 1 - (1 - t) ** 3;
 
 type Particle = { x: number; y: number; a: number; fx: number; fy: number; fa: number; sx: number; sy: number; tx: number; ty: number; ta: number };
 
-export default function DotField({ active, departures, idle = 'ring' }: { active: string | null; departures: Record<string, Departure>; idle?: Idle }) {
+export default function DotField({ active, departures, domains = [], idle = 'ring' }: { active: string | null; departures: Record<string, Departure>; domains?: string[]; idle?: Idle }) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const boardRef = useRef<HTMLDivElement | null>(null);
   const mountRef = useRef<HTMLDivElement | null>(null);
@@ -325,18 +350,68 @@ export default function DotField({ active, departures, idle = 'ring' }: { active
     const turns = idle === 'ring';
     const portrait = new Image();
     let portraitReady = false;
-    let faceCache: { cols: number; rows: number; cells: Cell[] } | null = null;
-    const faceIdle = (): Cell[] => {
-      if (!portraitReady) return [];
+    let faceCache: { cols: number; rows: number; face: Face } | null = null;
+    const faceData = (): Face | null => {
+      if (!portraitReady) return null;
       if (!faceCache || faceCache.cols !== cols || faceCache.rows !== rows) {
-        faceCache = { cols, rows, cells: faceCells(portrait, cols, rows) };
+        faceCache = { cols, rows, face: faceCells(portrait, cols, rows) };
       }
-      return faceCache.cells;
+      return faceCache.face;
+    };
+
+    // The domains, a wall of big type behind the portrait: double-size
+    // capitals with a two-LED stroke, close-set, in one continuous column
+    // scrolling up at a steady pace, all at one low brightness. The long ones
+    // run on behind his head, which is the point; they are the background,
+    // not a caption. Sized so the longest word spans the board edge to edge:
+    // the normal two-LED letter gap where it fits, one LED where only that
+    // fits (MANUFACTURING is 150 LEDs at two, 138 at one, and the board is
+    // 136 to about 180 wide depending on its size). That word is centred and
+    // every word shares its left edge. No easing and no stops, so nothing
+    // starts or lands to catch the eye; whole-LED steps like the rest of the
+    // board. The board starts full (the intro pours into face and words
+    // together), and the scroll only advances while it runs, so a pause or a
+    // hidden tab freezes it in place instead of making it jump.
+    const textH = 7 * DOMAIN_SCALE, linePitch = textH + DOMAIN_LEADING;
+    const domainText = domains.map((d) => d.toUpperCase()); // font M is capitals only
+    let travel = 0; // rows scrolled so far
+    let fit = { cols: -1, gap: DOMAIN_SCALE, x0: 3 };
+    const domainFit = () => {
+      if (fit.cols === cols) return fit;
+      const widest = (gap: number) => Math.max(...domainText.map((d) => scaledWidth(d, DOMAIN_SCALE, gap)));
+      const gap = widest(DOMAIN_SCALE) + 2 <= cols ? DOMAIN_SCALE : 1;
+      fit = { cols, gap, x0: Math.max(1, Math.floor((cols - widest(gap)) / 2)) };
+      return fit;
+    };
+    const domainCells = (): Uint8Array | null => {
+      if (!domainText.length) return null;
+      const { gap, x0 } = domainFit();
+      const lit = new Uint8Array(cols * rows);
+      const cells: Cell[] = [];
+      for (let k = Math.max(0, Math.floor(travel / linePitch) - 1); ; k++) {
+        const y = Math.round(linePitch * k - travel);
+        if (y >= rows) break;
+        if (y > -textH) setText(cells, domainText[k % domainText.length], x0, y, 1, DOMAIN_SCALE, gap);
+      }
+      for (const c of cells) if (c.x >= 0 && c.y >= 0 && c.x < cols && c.y < rows) lit[c.y * cols + c.x] = 1;
+      return lit;
+    };
+    // At rest: the portrait inside his silhouette, the domains outside it.
+    const restFrame = (): Cell[] => {
+      const face = faceData();
+      if (!face) return [];
+      const words = domainCells();
+      const out: Cell[] = [];
+      for (let i = 0; i < cols * rows; i++) {
+        const a = face.inside[i] ? face.grid[i] : words?.[i] ? DOMAIN_LEVEL : 0;
+        if (a > 0.05) out.push({ x: i % cols, y: Math.floor(i / cols), a });
+      }
+      return out;
     };
     const picture = (key: string | null): Cell[] =>
       key && departures[key]
         ? departureCells(departures[key], cols, rows)
-        : turns ? ringCells(model, angle, cols, rows) : faceIdle();
+        : turns ? ringCells(model, angle, cols, rows) : restFrame();
 
     // Start a move from whatever is lit now to the next picture.
     const moveTo = (key: string | null, intro = false) => {
@@ -410,7 +485,7 @@ export default function DotField({ active, departures, idle = 'ring' }: { active
     // never makes it jump) and redraws only on 15 fps steps.
     const SPEED = (Math.PI * 2) / (TURN_SECONDS * 1000);
     let prevNow = 0, drawnStep = -1;
-    const needed = () => mode === 'move' || (mode === 'ring' && turns && !isPaused);
+    const needed = () => mode === 'move' || (mode === 'ring' && !isPaused && (turns || portraitReady));
     const schedule = () => {
       running = true;
       raf = requestAnimationFrame(tick);
@@ -421,13 +496,15 @@ export default function DotField({ active, departures, idle = 'ring' }: { active
       if (mode === 'move') {
         stepMove(now);
         prevNow = 0;
-      } else if (mode === 'ring' && turns && !isPaused) {
-        if (prevNow) angle += Math.min(now - prevNow, 200) * SPEED;
+      } else if (mode === 'ring' && !isPaused) {
+        const dt = prevNow ? Math.min(now - prevNow, 200) : 0;
+        if (turns) angle += dt * SPEED;
+        else travel += (dt / 1000) * DOMAIN_ROWS_PER_S;
         prevNow = now;
         const st = Math.floor(now / STEP_MS);
         if (st !== drawnStep) {
           drawnStep = st;
-          shown = ringCells(model, angle, cols, rows);
+          shown = turns ? ringCells(model, angle, cols, rows) : restFrame();
           draw(shown);
         }
       }
@@ -516,7 +593,7 @@ export default function DotField({ active, departures, idle = 'ring' }: { active
       document.removeEventListener('visibilitychange', wake);
       api.current = null;
     };
-  }, [departures, idle]);
+  }, [departures, domains, idle]);
 
   useEffect(() => {
     api.current?.show(active);
@@ -525,16 +602,28 @@ export default function DotField({ active, departures, idle = 'ring' }: { active
   // Sway: the board hangs from a pole, so scrolling back up gives it a small
   // swing that settles on its own, a damped spring around the top of the
   // pole. Scrolling down leaves it still (Scott, 2026-10-09: calmer).
-  // Capped at 3 degrees, runs only while it is moving and on screen, and is
-  // off under reduced motion.
+  // A mouse crossing onto the board brushes it too (Scott, 2026-10-10): a
+  // gentler push, at most about 0.6 degrees (some 5px at the board's foot),
+  // in the direction the pointer was moving, and only when the board is
+  // nearly still, so a board swinging out from under the cursor and back
+  // can't set itself off again. Gentle also
+  // because the pause key is on the board: reaching for it swings it a
+  // little and it settles in about a second and a half. The page's spine
+  // layer sits over the board, so the crossing is found by position, not by
+  // hover events. Capped at 3 degrees, runs only while it is moving and on
+  // screen, and is off under reduced motion and while the board is paused.
+  const pausedRef = useRef(paused);
+  pausedRef.current = paused;
   useEffect(() => {
-    const mount = mountRef.current;
-    if (!mount) return;
+    const mount = mountRef.current, board = boardRef.current;
+    if (!mount || !board) return;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
     const K = 52; // stiffness: about 1.1 swings a second
     const C = 5.5; // damping: settles in roughly a second and a half
     const GAIN = 0.18; // degrees a second per pixel scrolled
     const MAX = 3;
+    const HOVER_GAIN = 4; // degrees a second per px/ms of pointer speed
+    const HOVER_MIN = 2.5, HOVER_MAX = 8; // degrees a second: a swing peaking at about 0.2 to 0.6 degrees
     const shadow = shadowRef.current;
     const LAG = 7; // how fast the shadow catches up, per second: a beat behind the board
     const WIDER = 1.15; // the wall is farther from the pivot, so its swing reads a little wider
@@ -562,21 +651,44 @@ export default function DotField({ active, departures, idle = 'ring' }: { active
       place();
       raf = requestAnimationFrame(step);
     };
+    const swing = () => {
+      if (running) return;
+      running = true;
+      last = performance.now();
+      raf = requestAnimationFrame(step);
+    };
     const onScroll = () => {
       const y = window.scrollY;
       const dy = y - lastY;
       lastY = y;
-      if (dy >= 0 || reduced.matches || mount.getBoundingClientRect().bottom < 0) return;
+      if (dy >= 0 || reduced.matches || pausedRef.current || mount.getBoundingClientRect().bottom < 0) return;
       omega -= Math.max(-80, Math.min(80, dy)) * GAIN;
-      if (!running) {
-        running = true;
-        last = performance.now();
-        raf = requestAnimationFrame(step);
-      }
+      swing();
+    };
+    // Pointer speed, smoothed, and whether the pointer was over the board.
+    let lastX = 0, lastT = 0, vx = 0, over = false, lastBrush = 0;
+    const onMove = (e: PointerEvent) => {
+      if (e.pointerType !== 'mouse') return;
+      if (lastT) vx = 0.7 * vx + 0.3 * ((e.clientX - lastX) / Math.max(1, e.timeStamp - lastT));
+      lastX = e.clientX;
+      lastT = e.timeStamp;
+      const r = board.getBoundingClientRect();
+      const now = e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+      const entered = now && !over;
+      over = now;
+      if (!entered || reduced.matches || pausedRef.current) return;
+      if (Math.abs(theta) > 0.3 || e.timeStamp - lastBrush < 1200) return;
+      lastBrush = e.timeStamp;
+      // CSS rotate turns clockwise, which swings the bottom left; a pointer
+      // moving right pushes the bottom right, so the push is negative.
+      omega -= Math.sign(vx || 1) * Math.max(HOVER_MIN, Math.min(HOVER_MAX, Math.abs(vx) * HOVER_GAIN));
+      swing();
     };
     window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('pointermove', onMove, { passive: true });
     return () => {
       window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('pointermove', onMove);
       cancelAnimationFrame(raf);
       mount.style.transform = '';
       if (shadow) shadow.style.transform = '';
@@ -611,24 +723,25 @@ export default function DotField({ active, departures, idle = 'ring' }: { active
             <div className="hvg-field" ref={wrapRef} aria-hidden="true">
               <canvas ref={canvasRef} />
             </div>
-            {/* Where the real board has its operator badge: a plain yellow
-                square at the foot of the right-hand grey bar. */}
-            <span className="hvg-badge" aria-hidden="true" />
-          </div>
-          <div className="hvg-foot">
-            <span className="hvg-stop" aria-hidden="true">Berlin</span>
-            {/* The turning Ring runs past five seconds, so it gets a pause key
-                (WCAG 2.2.2); the still portrait has nothing to pause. */}
-            {idle === 'ring' && <button
+            {/* The pause key is the board's operator badge, the yellow square
+                at the foot of the right-hand grey bar. The scrolling domains
+                and the turning Ring both run past five seconds, so the board
+                needs one (WCAG 2.2.2). */}
+            <button
               type="button"
               className="hvg-pause"
               onClick={() => setPaused((p) => !p)}
-              aria-label={paused ? 'Play the map animation' : 'Pause the map animation'}
+              aria-label={paused ? 'Play the board animation' : 'Pause the board animation'}
             >
-              <svg viewBox="0 0 16 16" aria-hidden="true">
-                {paused ? <path d="M5 3.5v9l7.5-4.5z" /> : <path d="M4.5 3.5h2.5v9H4.5zM9 3.5h2.5v9H9z" />}
-              </svg>
-            </button>}
+              <span className="hvg-pause-key">
+                <svg viewBox="0 0 8 8" aria-hidden="true">
+                  {paused ? <path d="M2 1v6l5-3z" /> : <path d="M1.5 1h2v6h-2zM4.5 1h2v6h-2z" />}
+                </svg>
+              </span>
+            </button>
+          </div>
+          <div className="hvg-foot">
+            <span className="hvg-stop" aria-hidden="true">Berlin</span>
           </div>
         </div>
       </div>

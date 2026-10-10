@@ -36,6 +36,55 @@
   --font-sans: 'Inter', sans-serif;
   --font-condensed: 'Barlow Condensed', sans-serif;
   --font-mono: 'VT323', monospace;
+
+  /* The card shadow, at rest and on hover: the case cards, the station
+     cards and the hero's work tiles. */
+  --shadow-card: 1px 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-card-hover: 2px 4px 14px rgba(0, 0, 0, 0.14);
+}
+
+/* The hover wash on cards (data-wash): a tint of the card's line colour that
+   spreads from where the pointer came in, then fades out on leave. Drawn as
+   the card's ::after behind its content (z-index -1 inside the card's own
+   stacking context, so above its white and under its text). The layout's
+   script records the entry point as --wash-x / --wash-y, in px from the
+   card's top left; keyboard focus spreads from the centre. A card sets
+   --wash-color, and --wash-inset when its visible card reaches past its box
+   (the hero tiles, 14px). Spreads in 350ms, fades out in 200ms, then resets
+   its radius so the next entry starts small. Reduced motion: fade only. */
+@property --wash-r {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+[data-wash] {
+  isolation: isolate;
+}
+[data-wash]::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: var(--wash-inset, 0px);
+  border-radius: 4px;
+  background: radial-gradient(
+    circle at calc(var(--wash-x, 50%) - var(--wash-inset, 0px)) calc(var(--wash-y, 50%) - var(--wash-inset, 0px)),
+    var(--wash-color) calc(var(--wash-r) - 18%),
+    transparent var(--wash-r)
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease, --wash-r 0s linear 200ms, translate 0.2s ease;
+}
+[data-wash]:is(:hover, :focus-visible, :has(:focus-visible))::after {
+  --wash-r: 125%;
+  opacity: 1;
+  transition: opacity 120ms ease-out, --wash-r 350ms ease-out, translate 0.2s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-wash]::after {
+    --wash-r: 125%;
+    transition: opacity 150ms ease;
+  }
 }
 
 :root {
