@@ -468,52 +468,59 @@
   font-size: 19px;
 }
 
-/* The yellow key sits where the real board has its badge, tucked against
-   the bottom of the display. It pauses the idle turn (WCAG 2.2.2). */
+/* The pause key is the board's operator badge: a small yellow square centred
+   at the foot of the right-hand grey bar, above the glass sheen, where the
+   real board has its badge. One square, not a badge and a button. It pauses
+   the scrolling domains and the idle turn (WCAG 2.2.2). The button is the
+   bar's full 24px width and transparent, so the whole 24 x 24 is the target
+   (2.5.8); the 16px square inside it is what shows. A padded ::before did
+   not work: the page's spine layer sits over the board and only the
+   button's own box hit-tests through it. The focus ring is white, 5.7:1 on
+   the grey bar (the board's ink there was only 3.1:1), and drawn inside the
+   button so the glass's clipped edge never cuts it. */
 .hvg-pause {
+  position: absolute;
+  z-index: 3;
+  right: 0;
+  bottom: 2px;
   display: grid;
   place-items: center;
-  width: 26px;
-  height: 26px;
+  width: var(--hvg-bar);
+  height: 24px;
   padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.hvg-pause-key {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
   border: 1px solid var(--color-board-housing-shade);
   border-radius: 1px;
   background: var(--color-board-housing);
   color: var(--color-board-ink);
-  cursor: pointer;
-  pointer-events: auto;
   transition: background-color 150ms ease-out;
 }
 .hvg-pause svg {
-  width: 14px;
-  height: 14px;
+  width: 8px;
+  height: 8px;
   fill: currentColor;
 }
-.hvg-pause:hover {
+.hvg-pause:hover .hvg-pause-key {
   background: color-mix(in srgb, var(--color-board-housing) 85%, black);
 }
-.hvg-pause:active {
+.hvg-pause:active .hvg-pause-key {
   background: color-mix(in srgb, var(--color-board-housing) 72%, black);
 }
 .hvg-pause:focus-visible {
-  outline: 2px solid var(--color-board-ink);
-  outline-offset: 2px;
+  outline: 2px solid #fff;
+  outline-offset: -2px;
 }
 @media (prefers-reduced-motion: reduce) {
-  .hvg-pause { transition: none; }
-}
-/* The badge: a small yellow square centred at the foot of the right-hand
-   grey bar, above the glass sheen. */
-.hvg-badge {
-  position: absolute;
-  z-index: 3;
-  right: calc((var(--hvg-bar) - 13px) / 2);
-  bottom: 6px;
-  width: 13px;
-  height: 13px;
-  border: 1px solid var(--color-board-housing-shade);
-  border-radius: 1px;
-  background: var(--color-board-housing);
+  .hvg-pause-key { transition: none; }
 }
 
 @media (max-width: 1199px) {
@@ -545,25 +552,37 @@
 }
 
 
-/* Each work tile sits on a soft grey container that reaches 14px past it, so the screenshots stand off the page and the
-   map stays out from under the text. Hover and keyboard focus turn it to a muted wash of the CS1 line orange (14% in
-   oklab). It sits outside the tile's box, so nothing shifts, and replaces the base image lift. */
+/* Each work tile sits on a white card that reaches 14px past it, so the screenshots stand off the page and the map
+   stays out from under the text. At rest it is drawn like the case cards these tiles lead to: white, 4px corners, the
+   card shadow (2026-10-10; it was a grey well, which read as recessed and fought the shadow). Hover and keyboard focus
+   spread a muted wash of the CS1 line orange (14% in oklab) from where the pointer came in (the shared data-wash layer
+   in global.css, as on the case cards), deepen the shadow, lift the card 2px and underline the label in the line
+   orange, as the case cards do; an orange underline alone was too subtle (Scott, 2026-10-10).
+   The card and its contents lift, not the link: the link's box stays put, so a pointer resting on its bottom edge
+   can't fall out of the hover and back in as it rises. */
 .hv--g .hvf-work a {
   position: relative;
   isolation: isolate;
+  --wash-color: color-mix(in oklab, var(--color-line-pro) 14%, var(--color-bg));
+  --wash-inset: -14px;
 }
 .hv--g .hvf-work a::before {
   content: '';
   position: absolute;
   z-index: -1;
   inset: -14px;
-  border-radius: 10px;
-  background: color-mix(in oklab, var(--color-text) 6%, var(--color-bg));
+  border-radius: 4px;
+  background: white;
+  box-shadow: var(--shadow-card);
   pointer-events: none;
-  transition: background-color 150ms ease-out;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 .hv--g .hvf-work a:is(:hover, :focus-visible)::before {
-  background: color-mix(in oklab, var(--color-line-pro) 14%, var(--color-bg));
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+}
+.hv--g .hvf-work a:is(:hover, :focus-visible)::after {
+  translate: 0 -2px;
 }
 /* Wide enough that the containers keep about 16px of page between them. */
 .hv--g .hvf-work {
@@ -584,28 +603,48 @@
   }
   .hv--g .hvf-work a::before {
     inset: -8px;
-    border-radius: 8px;
+    border-radius: 4px;
   }
   .hero.hv--g .hvf-work a:focus-visible {
     outline-offset: 8px;
-    border-radius: 8px;
+    border-radius: 4px;
   }
 }
-.hv--g .hvf-work a:hover .hvf-shot {
-  transform: none;
+.hv--g .hvf-work a > * {
+  transition: transform 0.2s ease;
+}
+.hv--g .hvf-work a .hvf-shot {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.hv--g .hvf-work a:is(:hover, :focus-visible) > *,
+.hv--g .hvf-work a:is(:hover, :focus-visible) .hvf-shot {
+  transform: translateY(-2px);
 }
 .hv--g .hvf-work a:is(:hover, :focus-visible) .hvf-label {
   text-decoration: underline;
-  text-decoration-thickness: 1px;
+  text-decoration-thickness: 2px;
   text-underline-offset: 3px;
+  text-decoration-color: var(--color-line-pro);
 }
+/* Square: an outline's corners grow by its offset, so 4px here drew an 18px
+   ring around a 4px card. Square sits within a pixel of the card's corners. */
 .hv--g .hvf-work a:focus-visible {
   outline-offset: 14px;
-  border-radius: 10px;
+  border-radius: 0;
 }
 @media (prefers-reduced-motion: reduce) {
-  .hv--g .hvf-work a::before {
+  .hv--g .hvf-work a::before,
+  .hv--g .hvf-work a > *,
+  .hv--g .hvf-work a .hvf-shot {
     transition: none;
+  }
+  .hv--g .hvf-work a:is(:hover, :focus-visible)::before,
+  .hv--g .hvf-work a:is(:hover, :focus-visible) > *,
+  .hv--g .hvf-work a:is(:hover, :focus-visible) .hvf-shot {
+    transform: none;
+  }
+  .hv--g .hvf-work a:is(:hover, :focus-visible)::after {
+    translate: none;
   }
 }
 

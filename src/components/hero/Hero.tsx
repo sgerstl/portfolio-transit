@@ -41,6 +41,9 @@ const DEPARTURES: Record<string, Departure> = {
   pqdr: { line: 'CS1', name: 'PQ + DR', minutes: 5, from: 'AI insight', to: 'Operator decision' },
   'sim-racing': { line: 'CS1', name: 'Sim Racing', minutes: 7, from: 'Data and a chat window', to: 'A race engineer' },
 };
+// The domains that scroll up the board's left side at rest: the tiles' own
+// list, once each, so the board never says anything the page doesn't.
+const DOMAINS = [...new Set(PROOF.flatMap((p) => p.domains))];
 const describe = (slug: string) => {
   const d = DEPARTURES[slug];
   return d ? `From ${d.from.toLowerCase()} to ${d.to.toLowerCase()}. ${d.minutes} minute read.` : '';
@@ -156,13 +159,14 @@ export default function Hero({ figures }: { figures: HeroFigures }) {
             ))}
           </p>
         </div>
-        <DotField active={active} departures={DEPARTURES} idle={idle} />
+        <DotField active={active} departures={DEPARTURES} domains={DOMAINS} idle={idle} />
       </div>
       <ul className="hvf-work" aria-label="Selected work">
         {PROOF.map((p) => (
           <li key={p.href}>
             <a
               href={p.href}
+              data-wash
               aria-describedby={`hvg-desc-${p.slug}`}
               onMouseEnter={() => enter(p.slug)}
               onMouseLeave={clear}
